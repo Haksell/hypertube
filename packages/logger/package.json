@@ -14,13 +14,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
-  "jest": {
-    "preset": "jest-presets/jest/node"
-  },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "eslint-config-custom": "workspace:*",
-    "jest-presets": "workspace:*",
     "tsconfig": "workspace:*",
     "tsup": "^6.0.1",
     "typescript": "^5.2.2"
