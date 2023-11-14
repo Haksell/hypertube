@@ -24,7 +24,7 @@ importers:
         specifier: latest
         version: 1.10.16
 
-  apps/api:
+  apps/backend:
     dependencies:
       body-parser:
         specifier: ^1.20.2
@@ -79,7 +79,7 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  apps/storefront:
+  apps/frontend:
     dependencies:
       logger:
         specifier: workspace:*
