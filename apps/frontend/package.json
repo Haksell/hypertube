@@ -11,6 +11,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^1.6.1",
     "logger": "workspace:*",
     "next": "^13.4.19",
     "react": "^18.2.0",
