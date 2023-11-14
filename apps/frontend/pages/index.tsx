@@ -11,7 +11,7 @@ export default function Store(): JSX.Element {
   return (
     <div className="container">
       <h1 className="title">
-        Store <br />
+        myyyy <br />
         <span>Kitchen Sink</span>
       </h1>
       <CounterButton />
