@@ -1,5 +1,6 @@
 import { log } from "logger";
 import { CounterButton, Link } from "ui";
+import '../styles/tailwind.css';
 
 export const metadata = {
   title: "Store | Kitchen Sink",
@@ -10,21 +11,11 @@ export default function Store(): JSX.Element {
 
   return (
     <div className="container">
-      <h1 className="title">
+      <h1 className="text-3xl font-bold underline p-6">
         myyyy <br />
         <span>Kitchen Sink</span>
       </h1>
       <CounterButton />
-      <p className="description">
-        Built With{" "}
-        <Link href="https://turbo.build/repo" newTab>
-          Turborepo
-        </Link>
-        {" & "}
-        <Link href="https://nextjs.org/" newTab>
-          Next.js
-        </Link>
-      </p>
     </div>
   );
 }
