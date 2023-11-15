@@ -23,7 +23,7 @@ app.use(
 
 app.use(urlencoded({ extended: true }));
 app.use(json());
-
+app.use(requestLoggerMiddleware);
 app.get("/", (req, res) => res.send("API Root"));
 
 app.use("/auth", authRoutes);
