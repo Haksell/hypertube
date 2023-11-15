@@ -37,7 +37,7 @@ export default function Store(): JSX.Element {
 		const uname = "tonio2"
 		const mail = "tonio2@example.com"
 		const pwd = "Tonio"
-		const res = await axios.post("http://localhost:5001/auth/register", {username: uname, email: mail, password: pwd, firstName: "Antoine"})
+		const res = await axios.post("http://localhost:5001/auth/register", {username: uname, email: mail, password: pwd, firstName: "Antoine", lastName: "Bouquet"})
 		console.log(res.data)
 	} catch (error) {
 		console.log(error)
