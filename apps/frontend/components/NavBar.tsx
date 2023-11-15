@@ -3,123 +3,76 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Button from './elems/Button'
 
-type PropButtonLinkBar = {
+const ButtonLinkNavBar: React.FC<{
 	text: string
 	page: string
-	selected: boolean
-	block: boolean
-	currLink?: string
-	setCurrLink?: any
-}
-function ButtonLinkNavBar({
-	text,
-	page,
-	selected,
-	block,
-	currLink,
-	setCurrLink,
-}: PropButtonLinkBar) {
-	let styleInit: string = `text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium ${
-		block && 'block'
-	}`
-	const [style, setStyle] = useState<string>(styleInit)
-	useEffect(() => {
-		if (page.match(currLink)) {
-			setStyle(
-				`bg-zinc-900 text-white rounded-md px-3 py-2 text-sm font-medium ${
-					block && 'block'
-				}`,
-			)
-		} else
-			setStyle(
-				`text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium`,
-			)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currLink])
-
-	function handleChangePage(page: string) {
-		// console.log(page)
-		setCurrLink(page)
-	}
-	return (
-		<Link href={page}>
-			<p className={style} aria-current="page" onClick={() => handleChangePage(page)}>
-				{text}
-			</p>
-		</Link>
-	)
-}
-
-type PropLinkNavBar = {
 	currLink: string
-	setCurrLink: any
-}
-function LinkNavBar({ currLink, setCurrLink }: PropLinkNavBar) {
-	return (
-		<div className="hidden sm:ml-6 sm:block">
-			<div className="flex space-x-4">
-				<ButtonLinkNavBar
-					text="Profile"
-					page="/profile"
-					selected={true}
-					block={false}
-					currLink={currLink}
-					setCurrLink={setCurrLink}
-				/>
-				<ButtonLinkNavBar
-					text="Browsing"
-					page="/find"
-					selected={false}
-					block={false}
-					currLink={currLink}
-					setCurrLink={setCurrLink}
-				/>
-				<ButtonLinkNavBar
-					text="Map"
-					page="/map"
-					selected={false}
-					block={false}
-					currLink={currLink}
-					setCurrLink={setCurrLink}
-				/>
-				<ButtonLinkNavBar
-					text="Settings"
-					page="/settings"
-					selected={false}
-					block={false}
-					currLink={currLink}
-					setCurrLink={setCurrLink}
-				/>
-				<ButtonLinkNavBar
-					text="Movies"
-					page="/movies"
-					selected={false}
-					block={false}
-					currLink={currLink}
-					setCurrLink={setCurrLink}
-				/>
-			</div>
-		</div>
-	)
-}
+	setCurrLink: React.Dispatch<React.SetStateAction<string>>
+}> = ({ text, page, currLink, setCurrLink }) => (
+	<Link href={page}>
+		<p
+			className={`${
+				page.match(currLink)
+					? 'bg-zinc-900 text-white'
+					: 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
+			} rounded-md px-3 py-2 text-sm font-medium`}
+			aria-current="page"
+			onClick={() => setCurrLink(page)}
+		>
+			{text}
+		</p>
+	</Link>
+)
 
-function LogoNavBar() {
-	return (
-		<div className="flex flex-shrink-0 items-center">
-			<img className="h-8 w-auto" src="/navbar_logo.png" alt="Matcha" />
+const LinkNavBar: React.FC<{
+	currLink: string
+	setCurrLink: React.Dispatch<React.SetStateAction<string>>
+}> = ({ currLink, setCurrLink }) => (
+	<div className="flex items-center ml-6">
+		<div className="flex space-x-4">
+			<ButtonLinkNavBar
+				text="Profile"
+				page="/profile"
+				currLink={currLink}
+				setCurrLink={setCurrLink}
+			/>
+			<ButtonLinkNavBar
+				text="Browsing"
+				page="/find"
+				currLink={currLink}
+				setCurrLink={setCurrLink}
+			/>
+			<ButtonLinkNavBar
+				text="Map"
+				page="/map"
+				currLink={currLink}
+				setCurrLink={setCurrLink}
+			/>
+			<ButtonLinkNavBar
+				text="Settings"
+				page="/settings"
+				currLink={currLink}
+				setCurrLink={setCurrLink}
+			/>
+			<ButtonLinkNavBar
+				text="Movies"
+				page="/movies"
+				currLink={currLink}
+				setCurrLink={setCurrLink}
+			/>
 		</div>
-	)
-}
+	</div>
+)
 
-function DropdownMenu() {
-	// const { user } = useUserContext();
-	const user = null
+const LogoNavBar = () => (
+	<div className="flex flex-shrink-0 items-center">
+		<img className="h-12 w-auto" src="/navbar_logo.png" alt="Matcha" />
+	</div>
+)
+
+const DropdownMenu = () => {
+	const user = null // TODO
 	const router = useRouter()
-
-	useEffect(() => {
-		// if (!user) setShowDropMenu(false);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user])
 
 	return user ? (
 		<Button
@@ -139,23 +92,16 @@ function DropdownMenu() {
 }
 
 function NavBar() {
-	const [showMenu, setShowMenu] = useState<boolean>(false)
 	const [currLink, setCurrLink] = useState<string>('no')
-	// const { user, verifUser } = useUserContext();
 	const router = useRouter()
-	const user = null
-	// const location = router.pathname;
 
 	useEffect(() => {
-		// verifUser();
-		// console.log(router.pathname)
 		if (router.pathname.match('/profile')) setCurrLink('/profile')
 		else if (router.pathname.match('/settings')) setCurrLink('/settings')
 		else if (router.pathname.match('/find')) setCurrLink('/find')
 		else if (router.pathname.match('/map')) setCurrLink('/map')
 		else if (router.pathname.match('/movies')) setCurrLink('/movies')
 		else setCurrLink('no')
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currLink])
 
 	return (
