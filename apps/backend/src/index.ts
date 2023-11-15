@@ -61,7 +61,7 @@ app.get('/', (req, res) => res.send('API Root'));
 
 // * R E G I S T E R   N E W   U S E R
 
-app.post("/api/register", async (req, res) => {
+app.post("/auth/register", async (req, res) => {
     var errors=[]
     try {
         const { Username, Email, Password } = req.body;
@@ -131,7 +131,7 @@ app.post("/api/register", async (req, res) => {
 
 // * L O G I N
 
-app.post("/api/login", async (req, res) => {
+app.post("/auth/login", async (req, res) => {
   
   try {
 	  
@@ -184,7 +184,7 @@ app.post("/api/login", async (req, res) => {
 // * T E S T
 
 
-app.post("/api/test", auth, (req, res) => {
+app.post("/test", auth, (req, res) => {
     res.status(200).send("Token Works - Yay!");
 });
 
