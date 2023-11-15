@@ -45,7 +45,7 @@ function ForgotPasswordPage() {
     async function signInBackend() {
         try {
             const response = await axios.post(
-                `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/auth/forgotpwd`,
+                `http://localhost:5001/auth/forgotpwd`,
                 {
                     email: email,
                 },
@@ -54,18 +54,18 @@ function ForgotPasswordPage() {
                 },
             );
             // console.log(response.data);
-            if (response.data.message === SuccessMsg) {
+            if (response.data.msg === SuccessMsg) {
                 setError('');
                 setStyleError(false);
 				setCreated(true);
-            } else {
-                setStyleError(true);
-                setError(response.data.error);
-				setCreated(false);
             }
             return response.data;
         } catch (error) {
-			//
+			if (error.response) {
+				setStyleError(true);
+				setError(error.response.data);
+				setCreated(false);
+			}
         }
     }
 

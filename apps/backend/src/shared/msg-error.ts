@@ -44,16 +44,3 @@ export const EmptyPhoto: string = 'empty photo';
 export const PhotoTooBig: string = 'size too big for picture';
 export const PhotoNbLimit: string = 'too many pictures in your profile';
 export const PhotoResolution: string = 'incorrect resolution for picture';
-//request image
-export const EmptyPhotoId: string = 'empty filename';
-export const InvalidPhotoId: string = 'invalid filename';
-
-//likes
-export const CannotLikeOtherPhotoEmpty: string = 'user does not have a profile picture';
-export const CannotLikeYourPhotoEmpty: string = 'you do not have a profile picture';
-export const ProfileAlreadyLiked: string = 'already in your like';
-export const ProfileNotLiked: string = 'cannot unlike because is not in your likes';
-
-//block
-export const AlreadyBlocked: string = 'profile already blocked';
-export const ProfileNotBlocked: string = 'cannot unblock because profile not blocked';

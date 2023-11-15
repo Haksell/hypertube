@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import { generateId } from "../utils/generate-code";
+import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from "../utils/generateBodyEmail";
+import { sendEmail } from "../utils/mail";
+import { InvalidId, SuccessMsg, UnknownUsername } from "../shared/msg-error";
 
 const prisma = new PrismaClient();
 
 export async function register(req: Request, res: Response) {
   var errors = [];
-  const { Username, Email, Password } = req.body;
+  const { Username, Email, Password, FirstName, LastName } = req.body;
 
   if (!Username) {
     errors.push("Username is missing");
@@ -22,7 +26,14 @@ export async function register(req: Request, res: Response) {
 
   const user = await prisma.user.findMany({
     where: {
-      email: Email,
+		OR: [
+			{
+				email: Email,
+			},
+			{
+				username: Username
+			}
+		]
     },
   });
 
@@ -32,36 +43,41 @@ export async function register(req: Request, res: Response) {
   }
 
   var salt = bcrypt.genSaltSync(10);
+  const confirmID: string = generateId();
   const newUser = await prisma.user.create({
     data: {
       username: Username,
-      firstName: "user1",
-      lastName: "example",
+      firstName: FirstName,
+      lastName: LastName,
       email: Email,
       password: bcrypt.hashSync(Password, salt),
       salt: salt,
+	  email_confirm_id: confirmID,
     },
   });
+
+	// const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
+	// sendEmail('Verify your account', Email, emailBody);
 
   res.status(201).send({ msg: "Success" });
 }
 
 export async function login(req: Request, res: Response) {
-  const { Email, Password } = req.body;
+  const { Username, Password } = req.body;
   // Make sure there is an Email and Password in the request
-  if (!(Email && Password)) {
+  if (!(Username && Password)) {
     res.status(400).send("All input is required");
     return;
   }
 
   const user = await prisma.user.findMany({
     where: {
-      email: Email,
+      username: Username,
     },
   });
 
   if (user.length === 0) {
-    res.status(400).send({ error: "User does not exist. Please register" });
+    res.status(400).send("User does not exist. Please register" );
     return;
   }
 
@@ -70,7 +86,7 @@ export async function login(req: Request, res: Response) {
   if (PHash === user[0].password) {
     // * CREATE JWT TOKEN
     const token = jwt.sign(
-      { user_id: user[0].id, username: user[0].username, Email },
+      { user_id: user[0].id, username: user[0].username, email: user[0].email },
       process.env.TOKEN_KEY || "",
       {
         expiresIn: "1h", // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
@@ -81,7 +97,125 @@ export async function login(req: Request, res: Response) {
     res.status(200).send({ user: user[0] });
     return;
   } else {
-    res.status(400).send({ msg: "No Match" });
+    res.status(400).send("Incorrect password");
     return;
   }
+}
+
+export async function ConfirmEmail(req: Request, res: Response) {
+    const confirmID = req.params.confirmId;
+	try {
+		const users = await prisma.user.findMany({
+			where: {
+				email_confirm_id: confirmID
+			}
+		})
+		if (users.length == 0)
+			return res.status(400).json(InvalidId);
+		if (users.length > 1)
+			return res.status(500).json('Link error (dup) - contact admin');
+		const user = users[0]
+		if (user.email_verified === true)
+			return res.status(400).json('already validated');
+		const retour = await prisma.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				email_verified: true
+			}
+		})
+		return res.status(200).json({ msg: SuccessMsg });
+	}
+	catch (error) {
+		return res.status(400).json(InvalidId);
+	}
+
+}
+
+export async function ForgotPwd(req: Request, res: Response) {
+	const { email } = req.body;
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				email: email,
+			}
+		})
+		if (!user)
+			return res.status(400).json(UnknownUsername);
+
+		// generate a link to reset pwd
+		const confirmID: string = generateId();
+		// amend profile with the code
+		const retour = await prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				reset_pwd: confirmID,
+			}
+		})
+		console.log(retour)
+
+		// send Email
+		// const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
+		// sendEmail('Reset your password', email, emailBody);
+
+		return res.status(200).json({ msg: SuccessMsg });
+	}
+	catch (error) {
+		return res.status(400).json(UnknownUsername);
+	}
+    
+}
+
+export async function ConfirmForgotPwd(req: Request, res: Response) {
+	const confirmID = req.params.confirmId;
+    // console.log('confirm');
+
+    //recuperer USER
+    // const user: TableUser[] | null = await db.selectOneElemFromTable(
+    //     TableUsersName,
+    //     'reset_pwd',
+    //     confirmID,
+    // );
+    // // console.log(user);
+
+    // if (!user || user.length !== 1)
+    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
+
+    // return res.status(200).json({ msg: SuccessMsg, username: user[0].username });
+	return res.status(200).json({ msg: SuccessMsg });
+}
+
+export async function ResetPwd(req: Request, res: Response) {
+	const confirmID = req.params.confirmId;
+	const { password } = req.body;
+    // console.log('confirm');
+
+    // //recuperer USER
+    // const users: TableUser[] | null = await db.selectOneElemFromTable(
+    //     TableUsersName,
+    //     'reset_pwd',
+    //     confirmID,
+    // );
+    // // console.log(users);
+
+    // if (!users || users.length !== 1)
+    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
+
+	// const user: TableUser = users[0];
+	// const hash = await hashPassword(password);
+
+	// //amend user
+	// await db.AmendElemsFromTable(
+    //     TableUsersName,
+    //     'id',
+    //     user.id,
+	// 	['reset_pwd', 'password'],
+    //     ['', hash],
+    // );
+
+    return res.status(200).json({ msg: SuccessMsg });
 }

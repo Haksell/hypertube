@@ -8,7 +8,6 @@ import Button from '../components/elems/Button';
 import {
     EmailNotVerified,
     InvalidPassword,
-    SuccessMsg,
     UnknownUsername,
 } from '../src/shared/errors';
 import ShowErrorMessage from '../components/elems/ShowErrorMessage';
@@ -25,7 +24,6 @@ function SignInPage() {
         useState<boolean>(false);
     const [styleErrorPwd, setStyleErrorPwd] = useState<boolean>(false);
     const [styleError, setStyleError] = useState<boolean>(false);
-    // const navigate = useNavigate();
 	const router = useRouter();
     // const { user, loginUser } = useUserContext();
 	const user = null
@@ -55,37 +53,34 @@ function SignInPage() {
 
     function handleSignIn(event: any) {
         event.preventDefault();
-        // console.log('username=' + username + ', pwd=' + password);
         signInBackend();
     }
 
     async function signInBackend() {
         try {
-			const response = null
-            // const response = await axios.post(
-            //     `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/auth/signin`,
-            //     {
-            //         username: username,
-            //         password: password,
-            //     },
-            //     {
-            //         withCredentials: true,
-            //     },
-            // );
-            // console.log(response.data);
-            if (response.data.message === SuccessMsg) {
-                loginUser(response.data.user);
-                setError('');
-                setStyleError(false);
-                // navigate('/');
+            const response = await axios.post(
+                `http://localhost:5001/auth/login`,
+                {
+                    Username: username,
+                    Password: password,
+                },
+                {
+                    withCredentials: true,
+                },
+            );
+            console.log(response.data);
+			if (response.data) {
+				// loginUser(response.data.user);
+				setError('');
+				setStyleError(false);
 				router.push('/')
-            } else {
-                setStyleError(true);
-                setError(response.data.error);
-            }
+			}
             return response.data;
         } catch (error) {
-            loginUser(null);
+			console.log(error)
+			setStyleError(true);
+            setError(error.response.data);
+            // loginUser(null);
         }
     }
 
@@ -99,7 +94,7 @@ function SignInPage() {
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
                     <ShowErrorMessage
                         error={error}
-                        message={'Impossible to log-in because '}
+                        message={''}
                     />
                     <ErrorField
                         name="username"
