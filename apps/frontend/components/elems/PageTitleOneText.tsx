@@ -1,3 +1,4 @@
+import React from 'react';
 import TitleSmall from '../elems/TitleSmall';
 import LinkText from '../elems/LinkText';
 import MainLayout from '../../layouts/MainLayout';

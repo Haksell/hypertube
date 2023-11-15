@@ -1,3 +1,5 @@
+import React from 'react';
+
 type Prop = {
 	name: string;
 	title: string;
