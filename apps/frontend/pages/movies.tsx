@@ -1,86 +1,103 @@
-import React from 'react'
-import MainLayout from '../layouts/MainLayout'
+import NavBar from '../components/NavBar'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 
-type Film = {
-	title: string
-	thumbnail: string
-	year: number
-	length: number
+type Movie = {
+    title: string
+    thumbnail: string
+    year: number
+    length: number
+    imdbRating?: number
 }
 
-const films: Film[] = [
-	{
-		title: 'Oppenheimer',
-		thumbnail: '/dev_thumbnails/oppenheimer.jpg',
-		year: 2023,
-		length: 162,
-	},
-	{
-		title: 'Rumble Through the Dark',
-		thumbnail: '/dev_thumbnails/rumble_through_the_dark.jpg',
-		year: 2023,
-		length: 162,
-	},
-	{
-		title: 'The Killer',
-		thumbnail: '/dev_thumbnails/the_killer.jpg',
-		year: 2023,
-		length: 162,
-	},
-	{
-		title: 'The Creator',
-		thumbnail: '/dev_thumbnails/the_creator.jpg',
-		year: 2023,
-		length: 162,
-	},
-	{
-		title: 'The Death',
-		thumbnail: '/dev_thumbnails/the_death.jpg',
-		year: 2023,
-		length: 162,
-	},
-	{
-		title: 'Spirit of Fear',
-		thumbnail: '/dev_thumbnails/spirit_of_fear.jpg',
-		year: 2023,
-		length: 162,
-	},
-]
-
-const FilmCard: React.FC<{ film: Film }> = ({ film }) => {
-	const formatDuration = (minutes: number) => {
-		const hours = Math.floor(minutes / 60)
-		const mins = minutes % 60
-		return `${hours}h ${mins}m`
-	}
-
-	return (
-		<div className="max-w-sm rounded overflow-hidden shadow-lg">
-			<img className="w-full" src={film.thumbnail} alt={`Thumbnail of ${film.title}`} />
-			<div className="p-4">
-				<div className="font-bold text-lg truncate mb-2">{film.title}</div>
-				<div className="flex justify-between items-center">
-					<span className="text-gray-600 text-sm">{film.year}</span>
-					<span className="text-gray-600 text-sm">{formatDuration(film.length)}</span>
-				</div>
-			</div>
-		</div>
-	)
+const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours}:${mins}`
 }
 
-const FilmsPage = () => {
-	return (
-		<MainLayout>
-			<div className="container mx-auto px-6">
-				<h2 className="text-4xl font-bold my-8">Movies</h2>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-					{films.map((film) => (
-						<FilmCard key={film.title} film={film} />
-					))}
-				</div>
-			</div>
-		</MainLayout>
-	)
+const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
+    const [isHovered, setIsHovered] = useState(false)
+
+    return (
+        <div
+            className="relative group overflow-hidden cursor-pointer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <img
+                src={movie.thumbnail}
+                alt={movie.title}
+                width={230}
+                height={345}
+                className={`w-full h-auto transition-all duration-300 ease-in-out ${
+                    isHovered ? 'opacity-50' : ''
+                }`}
+            />
+            {isHovered && (
+                <div className="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold mb-2">
+                        {movie.title}
+                    </h3>
+                    {movie.imdbRating && (
+                        <div className="text-center text-sm">{movie.imdbRating} / 10</div>
+                    )}
+                    <div className="flex justify-between text-sm">
+                        <span>{movie.year}</span>
+                        <span>{formatDuration(movie.length)}</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+const MoviesPage = () => {
+    const [movies, setMovies] = useState<Movie[]>([])
+    const [isLoading, setIsLoading] = useState(false)
+
+    const fetchMovies = async () => {
+        setIsLoading(true)
+        try {
+            const response = await axios.get('http://localhost:5001/movies')
+            setMovies((prevMovies) => [...prevMovies, ...response.data])
+        } catch (error) {
+            console.error('Error fetching movies:', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchMovies()
+    }, [])
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + document.documentElement.scrollTop !==
+                document.documentElement.offsetHeight
+            )
+                return
+            fetchMovies()
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
+    return (
+        <div className="min-h-screen bg-black">
+            <NavBar />
+            <div className="text-white">
+                <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1 p-4">
+                    {movies.map((movie, i) => (
+                        <MovieCard key={i} movie={movie} />
+                    ))}
+                </div>
+                {isLoading && <p>Loading more movies...</p>}
+            </div>
+        </div>
+    )
 }
 
-export default FilmsPage
+export default MoviesPage

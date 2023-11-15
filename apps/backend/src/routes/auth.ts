@@ -6,10 +6,10 @@ import { validateConfirmIdParam } from '../middleware/atuh.confirm-id.body.middl
 import { validateForgotPwdBody } from '../middleware/auth.verife-email.middleware';
 import { validateResetPwdBody } from '../middleware/auth.checkPwd.middleware';
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
-router.post("/register", asyncHandler(register));
-router.post("/login", asyncHandler(login));
+router.post('/register', asyncHandler(register))
+router.post('/login', asyncHandler(login))
 
 router.get('/confirm/:confirmId', validateConfirmIdParam, (req: Request, res: Response) => {
 	return ConfirmEmail(req, res);
