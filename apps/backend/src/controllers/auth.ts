@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { generateId } from "../utils/generate-code";
 import { generateEmailBodyNewUser } from "../utils/generateBodyEmail-newUser";
 import { sendEmail } from "../utils/mail";
+import { SuccessMsg } from "../shared/msg-error";
 
 const prisma = new PrismaClient();
 
@@ -51,11 +52,12 @@ export async function register(req: Request, res: Response) {
       email: Email,
       password: bcrypt.hashSync(Password, salt),
       salt: salt,
+	  email_confirm_id: confirmID,
     },
   });
 
-	const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
-	sendEmail('Verify your account', Email, emailBody);
+	// const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
+	// sendEmail('Verify your account', Email, emailBody);
 
   res.status(201).send({ msg: "Success" });
 }
@@ -98,4 +100,56 @@ export async function login(req: Request, res: Response) {
     res.status(400).send({ msg: "No Match" });
     return;
   }
+}
+
+export async function ConfirmEmail(req: Request, res: Response) {
+    const confirmID = req.params.confirmId;
+    // console.log('confirm');
+    //recuperer USER
+	try {
+		console.log('confirm='+confirmID)
+		const users = await prisma.user.findMany({
+			where: {
+				email_confirm_id: confirmID
+			}
+		})
+		if (users.length == 0)
+			return res.status(400).json('unknown link');
+		if (users.length > 1)
+			return res.status(500).json('Link error (dup) - contact admin');
+		const user = users[0]
+		if (user.email_verified === true)
+			return res.status(400).json('link already validated');
+		console.log('found')
+		console.log(user)
+		const retour = await prisma.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				email_verified: true
+			}
+		})
+
+	}
+	catch (error) {
+		return res.status(400).json('unknown link');
+	}
+	
+    // console.log(user);
+
+    // if (!user || user.length !== 1)
+    //     return res.status(200).json({ message: 'unknown link' });
+    // if (user[0].email_verified === true)
+    //     return res.status(200).json({ message: 'already validated' });
+
+    // db.AmendOneElemFromTable(
+    //     TableUsersName,
+    //     'email_verified',
+    //     'id',
+    //     user[0].id,
+    //     true,
+    // );
+
+    return res.status(200).json({ msg: SuccessMsg });
 }

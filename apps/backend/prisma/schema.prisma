@@ -20,5 +20,9 @@ model User {
   salt String
   token String?
   email_confirm_id String?
+  email_verified	Boolean @default(false)
+  reset_pwd	String?
+  language String @default("english")
   createdAt DateTime @default(now())
+  profile_picture String?
 }
