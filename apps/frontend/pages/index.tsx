@@ -25,7 +25,7 @@ export default function Store(): JSX.Element {
 	try {
 		const mail = "tonio@example.com"
 		const pwd = "Tonio"
-		const res = await axios.post("http://localhost:5001/api/login", {Email: mail, Password: pwd})
+		const res = await axios.post("http://localhost:5001/auth/login", {Email: mail, Password: pwd})
 		console.log(res.data)
 	} catch (error) {
 		console.log(error)
@@ -37,7 +37,7 @@ export default function Store(): JSX.Element {
 		const uname = "tonio"
 		const mail = "tonio@example.com"
 		const pwd = "Tonio"
-		const res = await axios.post("http://localhost:5001/api/register", {Username: uname, Email: mail, Password: pwd})
+		const res = await axios.post("http://localhost:5001/auth/register", {Username: uname, Email: mail, Password: pwd})
 		console.log(res.data)
 	} catch (error) {
 		console.log(error)
@@ -47,7 +47,7 @@ export default function Store(): JSX.Element {
   const test = async () => {
 	try {
 		const token = (document.getElementById("token") as HTMLInputElement).value
-		const res = await axios.post("http://localhost:5001/api/test", {token: token})
+		const res = await axios.post("http://localhost:5001/test", {token: token})
 		console.log(res.data)
 	} catch (error) {
 		console.log(error)
