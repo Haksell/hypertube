@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { generateId } from "../utils/generate-code";
 import { generateEmailBodyNewUser } from "../utils/generateBodyEmail-newUser";
 import { sendEmail } from "../utils/mail";
-import { SuccessMsg } from "../shared/msg-error";
+import { InvalidId, SuccessMsg } from "../shared/msg-error";
 
 const prisma = new PrismaClient();
 
@@ -63,21 +63,21 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const { Email, Password } = req.body;
+  const { Username, Password } = req.body;
   // Make sure there is an Email and Password in the request
-  if (!(Email && Password)) {
+  if (!(Username && Password)) {
     res.status(400).send("All input is required");
     return;
   }
 
   const user = await prisma.user.findMany({
     where: {
-      email: Email,
+      username: Username,
     },
   });
 
   if (user.length === 0) {
-    res.status(400).send({ error: "User does not exist. Please register" });
+    res.status(400).send("User does not exist. Please register" );
     return;
   }
 
@@ -86,7 +86,7 @@ export async function login(req: Request, res: Response) {
   if (PHash === user[0].password) {
     // * CREATE JWT TOKEN
     const token = jwt.sign(
-      { user_id: user[0].id, username: user[0].username, Email },
+      { user_id: user[0].id, username: user[0].username, email: user[0].email },
       process.env.TOKEN_KEY || "",
       {
         expiresIn: "1h", // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
@@ -97,31 +97,26 @@ export async function login(req: Request, res: Response) {
     res.status(200).send({ user: user[0] });
     return;
   } else {
-    res.status(400).send({ msg: "No Match" });
+    res.status(400).send("Incorrect password");
     return;
   }
 }
 
 export async function ConfirmEmail(req: Request, res: Response) {
     const confirmID = req.params.confirmId;
-    // console.log('confirm');
-    //recuperer USER
 	try {
-		console.log('confirm='+confirmID)
 		const users = await prisma.user.findMany({
 			where: {
 				email_confirm_id: confirmID
 			}
 		})
 		if (users.length == 0)
-			return res.status(400).json('unknown link');
+			return res.status(400).json(InvalidId);
 		if (users.length > 1)
 			return res.status(500).json('Link error (dup) - contact admin');
 		const user = users[0]
 		if (user.email_verified === true)
-			return res.status(400).json('link already validated');
-		console.log('found')
-		console.log(user)
+			return res.status(400).json('already validated');
 		const retour = await prisma.user.update({
 			where: {
 				id: user.id
@@ -130,26 +125,10 @@ export async function ConfirmEmail(req: Request, res: Response) {
 				email_verified: true
 			}
 		})
-
+		return res.status(200).json({ msg: SuccessMsg });
 	}
 	catch (error) {
-		return res.status(400).json('unknown link');
+		return res.status(400).json(InvalidId);
 	}
-	
-    // console.log(user);
 
-    // if (!user || user.length !== 1)
-    //     return res.status(200).json({ message: 'unknown link' });
-    // if (user[0].email_verified === true)
-    //     return res.status(200).json({ message: 'already validated' });
-
-    // db.AmendOneElemFromTable(
-    //     TableUsersName,
-    //     'email_verified',
-    //     'id',
-    //     user[0].id,
-    //     true,
-    // );
-
-    return res.status(200).json({ msg: SuccessMsg });
 }
