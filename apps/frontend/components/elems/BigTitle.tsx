@@ -1,3 +1,5 @@
+import React from 'react';
+
 type Prop = {
     text: string;
 	space?: string;
