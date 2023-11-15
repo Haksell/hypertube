@@ -43,7 +43,7 @@ export async function register(req: Request, res: Response) {
     },
   });
 
-  res.status(201).json({ msg: "Success" });
+  res.status(201).send({ msg: "Success" });
 }
 
 export async function login(req: Request, res: Response) {
