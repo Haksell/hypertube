@@ -1,11 +1,10 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import { json, urlencoded } from "body-parser";
 import "dotenv/config";
-import auth from "./middleware.ts";
 import intializeDB from "./db/init.ts";
 import authRoutes from "./routes/auth.ts";
+import auth from "./middleware/auth.middleware.ts";
 import requestLoggerMiddleware from "./middleware/requestLogger.middleware.ts";
 import globalErrorMiddleware from "./middleware/globalError.middleware.ts";
 

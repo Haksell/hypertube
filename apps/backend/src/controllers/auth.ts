@@ -43,7 +43,7 @@ export async function register(req: Request, res: Response) {
     },
   });
 
-  res.status(201).json({msg: "Success"});
+  res.status(201).json({ msg: "Success" });
 }
 
 export async function login(req: Request, res: Response) {
@@ -60,20 +60,8 @@ export async function login(req: Request, res: Response) {
     },
   });
 
-  // create artificially an 500 error for testing
-  await prisma.user.create({
-    data: {
-      username: "user1",
-      firstName: "user1",
-      lastName: "example",
-      email: "user1@example.com",
-      password: "user1",
-      salt: "salt",
-    },
-  });
-
   if (user.length === 0) {
-    res.status(400).send({error: "User does not exist. Please register"});
+    res.status(400).send({ error: "User does not exist. Please register" });
     return;
   }
 
@@ -83,17 +71,17 @@ export async function login(req: Request, res: Response) {
     // * CREATE JWT TOKEN
     const token = jwt.sign(
       { user_id: user[0].id, username: user[0].username, Email },
-      process.env.TOKEN_KEY,
+      process.env.TOKEN_KEY || "",
       {
         expiresIn: "1h", // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
       }
     );
 
     user[0].token = token;
-    res.status(200).send({user: user[0]});
+    res.status(200).send({ user: user[0] });
     return;
   } else {
-    res.status(400).send({msg: "No Match"});
+    res.status(400).send({ msg: "No Match" });
     return;
   }
 }
