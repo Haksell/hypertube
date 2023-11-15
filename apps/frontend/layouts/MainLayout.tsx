@@ -1,6 +1,5 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
-import '../styles/tailwind.css'
 
 const MainLayout = ({ children }) => {
 	return (

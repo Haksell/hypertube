@@ -1,5 +1,5 @@
-import React from 'react'
-import MainLayout from '../layouts/MainLayout'
+import React, { useState } from 'react'
+import NavBar from '../components/NavBar'
 
 type Film = {
 	title: string
@@ -8,7 +8,7 @@ type Film = {
 	length: number
 }
 
-const films: Film[] = [
+let films: Film[] = [
 	{
 		title: 'Oppenheimer',
 		thumbnail: '/dev_thumbnails/oppenheimer.jpg',
@@ -45,41 +45,67 @@ const films: Film[] = [
 		year: 2023,
 		length: 162,
 	},
+	{
+		title: "OSS 117: Le Caire, nid d'espions",
+		thumbnail: '/dev_thumbnails/oss117.jpg',
+		year: 2006,
+		length: 99,
+	},
 ]
 
-const FilmCard: React.FC<{ film: Film }> = ({ film }) => {
-	const formatDuration = (minutes: number) => {
-		const hours = Math.floor(minutes / 60)
-		const mins = minutes % 60
-		return `${hours}h ${mins}m`
-	}
+films = [
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+	...films,
+]
+
+const FilmCard = ({ film }) => {
+	const [isHovered, setIsHovered] = useState(false)
 
 	return (
-		<div className="max-w-sm rounded overflow-hidden shadow-lg">
-			<img className="w-full" src={film.thumbnail} alt={`Thumbnail of ${film.title}`} />
-			<div className="p-4">
-				<div className="font-bold text-lg truncate mb-2">{film.title}</div>
-				<div className="flex justify-between items-center">
-					<span className="text-gray-600 text-sm">{film.year}</span>
-					<span className="text-gray-600 text-sm">{formatDuration(film.length)}</span>
+		<div
+			className="relative group"
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+		>
+			<img
+				src={film.thumbnail}
+				alt={film.title}
+				width={230}
+				height={345}
+				className="w-full h-auto"
+			/>
+			{isHovered && (
+				<div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2">
+					<h3>{film.title}</h3>
+					<p>{film.year}</p>
+					<p>{`${film.length} min`}</p>
 				</div>
-			</div>
+			)}
 		</div>
 	)
 }
 
 const FilmsPage = () => {
 	return (
-		<MainLayout>
-			<div className="container mx-auto px-6">
-				<h2 className="text-4xl font-bold my-8">Movies</h2>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+		<div className="min-h-screen bg-black">
+			<NavBar />
+			<div className="text-white">
+				<div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1 p-4">
 					{films.map((film) => (
 						<FilmCard key={film.title} film={film} />
 					))}
 				</div>
 			</div>
-		</MainLayout>
+		</div>
 	)
 }
 
