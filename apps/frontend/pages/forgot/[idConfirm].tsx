@@ -1,53 +1,52 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 // import { useNavigate, useParams } from 'react-router-dom';
-import { RetourType } from '../types/response';
 import axios from 'axios';
-import { InvalidId, SuccessMsg } from '../src/shared/errors';
-import PageTitleOneText from '../components/elems/PageTitleOneText';
-import TramePage from '../components/elems/TramePage';
-import TitleSmall from '../components/elems/TitleSmall';
-import TextPage from '../components/elems/TextPage';
-import LinkText from '../components/elems/LinkText';
-import ShowErrorMessage from '../components/elems/ShowErrorMessage';
-import Button from '../components/elems/Button';
-import { ErrorField } from '../components/elems/ErrorFields';
-import MainLayout from '../layouts/MainLayout';
+import { InvalidId, SuccessMsg } from '../../src/shared/errors';
+import PageTitleOneText from '../../components/elems/PageTitleOneText';
+import TramePage from '../../components/elems/TramePage';
+import TitleSmall from '../../components/elems/TitleSmall';
+import TextPage from '../../components/elems/TextPage';
+import LinkText from '../../components/elems/LinkText';
+import ShowErrorMessage from '../../components/elems/ShowErrorMessage';
+import Button from '../../components/elems/Button';
+import { ErrorField } from '../../components/elems/ErrorFields';
+import MainLayout from '../../layouts/MainLayout';
 import { useRouter } from 'next/router';
 
 function ResetPasswordPage() {
 	const router = useRouter()
     const { idConfirm } = router.query;
-    const [retour, setRetour] = useState<RetourType | null>(null);
+    const [retour, setRetour] = useState<string | null>(null);
     const [styleErrorPassword, setStyleErrorPassword] =
         useState<boolean>(false);
     const [created, setCreated] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    // const navigate = useNavigate();
 	
 
     useEffect(() => {
+		console.log('id='+idConfirm)
         validateLink();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [idConfirm]);
 
     async function validateLink() {
         if (!idConfirm) return;
         try {
             const response = await axios.get(
-                `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/auth/forgot/${idConfirm}`,
+                `http://localhost:5001/auth/forgot/${idConfirm}`,
                 {
                     withCredentials: true,
                 },
             );
-            setRetour(response.data);
+			if (response && response.data.msg)
+            	setRetour(response.data.msg);
             // console.log(response.data);
-            if (response.data.error === InvalidId)
-				router.push('/404')
-				//navigate('/404');
             return response.data;
         } catch (error) {
+			if (error.response === InvalidId)
+				router.push('/404')
             setRetour(null);
         }
     }
@@ -88,7 +87,7 @@ function ResetPasswordPage() {
         resetPasswordBackend();
     }
 
-    return retour && retour.message === SuccessMsg ? (
+    return retour && retour === SuccessMsg ? (
         created ? (
             <PageTitleOneText
                 title="Password changed"

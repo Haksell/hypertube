@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import { PrismaClient, User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { generateId } from "../utils/generate-code";
-import { generateEmailBodyNewUser } from "../utils/generateBodyEmail-newUser";
+import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from "../utils/generateBodyEmail";
 import { sendEmail } from "../utils/mail";
-import { InvalidId, SuccessMsg } from "../shared/msg-error";
+import { InvalidId, SuccessMsg, UnknownUsername } from "../shared/msg-error";
 
 const prisma = new PrismaClient();
 
@@ -131,4 +131,41 @@ export async function ConfirmEmail(req: Request, res: Response) {
 		return res.status(400).json(InvalidId);
 	}
 
+}
+
+export async function ForgotPwd(req: Request, res: Response) {
+	const { email } = req.body;
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: {
+				email: email,
+			}
+		})
+		if (!user)
+			return res.status(400).json(UnknownUsername);
+
+		// generate a link to reset pwd
+		const confirmID: string = generateId();
+		// amend profile with the code
+		const retour = await prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				reset_pwd: confirmID,
+			}
+		})
+		console.log(retour)
+
+		// send Email
+		// const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
+		// sendEmail('Reset your password', email, emailBody);
+
+		return res.status(200).json({ msg: SuccessMsg });
+	}
+	catch (error) {
+		return res.status(400).json(UnknownUsername);
+	}
+    
 }
