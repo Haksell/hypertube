@@ -7,6 +7,7 @@ import auth from "./middleware.ts";
 import intializeDB from "./db/init.ts";
 import authRoutes from "./routes/auth.ts";
 import requestLoggerMiddleware from "./middleware/requestLogger.middleware.ts";
+import globalErrorMiddleware from "./middleware/globalError.middleware.ts";
 
 const port = process.env.PORT || 5001;
 
@@ -31,5 +32,7 @@ app.use("/auth", authRoutes);
 app.post("/test", auth, (req, res) => {
   res.status(200).send("Token Works - Yay!");
 });
+
+app.use(globalErrorMiddleware);
 
 app.listen(port, () => console.log(`API listening on port ${port}!`));
