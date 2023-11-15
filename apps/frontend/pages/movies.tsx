@@ -6,6 +6,7 @@ type Film = {
 	thumbnail: string
 	year: number
 	length: number
+	imdbRating?: number
 }
 
 let films: Film[] = [
@@ -14,12 +15,14 @@ let films: Film[] = [
 		thumbnail: '/dev_thumbnails/oppenheimer.jpg',
 		year: 2023,
 		length: 162,
+		imdbRating: 8.5,
 	},
 	{
 		title: 'Rumble Through the Dark',
 		thumbnail: '/dev_thumbnails/rumble_through_the_dark.jpg',
 		year: 2023,
 		length: 162,
+		imdbRating: 6.2,
 	},
 	{
 		title: 'The Killer',
@@ -67,12 +70,18 @@ films = [
 	...films,
 ]
 
-const FilmCard = ({ film }) => {
+const formatDuration = (minutes: number) => {
+	const hours = Math.floor(minutes / 60)
+	const mins = minutes % 60
+	return `${hours}:${mins}`
+}
+
+const FilmCard: React.FC<{ film: Film }> = ({ film }) => {
 	const [isHovered, setIsHovered] = useState(false)
 
 	return (
 		<div
-			className="relative group"
+			className="relative group overflow-hidden cursor-pointer"
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 		>
@@ -81,19 +90,25 @@ const FilmCard = ({ film }) => {
 				alt={film.title}
 				width={230}
 				height={345}
-				className="w-full h-auto"
+				className={`w-full h-auto transition-all duration-300 ease-in-out ${
+					isHovered ? 'opacity-50' : ''
+				}`}
 			/>
 			{isHovered && (
-				<div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2">
-					<h3>{film.title}</h3>
-					<p>{film.year}</p>
-					<p>{`${film.length} min`}</p>
+				<div className="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out">
+					<h3 className="text-base md:text-lg lg:text-xl font-bold mb-2">{film.title}</h3>
+					{film.imdbRating && (
+						<div className="text-center text-sm">{film.imdbRating} / 10</div>
+					)}
+					<div className="flex justify-between text-sm">
+						<span>{film.year}</span>
+						<span>{formatDuration(film.length)}</span>
+					</div>
 				</div>
 			)}
 		</div>
 	)
 }
-
 const FilmsPage = () => {
 	return (
 		<div className="min-h-screen bg-black">
