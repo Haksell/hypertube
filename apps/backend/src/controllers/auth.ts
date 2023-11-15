@@ -169,3 +169,53 @@ export async function ForgotPwd(req: Request, res: Response) {
 	}
     
 }
+
+export async function ConfirmForgotPwd(req: Request, res: Response) {
+	const confirmID = req.params.confirmId;
+    // console.log('confirm');
+
+    //recuperer USER
+    // const user: TableUser[] | null = await db.selectOneElemFromTable(
+    //     TableUsersName,
+    //     'reset_pwd',
+    //     confirmID,
+    // );
+    // // console.log(user);
+
+    // if (!user || user.length !== 1)
+    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
+
+    // return res.status(200).json({ msg: SuccessMsg, username: user[0].username });
+	return res.status(200).json({ msg: SuccessMsg });
+}
+
+export async function ResetPwd(req: Request, res: Response) {
+	const confirmID = req.params.confirmId;
+	const { password } = req.body;
+    // console.log('confirm');
+
+    // //recuperer USER
+    // const users: TableUser[] | null = await db.selectOneElemFromTable(
+    //     TableUsersName,
+    //     'reset_pwd',
+    //     confirmID,
+    // );
+    // // console.log(users);
+
+    // if (!users || users.length !== 1)
+    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
+
+	// const user: TableUser = users[0];
+	// const hash = await hashPassword(password);
+
+	// //amend user
+	// await db.AmendElemsFromTable(
+    //     TableUsersName,
+    //     'id',
+    //     user.id,
+	// 	['reset_pwd', 'password'],
+    //     ['', hash],
+    // );
+
+    return res.status(200).json({ msg: SuccessMsg });
+}
