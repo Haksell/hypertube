@@ -1,7 +1,7 @@
 
 //message
 export const ErrorMsg: string = 'error';
-export const SuccessMsg: string = 'success';
+export const SuccessMsg: string = 'Success';
 export const NotConnected: string = 'not connected';
 
 

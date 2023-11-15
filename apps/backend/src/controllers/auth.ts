@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import { generateId } from "../utils/generate-code";
+import { generateEmailBodyNewUser } from "../utils/generateBodyEmail-newUser";
+import { sendEmail } from "../utils/mail";
 
 const prisma = new PrismaClient();
 
 export async function register(req: Request, res: Response) {
   var errors = [];
-  const { Username, Email, Password } = req.body;
+  const { Username, Email, Password, FirstName, LastName } = req.body;
 
   if (!Username) {
     errors.push("Username is missing");
@@ -22,7 +25,14 @@ export async function register(req: Request, res: Response) {
 
   const user = await prisma.user.findMany({
     where: {
-      email: Email,
+		OR: [
+			{
+				email: Email,
+			},
+			{
+				username: Username
+			}
+		]
     },
   });
 
@@ -32,16 +42,20 @@ export async function register(req: Request, res: Response) {
   }
 
   var salt = bcrypt.genSaltSync(10);
+  const confirmID: string = generateId();
   const newUser = await prisma.user.create({
     data: {
       username: Username,
-      firstName: "user1",
-      lastName: "example",
+      firstName: FirstName,
+      lastName: LastName,
       email: Email,
       password: bcrypt.hashSync(Password, salt),
       salt: salt,
     },
   });
+
+	const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
+	sendEmail('Verify your account', Email, emailBody);
 
   res.status(201).send({ msg: "Success" });
 }

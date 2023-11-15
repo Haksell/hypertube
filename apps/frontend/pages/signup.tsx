@@ -33,8 +33,6 @@ function SignUpPage() {
     const [email, setemail] = useState<string>('');
     const [firstname, setfirstname] = useState<string>('');
     const [lastname, setlastname] = useState<string>('');
-    const [datebirth, setDatebirth] = useState<string>('');
-    const [gender, setGender] = useState<string>('female');
     const [error, setError] = useState<string>('');
     const [styleErrorUsername, setStyleErrorUsername] =
         useState<boolean>(false);
@@ -102,12 +100,6 @@ function SignUpPage() {
     function handleOnChangeLastname(e: React.ChangeEvent<HTMLInputElement>) {
         setlastname(e.target.value);
     }
-    function handleOnChangeDateBirth(e: React.ChangeEvent<HTMLInputElement>) {
-        setDatebirth(e.target.value);
-    }
-    function handleOnChangeGender(e: React.ChangeEvent<HTMLInputElement>) {
-        setGender(e.target.value);
-    }
 
     function handleSignUp(event: any) {
         event.preventDefault();
@@ -117,22 +109,20 @@ function SignUpPage() {
     async function signUpBackend() {
         try {
             const response = await axios.post(
-                `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/auth/signup`,
+                `http://localhost:5001/auth/register`,
                 {
-                    username: username,
-                    password: password,
-                    email: email,
-                    lastname: lastname,
-                    firstname: firstname,
-                    datebirth: datebirth,
-                    gender: gender,
+                    Username: username,
+                    Password: password,
+                    Email: email,
+                    LastName: lastname,
+                    FirstName: firstname,
                 },
                 {
                     withCredentials: true,
                 },
             );
-            // console.log(response.data);
-            if (response.data.message === SuccessMsg) {
+            console.log(response.data);
+            if (response.data.msg === SuccessMsg) {
                 setError('');
                 setStyleError(false);
                 setCreated(true);
@@ -142,6 +132,9 @@ function SignUpPage() {
             }
             return response.data;
         } catch (error) {
+			// console.log(error)
+			setStyleError(true);
+            setError(error.response.data);
             //to handle ?
         }
     }
@@ -199,20 +192,6 @@ function SignUpPage() {
                         styleError={styleErrorLastname}
                         setStyleError={setStyleErrorLastname}
                         init={lastname}
-                    />
-                    <DateInputField
-                        title="Date of birth"
-                        onBlur={handleOnChangeDateBirth}
-                        max={maxAge}
-                        init={datebirth}
-                    />
-                    <SelectInput
-                        title="Gender"
-                        name="gender"
-                        nameDefault="Select gender"
-                        list={['female', 'male']}
-                        onBlur={handleOnChangeGender}
-						init={gender}
                     />
 
                     <div className="pt-5">
