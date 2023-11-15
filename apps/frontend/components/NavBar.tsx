@@ -19,20 +19,20 @@ function ButtonLinkNavBar({
 	currLink,
 	setCurrLink,
 }: PropButtonLinkBar) {
-	let styleInit: string = `text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium ${
+	let styleInit: string = `text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium ${
 		block && 'block'
 	}`
 	const [style, setStyle] = useState<string>(styleInit)
 	useEffect(() => {
 		if (page.match(currLink)) {
 			setStyle(
-				`bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium ${
+				`bg-zinc-900 text-white rounded-md px-3 py-2 text-sm font-medium ${
 					block && 'block'
 				}`,
 			)
 		} else
 			setStyle(
-				`text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium`,
+				`text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium`,
 			)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currLink])
@@ -55,16 +55,12 @@ type PropLinkNavBar = {
 	setCurrLink: any
 }
 function LinkNavBar({ currLink, setCurrLink }: PropLinkNavBar) {
-	// const { user } = useUserContext();
-	const user = null
-	const profileLink: string = `/profile` //${user?.id}
-
 	return (
 		<div className="hidden sm:ml-6 sm:block">
 			<div className="flex space-x-4">
 				<ButtonLinkNavBar
 					text="Profile"
-					page={profileLink}
+					page="/profile"
 					selected={true}
 					block={false}
 					currLink={currLink}
@@ -110,7 +106,7 @@ function LinkNavBar({ currLink, setCurrLink }: PropLinkNavBar) {
 function LogoNavBar() {
 	return (
 		<div className="flex flex-shrink-0 items-center">
-			<img className="h-8 w-auto" src="/hyperlogo.png" alt="Matcha" />
+			<img className="h-8 w-auto" src="/navbar_logo.png" alt="Matcha" />
 		</div>
 	)
 }
@@ -162,9 +158,8 @@ function NavBar() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currLink])
 
-	let outside: boolean = false
 	return (
-		<nav className="bg-gray-800">
+		<nav className="bg-zinc-800">
 			<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
 				<div className="relative flex h-16 items-center justify-between">
 					<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
