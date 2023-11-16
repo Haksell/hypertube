@@ -103,25 +103,20 @@ function SignUpPage() {
             const response = await axios.post(
                 `http://localhost:5001/auth/register`,
                 {
-                    Username: username,
-                    Password: password,
-                    Email: email,
-                    LastName: lastname,
-                    FirstName: firstname,
+                    username: username,
+                    password: password,
+                    email: email,
+                    lastName: lastname,
+                    firstName: firstname,
                 },
                 {
                     withCredentials: true,
                 },
             )
             console.log(response.data)
-            if (response.data.msg === SuccessMsg) {
-                setError('')
-                setStyleError(false)
-                setCreated(true)
-            } else {
-                setStyleError(true)
-                setError(response.data.error)
-            }
+            setError('')
+            setStyleError(false)
+            setCreated(true)
             return response.data
         } catch (error) {
             // console.log(error)

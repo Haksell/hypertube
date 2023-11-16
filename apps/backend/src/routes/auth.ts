@@ -5,6 +5,7 @@ import Joi from 'joi'
 import {
     register,
     login,
+	login42,
     ConfirmEmail,
     ForgotPwd,
     ConfirmForgotPwd,
