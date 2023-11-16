@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { json, urlencoded } from "body-parser";
 import "dotenv/config";
+import axios from "axios";
 import intializeDB from "./db/init.ts";
 import authRoutes from "./routes/auth.ts";
 import auth from "./middleware/auth.middleware.ts";
@@ -15,13 +16,13 @@ intializeDB();
 const app = express();
 
 app.use(
-  express.urlencoded(),
+  urlencoded({ extended: true }),
   cors({
     origin: "http://localhost:3000",
+	credentials: true,
   })
 );
 
-app.use(urlencoded({ extended: true }));
 app.use(json());
 app.use(requestLoggerMiddleware);
 app.get("/", (req, res) => res.send("API Root"));

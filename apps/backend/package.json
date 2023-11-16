@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
+    "axios": "^1.6.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -35,6 +36,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.5",
     "@types/node": "^20.5.9",
+    "@types/passport-42": "^1.1.1",
     "@types/supertest": "^2.0.12",
     "eslint-config-custom": "workspace:*",
     "supertest": "^6.3.3",

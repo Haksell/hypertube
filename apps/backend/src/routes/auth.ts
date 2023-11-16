@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
 import { createValidator } from 'express-joi-validation'
 import Joi from 'joi'
-import { register, login } from '../controllers/auth'
+import { register, login, login42 } from '../controllers/auth'
 
 const router: Router = express.Router()
 const validator = createValidator()
@@ -22,5 +22,6 @@ const loginSchema = Joi.object({
 
 router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
+router.post('/42', asyncHandler(login42))
 
 export default router
