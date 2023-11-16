@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Button from './elems/Button'
+import LanguageSwitcher from './LanguageSwitcher'
 
 const ButtonLinkNavBar: React.FC<{
 	text: string
@@ -115,6 +116,7 @@ function NavBar() {
 					<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 						<DropdownMenu />
 					</div>
+					<LanguageSwitcher/>
 				</div>
 			</div>
 		</nav>

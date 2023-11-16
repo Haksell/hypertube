@@ -16,6 +16,8 @@ import UserAlreadySignedIn from '../components/auth/UserAlreadySignedIn';
 import TitleSmall from '../components/elems/TitleSmall';
 import LinkText from '../components/elems/LinkText';
 import MainLayout from '../layouts/MainLayout';
+import { useTranslation, Trans } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SignInPage() {
     const [username, setUsername] = useState<string>('');
@@ -29,6 +31,7 @@ function SignInPage() {
 	const router = useRouter();
     // const { user, loginUser } = useUserContext();
 	const user = null
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         if (styleError === false) return;
@@ -93,8 +96,7 @@ function SignInPage() {
         <UserAlreadySignedIn />
     ) : (
 		<MainLayout>
-            <TitleSmall text={'Sign in to your account'} />
-
+            <TitleSmall text={t('sign_title')} />
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
                     <ShowErrorMessage
@@ -103,7 +105,7 @@ function SignInPage() {
                     />
                     <ErrorField
                         name="username"
-                        title="Username"
+                        title={t('username')}
                         onBlur={handleOnChangeUsername}
                         styleError={styleErrorUsername}
                         setStyleError={setStyleErrorUsername}
@@ -111,7 +113,7 @@ function SignInPage() {
                     />
                     <ErrorField
                         name="password"
-                        title="Password"
+                        title={t('password')}
                         onBlur={handleOnChangePassword}
                         styleError={styleErrorPwd}
                         setStyleError={setStyleErrorPwd}
@@ -120,7 +122,7 @@ function SignInPage() {
 
                     <div>
                         <Button
-                            text="Sign In"
+                            text={t('sign_in')}
                             type="submit"
                             stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         />
@@ -128,19 +130,27 @@ function SignInPage() {
                 </form>
 
                 <LinkText
-                    firstText="Not a member?"
-                    linkText="Sign up"
+                    firstText={t('NAM')}
+                    linkText={t('sign_up')}
                     link="/signup"
                 />
                 <LinkText
-                    firstText="Forgot password?"
-                    linkText="Reset password"
+                    firstText={t('forgot')}
+                    linkText={t('reset')}
                     link="/forgot"
 					space='1'
                 />
             </div>
 		</MainLayout>
     );
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default SignInPage;
