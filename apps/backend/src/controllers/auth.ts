@@ -140,6 +140,7 @@ export async function login42(req: Request, res: Response) {
                 firstName: first_name,
                 lastName: last_name,
                 email: email,
+				authMethod: 'FORTYTWO',
             },
         })
     } else {
