@@ -1,4 +1,5 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
+import { TUserCookie } from '../types_backend/user-cookie'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
 import { sendEmail } from '../utils/mail'
@@ -85,8 +86,9 @@ export async function login(req: Request, res: Response) {
     const PHash = bcrypt.hashSync(Password, user[0].salt)
     if (PHash === user[0].password) {
         // * CREATE JWT TOKEN
+		const content: TUserCookie = { user_id: user[0].id, username: user[0].username, email: user[0].email }
         const token = jwt.sign(
-            { user_id: user[0].id, username: user[0].username, email: user[0].email },
+            content,
             process.env.TOKEN_KEY || '',
             {
                 expiresIn: '1h', // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
