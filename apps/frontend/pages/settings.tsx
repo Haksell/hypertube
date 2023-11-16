@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import ShowErrorMessage from "../components/elems/ShowErrorMessage";
 import UserNotSignedIn from "../components/auth/UserNotSignedIn";
 import MultiplesInputOneRow from "../components/elems/MultiplesInputOneRow";
-import { DateInputField } from "../components/elems/DateInputField";
 import SelectInput from "../components/elems/SelectInput";
-import { TextareaField } from "../components/elems/TextareaField";
 import axios from "axios";
 import TitleSmall from "../components/elems/TitleSmall";
 import { ErrorField } from "../components/elems/ErrorFields";
@@ -14,11 +12,9 @@ import { TUserContext } from "../src/shared/user";
 import { useUserContext } from "../src/context/UserContext";
 import MainLayout from "../layouts/MainLayout";
 import ShowImg from "../components/settings/ShowImg";
-import PhotoUploader from "../components/settings/PhotoUpload";
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
-	// const [user, setUser] = useState<TUserContext | null>(null);
 	const { user } = useUserContext();
 	
 	//fields
@@ -64,7 +60,6 @@ function SettingsPage() {
                     withCredentials: true,
                 },
             );
-            // console.log(response.data);
             setError('');
             return response.data;
         } catch (error) {

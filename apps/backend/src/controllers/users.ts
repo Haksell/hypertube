@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { EmptyPhoto, InvalidPhotoExtension, InvalidPhotoId, NotConnected, PhotoTooBig, SuccessMsg } from '../shared/msg-error'
+import { EmailTaken, EmptyPhoto, InvalidPhotoExtension, InvalidPhotoId, NotConnected, PhotoTooBig, SuccessMsg } from '../shared/msg-error'
 import { TUserCookie } from '../types_backend/user-cookie';
 import { PrismaClient } from '@prisma/client';
 import { formatUser } from '../utils/format';
@@ -48,6 +48,51 @@ export function getUserFromRequest(req: Request): TUserCookie {
 	}
 }
 
+export async function updateSettings(req: Request, res: Response) {
+	const { email, firstname, lastname } = req.body
+	try {
+		const userReq: TUserCookie = req.user
+		//verif user existe
+		const user = await prisma.user.findUnique({
+			where: {
+				username: userReq.username,
+			}
+		})
+		if (!user) {
+			res.status(400).json(NotConnected);
+			return
+		}
+
+		if (email !== user.email) {
+			//verif email not already used
+			const verifEmail = await prisma.user.findUnique({
+				where: {
+					email: email,
+				}
+			})
+			if (verifEmail) {
+				res.status(400).json(EmailTaken);
+				return
+			}
+		}
+		
+		//amend user
+		const retour = await prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				email: email,
+				firstName: firstname,
+				lastName: lastname,
+			}
+		})
+	}
+	catch (error) {
+		res.status(400).send('Error with settings');
+	}
+}
+
 export async function uploadImg(req: Request, res: Response) {
 	imageUpload.single('image')(req, res, (err: any) => {
 		if (err) {
@@ -55,7 +100,7 @@ export async function uploadImg(req: Request, res: Response) {
 		}
 		uploadImgtoDb(req, res);
 	  });
-} 
+}
 
 export async function uploadImgtoDb(req: Request, res: Response) {
 	const file: Express.Multer.File | undefined = req.file;
@@ -65,6 +110,23 @@ export async function uploadImgtoDb(req: Request, res: Response) {
 		if (!file) {
 			res.status(400).json(EmptyPhoto);
 			return
+		}
+
+		//verif user existe
+		const user = await prisma.user.findUnique({
+			where: {
+				username: userReq.username,
+			}
+		})
+		if (!user) {
+			res.status(400).json(NotConnected);
+			return
+		}
+
+		if (user.profile_picture) {
+			//supprimer photo si existe
+			const fullfilepath = givePathImage(user.profile_picture);
+			deleteFile(res, fullfilepath)
 		}
 
 		const retour = await prisma.user.update({
@@ -136,17 +198,19 @@ export async function deleteImg(req: Request, res: Response) {
 		}
 	})
 
-	//supprier photo
+	//supprimer photo
+	deleteFile(res, fullfilepath)
+	res.status(200).json(SuccessMsg);
+}
+
+function deleteFile(res: Response, fullfilepath: string) {
 	const fs = require('fs');
 	fs.unlink(fullfilepath, (err: any) => {
 		if (err) {
-			res.status(400).json(InvalidPhotoId);
-			return
+			return false
 		}
-	  
-		res.status(200).json(SuccessMsg);
+		return true
 	});
-
 }
 
 //handling photo
@@ -186,4 +250,3 @@ export const imageUpload = multer({
 		cb(null, true);
 	},
 });
-
