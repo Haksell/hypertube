@@ -9,6 +9,8 @@ import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { signJwt } from '../utils/jwt'
+import { get } from 'http'
+import { get42Token, get42User } from '../utils/axios'
 
 const prisma = new PrismaClient()
 
@@ -100,31 +102,17 @@ export async function login(req: Request, res: Response) {
 
 export async function login42(req: Request, res: Response) {
     const { code } = req.body
-    const body = {
-        client_id: process.env.FORTYTWO_CLIENT_ID,
-        client_secret: process.env.FORTYTWO_CLIENT_SECRET,
-        code,
-        redirect_uri: 'http://localhost:3000',
-        grant_type: 'authorization_code',
-    }
-    const headers = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    }
-    const first = await axios.post('https://api.intra.42.fr/oauth/token', body, { headers })
-    const { access_token } = first.data
+    const access_token = await get42Token(code)
+    const { login, email, first_name, last_name } = await get42User(access_token)
 
-    const second = await axios.get('https://api.intra.42.fr/v2/me', {
-        headers: {
-            Authorization: `Bearer ${access_token}`,
-        },
-    })
-    const { login, email, first_name, last_name } = second.data
+	// Find user in db
     let user = await prisma.user.findUnique({
         where: {
             email: email,
         },
     })
+
+	// Check if user already exists and if its authMethod is 42
     if (!user) {
         const username = await generateUniqueUsername(login)
 
