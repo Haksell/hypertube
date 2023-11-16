@@ -43,7 +43,9 @@ export const getGithubToken = async (code: string) => {
         'Content-Type': 'application/json',
         Accept: 'application/json',
     }
-    const response = await axios.post('https://github.com/login/oauth/access_token', body, { headers })
+    const response = await axios.post('https://github.com/login/oauth/access_token', body, {
+        headers,
+    })
 
     return response.data.access_token
 }
@@ -55,6 +57,31 @@ export const getGithubUser = async (token: string) => {
             Authorization: `Bearer ${token}`,
         },
     })
+
+    return response.data
+}
+
+// Get Facebook token
+export const getFacebookToken = async (code: string) => {
+    const response = await axios.get(
+        'https://graph.facebook.com/v10.0/oauth/access_token?client_id=' +
+            process.env.FACEBOOK_CLIENT_ID +
+            '&redirect_uri=' +
+            process.env.FACEBOOK_REDIRECT_URI +
+            '&client_secret=' +
+            process.env.FACEBOOK_CLIENT_SECRET +
+            '&code=' +
+            code,
+    )
+
+    return response.data.access_token
+}
+
+// Get Facebook user
+export const getFacebookUser = async (token: string) => {
+    const response = await axios.get(
+        'https://graph.facebook.com/me?fields=name,email&access_token=' + token,
+    )
 
     return response.data
 }

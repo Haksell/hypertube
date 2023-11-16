@@ -143,6 +143,20 @@ function SignInPage() {
                     </button>
                 </div>
 
+				<div className="mt-6">
+                    <button
+                        type="button"
+                        className="flex w-full justify-center rounded-md px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                        <a
+                            href="https://www.facebook.com/v18.0/dialog/oauth?client_id=2811827598960107&redirect_uri=http://localhost:3000/loginFacebook&state=1234567890&scope=email"
+                            className="w-full text-center"
+                        >
+                            Sign in with Facebook
+                        </a>
+                    </button>
+                </div>
+
                 <LinkText firstText={t('NAM')} linkText={t('sign_up')} link="/signup" />
                 <LinkText firstText={t('forgot')} linkText={t('reset')} link="/forgot" space="1" />
             </div>

@@ -1,5 +1,5 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
-import { get42Token, get42User, getGithubToken, getGithubUser } from '../utils/axios'
+import { get42Token, get42User, getFacebookToken, getFacebookUser, getGithubToken, getGithubUser } from '../utils/axios'
 import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
@@ -164,6 +164,44 @@ export async function loginGithub(req: Request, res: Response) {
             },
         })
     } else if (user.authMethod !== 'GITHUB') {
+        res.status(400).send(
+            'An account with this email already exists. Please use the usual login method: ' +
+                user.authMethod,
+        )
+        return
+    }
+
+    const token = signJwt(user)
+    res.cookie('token', token)
+    res.status(200).send(formatUser(user))
+    return
+}
+
+export async function loginFacebook(req: Request, res: Response) {
+	const { code } = req.body
+    const access_token = await getFacebookToken(code)
+    const { name, email } = await getFacebookUser(access_token)
+
+    // Find user in db
+    let user = await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+    })
+
+    // Check if user already exists and if its authMethod is 42
+    if (!user) {
+        const username = await generateUniqueUsername(name)
+
+        user = await prisma.user.create({
+            data: {
+                username: username,
+                email: email,
+                authMethod: 'FACEBOOK',
+                email_verified: true,
+            },
+        })
+    } else if (user.authMethod !== 'FACEBOOK') {
         res.status(400).send(
             'An account with this email already exists. Please use the usual login method: ' +
                 user.authMethod,

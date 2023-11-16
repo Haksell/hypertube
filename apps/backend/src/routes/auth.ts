@@ -3,6 +3,7 @@ import {
     login,
     login42,
 	loginGithub,
+	loginFacebook,
     ConfirmEmail,
     ForgotPwd,
     ConfirmForgotPwd,
@@ -58,6 +59,7 @@ router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
 router.post('/42', validator.body(login42Schema), asyncHandler(login42))
 router.post('/github', validator.body(login42Schema), asyncHandler(loginGithub))
+router.post('/facebook', validator.body(login42Schema), asyncHandler(loginFacebook))
 router.get('/confirm/:confirmId', validator.query(confirmEmailSchema), asyncHandler(ConfirmEmail))
 router.post('/forgotpwd', validator.body(forgotPwdSchema), asyncHandler(ForgotPwd))
 router.get(
