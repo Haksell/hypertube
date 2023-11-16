@@ -1,4 +1,5 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
+import { formatUser } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
 import { sendEmail } from '../utils/mail'
@@ -7,7 +8,6 @@ import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import { formatUser } from '../utils/format'
 
 const prisma = new PrismaClient()
 
@@ -165,9 +165,7 @@ export async function login42(req: Request, res: Response) {
     const token = jwt.sign(
         { user_id: user.id, username: user.username, email },
         process.env.TOKEN_KEY || '',
-        {
-            expiresIn: '1h', // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
-        },
+        { expiresIn: '1h' },
     )
     user.token = token
     res.status(200).send(formatUser(user))
