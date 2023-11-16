@@ -1,11 +1,14 @@
 import { UserProvider } from '../src/context/UserContext'
+import { appWithTranslation } from 'next-i18next';
 import '../styles/global.css'
 import React from 'react'
 
-export default function App({ Component, pageProps }) {
+function MyApp({ Component, pageProps }) {
     return (
         <UserProvider>
             <Component {...pageProps} />
         </UserProvider>
     )
 }
+
+export default appWithTranslation(MyApp);

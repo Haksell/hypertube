@@ -6,4 +6,5 @@ export type TUserContext = {
     lastName: string
     picture: string
     authMethod: string
+	emailConfirmed: boolean;
 }

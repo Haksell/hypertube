@@ -17,7 +17,15 @@ const intializeDB = async () => {
                 salt: salt,
             },
         })
-    }
+    } else {
+		// delete users with email = "labalette.antoine@gmail.com"
+		// const user = await prisma.user.deleteMany({
+		// 	where: {
+		// 		email: "labalette.antoine@gmail.com"
+		// 	}
+		// })
+		// console.log(user)
+	}
 }
 
 export default intializeDB
