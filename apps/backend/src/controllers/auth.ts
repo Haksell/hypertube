@@ -66,18 +66,16 @@ export async function register(req: Request, res: Response) {
 export async function login(req: Request, res: Response) {
     const { username, password } = req.body
 
-    const users = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
         where: {
             username: username,
         },
     })
 
-    if (users.length === 0) {
+    if (!user) {
         res.status(400).send('Invalid Credentials')
         return
     }
-
-    const user = users[0]
 
     if (user.authMethod !== 'EMAIL') {
         res.status(400).send(
@@ -127,13 +125,12 @@ export async function login42(req: Request, res: Response) {
         },
     })
     const { login, email, first_name, last_name } = second.data
-    let user
-    const users = await prisma.user.findMany({
+    let user = await prisma.user.findUnique({
         where: {
             email: email,
         },
     })
-    if (users.length === 0) {
+    if (!user) {
         // if login is already used, add a number at the end until it's not used anymore
         let username = login
         let i = 1
@@ -151,17 +148,14 @@ export async function login42(req: Request, res: Response) {
                 authMethod: 'FORTYTWO',
             },
         })
-    } else {
-        //check if user's auth method is 42
-        if (users[0].authMethod !== 'FORTYTWO') {
-            res.status(400).send(
-                'An account with this email already exists. Please use the usual login method: ' +
-                    users[0].authMethod,
-            )
-            return
-        }
-        user = users[0]
+    } else if (user.authMethod !== 'FORTYTWO') {
+        res.status(400).send(
+            'An account with this email already exists. Please use the usual login method: ' +
+                user.authMethod,
+        )
+        return
     }
+	
     const token = jwt.sign(
         { user_id: user.id, username: user.username, email },
         process.env.TOKEN_KEY || '',
@@ -271,7 +265,7 @@ export async function ResetPwd(req: Request, res: Response) {
             id: users[0].id,
         },
         data: {
-            password: bcrypt.hashSync(password, users[0].salt || ""), // users[0].salt is not null if authMethod is email, but typescript doesn't know that
+            password: bcrypt.hashSync(password, users[0].salt || ''), // users[0].salt is not null if authMethod is email, but typescript doesn't know that
             reset_pwd: null,
         },
     })
