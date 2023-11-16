@@ -1,13 +1,13 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
+import { get42Token, get42User } from '../utils/axios'
+import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
+import { signJwt } from '../utils/jwt'
 import { sendEmail } from '../utils/mail'
 import { PrismaClient, User } from '@prisma/client'
-import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
-import { formatUser } from '../utils/format'
 
 const prisma = new PrismaClient()
 
@@ -66,36 +66,29 @@ export async function register(req: Request, res: Response) {
 export async function login(req: Request, res: Response) {
     const { username, password } = req.body
 
-    const users = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
         where: {
             username: username,
         },
     })
 
-    if (users.length === 0) {
+    if (!user) {
         res.status(400).send('Invalid Credentials')
         return
     }
-
-    const user = users[0]
 
     if (user.authMethod !== 'EMAIL') {
         res.status(400).send(
             'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
                 user.authMethod,
         )
+        return
     }
 
     // Check if password is correct
     const PHash = bcrypt.hashSync(password, user.salt || '') // user.salt is not null if authMethos is email, but typescript doesn't know that
     if (PHash === user.password) {
-        // Create jwt token
-        const token = jwt.sign(
-            { user_id: user.id, username: user.username, email: user.email },
-            process.env.TOKEN_KEY || '',
-            { expiresIn: '1h' },
-        )
-
+        const token = signJwt(user)
         res.cookie('token', token)
         res.status(200).send(formatUser(user))
         return
@@ -107,40 +100,19 @@ export async function login(req: Request, res: Response) {
 
 export async function login42(req: Request, res: Response) {
     const { code } = req.body
-    const body = {
-        client_id: process.env.FORTYTWO_CLIENT_ID,
-        client_secret: process.env.FORTYTWO_CLIENT_SECRET,
-        code,
-        redirect_uri: 'http://localhost:3000',
-        grant_type: 'authorization_code',
-    }
-    const headers = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    }
-    const first = await axios.post('https://api.intra.42.fr/oauth/token', body, { headers })
-    const { access_token } = first.data
+    const access_token = await get42Token(code)
+    const { login, email, first_name, last_name } = await get42User(access_token)
 
-    const second = await axios.get('https://api.intra.42.fr/v2/me', {
-        headers: {
-            Authorization: `Bearer ${access_token}`,
-        },
-    })
-    const { login, email, first_name, last_name } = second.data
-    let user
-    const users = await prisma.user.findMany({
+    // Find user in db
+    let user = await prisma.user.findUnique({
         where: {
             email: email,
         },
     })
-    if (users.length === 0) {
-        // if login is already used, add a number at the end until it's not used anymore
-        let username = login
-        let i = 1
-        while (await prisma.user.findMany({ where: { username } })) {
-            username = `${login}${i}`
-            i++
-        }
+
+    // Check if user already exists and if its authMethod is 42
+    if (!user) {
+        const username = await generateUniqueUsername(login)
 
         user = await prisma.user.create({
             data: {
@@ -149,149 +121,134 @@ export async function login42(req: Request, res: Response) {
                 lastName: last_name,
                 email: email,
                 authMethod: 'FORTYTWO',
+                email_verified: true,
             },
         })
-    } else {
-        //check if user's auth method is 42
-        if (users[0].authMethod !== 'FORTYTWO') {
-            res.status(400).send(
-                'An account with this email already exists. Please use the usual login method: ' +
-                    users[0].authMethod,
-            )
-            return
-        }
-        user = users[0]
+    } else if (user.authMethod !== 'FORTYTWO') {
+        res.status(400).send(
+            'An account with this email already exists. Please use the usual login method: ' +
+                user.authMethod,
+        )
+        return
     }
-    const token = jwt.sign(
-        { user_id: user.id, username: user.username, email },
-        process.env.TOKEN_KEY || '',
-        {
-            expiresIn: '1h', // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
-        },
-    )
-    user.token = token
+
+    const token = signJwt(user)
+    res.cookie('token', token)
     res.status(200).send(formatUser(user))
     return
 }
 
 export async function ConfirmEmail(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                email_confirm_id: confirmID,
-            },
-        })
-        if (users.length == 0) {
-            res.status(400).json(InvalidId)
-            return
-        }
-
-        if (users.length > 1) {
-            res.status(500).json('Link error (dup) - contact admin')
-            return
-        }
-        const user = users[0]
-        if (user.email_verified === true) {
-            res.status(400).json('already validated')
-            return
-        }
-
-        const retour = await prisma.user.update({
-            where: {
-                id: user.id,
-            },
-            data: {
-                email_verified: true,
-            },
-        })
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            email_confirm_id: confirmID,
+        },
+    })
+    if (users.length == 0) {
         res.status(400).json(InvalidId)
+        return
     }
+
+    if (users.length > 1) {
+        res.status(500).json('Link error (dup) - contact admin')
+        return
+    }
+    const user = users[0]
+    if (user.email_verified === true) {
+        res.status(400).json('already validated')
+        return
+    }
+
+    await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            email_verified: true,
+        },
+    })
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ForgotPwd(req: Request, res: Response) {
     const { email } = req.body
 
-    try {
-        const user = await prisma.user.findUnique({
-            where: {
-                email: email,
-            },
-        })
-        if (!user) {
-            res.status(400).json(UnknownUsername)
-            return
-        }
-
-        // generate a link to reset pwd
-        const confirmID: string = generateId()
-        // amend profile with the code
-        const retour = await prisma.user.update({
-            where: {
-                id: user.id,
-            },
-            data: {
-                reset_pwd: confirmID,
-            },
-        })
-        console.log(retour)
-
-        // send Email
-        // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
-        // sendEmail('Reset your password', email, emailBody);
-
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const user = await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+    })
+    if (!user) {
         res.status(400).json(UnknownUsername)
+        return
     }
+
+    if (user.authMethod !== 'EMAIL') {
+        res.status(400).send(
+            'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
+                user.authMethod,
+        )
+        return
+    }
+
+    // generate a link to reset pwd
+    const confirmID: string = generateId()
+    // amend profile with the code
+    const retour = await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            reset_pwd: confirmID,
+        },
+    })
+    console.log(retour)
+
+    // send Email
+    // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
+    // sendEmail('Reset your password', email, emailBody);
+
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ConfirmForgotPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                reset_pwd: confirmID,
-            },
-        })
-        if (users.length !== 1) {
-            res.status(400).json(InvalidId)
-            return
-        }
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            reset_pwd: confirmID,
+        },
+    })
+    if (users.length !== 1) {
         res.status(400).json(InvalidId)
+        return
     }
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ResetPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
     const { password } = req.body
 
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                reset_pwd: confirmID,
-            },
-        })
-        if (users.length !== 1) {
-            res.status(400).json(InvalidId)
-            return
-        }
-        //amend pwd
-        const retour = await prisma.user.update({
-            where: {
-                id: users[0].id,
-            },
-            data: {
-                password: bcrypt.hashSync(password, users[0].salt),
-                reset_pwd: null,
-            },
-        })
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            reset_pwd: confirmID,
+			authMethod: 'EMAIL',
+        },
+    })
+    if (users.length !== 1) {
         res.status(400).json(InvalidId)
+        return
     }
+    //amend pwd
+    const retour = await prisma.user.update({
+        where: {
+            id: users[0].id,
+        },
+        data: {
+            password: bcrypt.hashSync(password, users[0].salt || ''), // users[0].salt is not null if authMethod is email, but typescript doesn't know that
+            reset_pwd: null,
+        },
+    })
+    res.status(200).json({ msg: SuccessMsg })
 }
