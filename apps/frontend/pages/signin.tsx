@@ -7,11 +7,11 @@ import TitleSmall from '../components/elems/TitleSmall'
 import MainLayout from '../layouts/MainLayout'
 import { EmailNotVerified, InvalidPassword, UnknownUsername } from '../src/shared/errors'
 import axios from 'axios'
+import { useTranslation, Trans } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useTranslation, Trans } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SignInPage() {
     const [username, setUsername] = useState<string>('')
@@ -22,7 +22,7 @@ function SignInPage() {
     const [styleError, setStyleError] = useState<boolean>(false)
     const router = useRouter()
     // const { user, loginUser } = useUserContext();
-	const user = null
+    const user = null
     const { t } = useTranslation('common')
 
     useEffect(() => {
@@ -84,7 +84,7 @@ function SignInPage() {
     return user ? (
         <UserAlreadySignedIn />
     ) : (
-		<MainLayout>
+        <MainLayout>
             <TitleSmall text={t('sign_title')} />
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
@@ -115,17 +115,22 @@ function SignInPage() {
                     </div>
                 </form>
 
-                <LinkText
-                    firstText={t('NAM')}
-                    linkText={t('sign_up')}
-                    link="/signup"
-                />
-                <LinkText
-                    firstText={t('forgot')}
-                    linkText={t('reset')}
-                    link="/forgot"
-                    space="1"
-                />
+<div className="mt-6">
+	<button
+		type="button"
+		className="flex w-full justify-center rounded-md px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+	>
+		<a
+			href="https://api.intra.42.fr/oauth/authorize?client_id=88ebd807f809ddd25f6b6aa15d8f0e5a08ea725b5bf5fc80143c9e225f6b5ecc&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin42&response_type=code"
+			className="w-full text-center"
+		>
+			Sign in with 42
+		</a>
+	</button>
+</div>
+
+                <LinkText firstText={t('NAM')} linkText={t('sign_up')} link="/signup" />
+                <LinkText firstText={t('forgot')} linkText={t('reset')} link="/forgot" space="1" />
             </div>
         </MainLayout>
     )
@@ -139,4 +144,4 @@ export async function getStaticProps({ locale }) {
     }
 }
 
-export default SignInPage;
+export default SignInPage
