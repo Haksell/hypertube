@@ -1,13 +1,13 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
+import { get42Token, get42User } from '../utils/axios'
 import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
+import { signJwt } from '../utils/jwt'
 import { sendEmail } from '../utils/mail'
 import { PrismaClient, User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import { signJwt } from '../utils/jwt'
-import { get42Token, get42User } from '../utils/axios'
 
 const prisma = new PrismaClient()
 
@@ -82,7 +82,7 @@ export async function login(req: Request, res: Response) {
             'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
                 user.authMethod,
         )
-		return
+        return
     }
 
     // Check if password is correct
@@ -103,14 +103,14 @@ export async function login42(req: Request, res: Response) {
     const access_token = await get42Token(code)
     const { login, email, first_name, last_name } = await get42User(access_token)
 
-	// Find user in db
+    // Find user in db
     let user = await prisma.user.findUnique({
         where: {
             email: email,
         },
     })
 
-	// Check if user already exists and if its authMethod is 42
+    // Check if user already exists and if its authMethod is 42
     if (!user) {
         const username = await generateUniqueUsername(login)
 
@@ -121,7 +121,7 @@ export async function login42(req: Request, res: Response) {
                 lastName: last_name,
                 email: email,
                 authMethod: 'FORTYTWO',
-				email_verified: true,
+                email_verified: true,
             },
         })
     } else if (user.authMethod !== 'FORTYTWO') {
@@ -131,8 +131,8 @@ export async function login42(req: Request, res: Response) {
         )
         return
     }
-	
-	const token = signJwt(user)
+
+    const token = signJwt(user)
     res.cookie('token', token)
     res.status(200).send(formatUser(user))
     return
@@ -184,6 +184,14 @@ export async function ForgotPwd(req: Request, res: Response) {
         return
     }
 
+    if (user.authMethod !== 'EMAIL') {
+        res.status(400).send(
+            'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
+                user.authMethod,
+        )
+        return
+    }
+
     // generate a link to reset pwd
     const confirmID: string = generateId()
     // amend profile with the code
@@ -225,6 +233,7 @@ export async function ResetPwd(req: Request, res: Response) {
     const users = await prisma.user.findMany({
         where: {
             reset_pwd: confirmID,
+			authMethod: 'EMAIL',
         },
     })
     if (users.length !== 1) {
