@@ -1,23 +1,15 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import ShowErrorMessage from "../components/elems/ShowErrorMessage";
 import UserNotSignedIn from "../components/auth/UserNotSignedIn";
-import Button from "../components/elems/Button";
-import { ErrorField } from "../components/elems/ErrorFields";
-import LinkText from "../components/elems/LinkText";
-import TitleSmall from "../components/elems/TitleSmall";
-// import GetMe from "../components/backend/GetMe";
-// import { User } from "../types/users";
 import MultiplesInputOneRow from "../components/elems/MultiplesInputOneRow";
 import { DateInputField } from "../components/elems/DateInputField";
 import SelectInput from "../components/elems/SelectInput";
-import { compute18Y, formatDateYYYYMMDD } from "../components/auth/ComputeAge";
 import { TextareaField } from "../components/elems/TextareaField";
-import { ShowTags } from "../components/settings/ShowTags";
 import axios from "axios";
-import { SuccessMsg } from "../shared/errors";
-import PhotoUploader from "../components/settings/PhotoUpload";
-import ShowPictures from "../components/settings/ShowPictures";
-import CheckboxAskGeoModify from "../components/settings/CheckboxAskGeo";
+import TitleSmall from "../components/elems/TitleSmall";
+import { ErrorField } from "../components/elems/ErrorFields";
+import Button from "../components/elems/Button";
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -27,23 +19,9 @@ function SettingsPage() {
     const [email, setEmail] = useState<string>('');
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
-	const [datebirth, setDatebirth] = useState<string>('');
-    const [gender, setGender] = useState<string>('female');
-	const [bio, setBio] = useState<string>('');
-	const [preference, setPreference] = useState<string>('bisexual');
-	const [tagsUser, setTagsUser] = useState<string[]>([]);
-	const [tagsAll, setTagsAll] = useState<string[]>([]);
-	const [pictures, setPictures] = useState<string[]>([]);
 	const [mainPicture, setMainPicture] = useState<string>('');
-	const [longitude, setLongitude] = useState<string>('');
-	const [latitude, setLatitude] = useState<string>('');
-	const [amendPosition, setAmendPosition] = useState<boolean>(false);
-	
-
-	const [maxAge, setMaxAge] = useState<string>('');
 
 	useEffect(() => {
-		// setMaxAge(compute18Y());
 		getUserInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -57,9 +35,6 @@ function SettingsPage() {
 		if (retour.message === SuccessMsg && retour.user) {
 			setUser(retour.user);
 			setUserInfoForForm(retour.user);
-			// console.log(retour);
-			if (retour.tags)
-				setTagsAll(retour.tags);
 		}
 		else
 			setUser(null);
@@ -69,17 +44,7 @@ function SettingsPage() {
 		setEmail(userInfo.email);
 		setFirstname(userInfo.first_name);
 		setLastname(userInfo.last_name);
-		setTagsUser(userInfo.interests);
-		setPreference(userInfo.preference);
-		setBio(userInfo.biography);
-		setPictures(userInfo.pictures);
 		setMainPicture(userInfo.profile_picture);
-		if (userInfo.date_birth)
-			setDatebirth(formatDateYYYYMMDD(userInfo.date_birth));
-		setGender(userInfo.gender);
-		setLongitude(userInfo.position.longitude.toString());
-		setLatitude(userInfo.position.latitude.toString());
-		setAmendPosition(userInfo.force_position);
 	}
 
 	async function saveUserInfo() {
@@ -90,14 +55,6 @@ function SettingsPage() {
                     email: email,
                     lastname: lastname,
                     firstname: firstname,
-                    datebirth: datebirth,
-                    gender: gender,
-					preference: preference,
-					biography: bio,
-					tags: tagsUser,
-					amend_position: amendPosition,
-					longitude: longitude,
-					latitude: latitude,
                 },
                 {
                     withCredentials: true,
@@ -124,24 +81,7 @@ function SettingsPage() {
     function handleOnChangeLastname(e: React.ChangeEvent<HTMLInputElement>) {
         setLastname(e.target.value);
     }
-	function handleOnChangeDateBirth(e: React.ChangeEvent<HTMLInputElement>) {
-        setDatebirth(e.target.value);
-    }
-    function handleOnChangeGender(e: React.ChangeEvent<HTMLInputElement>) {
-        setGender(e.target.value);
-    }
-	function handleOnChangePreference(e: React.ChangeEvent<HTMLInputElement>) {
-        setPreference(e.target.value);
-    }
-	function handleOnChangeBio(e: React.ChangeEvent<HTMLInputElement>) {
-        setBio(e.target.value);
-    }
-	function handleOnChangeLatitude(e: React.ChangeEvent<HTMLInputElement>) {
-        setLatitude(e.target.value);
-    }
-	function handleOnChangeLongitude(e: React.ChangeEvent<HTMLInputElement>) {
-        setLongitude(e.target.value);
-    }
+
 
 	function handleSaveSettings(event: any) {
         event.preventDefault();
@@ -182,55 +122,7 @@ function SettingsPage() {
 						/>
 					</MultiplesInputOneRow>
 
-					<DateInputField
-							title="Date of birth"
-							onBlur={handleOnChangeDateBirth}
-							max={maxAge}
-							init={datebirth}
-						/>
-					
-					<MultiplesInputOneRow nbInRow="2">
-						<ErrorField
-							name="latitude"
-							title="Latitude"
-							onBlur={handleOnChangeLatitude}
-							init={latitude}
-							disabled={!amendPosition}
-						/>
-						<ErrorField
-							name="longitude"
-							title="Longitude"
-							onBlur={handleOnChangeLongitude}
-							init={longitude}
-							disabled={!amendPosition}
-						/>
-					</MultiplesInputOneRow>
-
-					<CheckboxAskGeoModify elemChecked={amendPosition} setElemChecked={setAmendPosition} />
-
-					{/* <MultiplesInputOneRow nbInRow="2"> */}
-						
-						<SelectInput
-							title="Gender"
-							name="gender"
-							nameDefault="Select gender"
-							list={['female', 'male']}
-							onBlur={handleOnChangeGender}
-							init={gender}
-						/>
-						<SelectInput
-							title="Sexual preference"
-							name="preference"
-							nameDefault="Select sexual preference"
-							list={['female', 'male', 'bisexual']}
-							onBlur={handleOnChangePreference}
-							init={preference}
-						/>
-					{/* </MultiplesInputOneRow> */}
-
 					<TextareaField name='biography' title="Biography" description="Write something about you here" onBlur={handleOnChangeBio} init={bio} />
-
-					<ShowTags tagsUser={tagsUser} tagsPossible={tagsAll} setTagsUser={setTagsUser} />
 
 					<ShowPictures pictures={pictures} mainPicture={mainPicture} setPictures={setPictures} setMainPicture={setMainPicture} setError={setError} />
 
@@ -243,11 +135,6 @@ function SettingsPage() {
                     />
                 </form>
 
-                <LinkText
-                    firstText="Already a member?"
-                    linkText="Sign in"
-                    link="/signin"
-                />
             </div>
         </div>
 	);

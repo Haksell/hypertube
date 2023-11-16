@@ -1,3 +1,4 @@
+import React from 'react'
 import LinkText from '../elems/LinkText'
 import TextPage from '../elems/TextPage'
 import TitleSmall from '../elems/TitleSmall'
