@@ -2,6 +2,7 @@ import Button from './elems/Button'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import LanguageSwitcher from './LanguageSwitcher'
 
 const ButtonLinkNavBar: React.FC<{
     text: string
@@ -100,21 +101,22 @@ function NavBar() {
         else setCurrLink('no')
     }, [currLink])
 
-    return (
-        <nav className="bg-zinc-800">
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-                <div className="relative flex h-16 items-center justify-between">
-                    <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                        <LogoNavBar />
-                        <LinkNavBar currLink={currLink} setCurrLink={setCurrLink} />
-                    </div>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        <DropdownMenu />
-                    </div>
-                </div>
-            </div>
-        </nav>
-    )
+	return (
+		<nav className="bg-zinc-800">
+			<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+				<div className="relative flex h-16 items-center justify-between">
+					<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+						<LogoNavBar />
+						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} />
+					</div>
+					<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+						<DropdownMenu />
+					</div>
+					<LanguageSwitcher/>
+				</div>
+			</div>
+		</nav>
+	)
 }
 
 export default NavBar
