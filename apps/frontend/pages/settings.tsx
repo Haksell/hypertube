@@ -10,10 +10,16 @@ import axios from "axios";
 import TitleSmall from "../components/elems/TitleSmall";
 import { ErrorField } from "../components/elems/ErrorFields";
 import Button from "../components/elems/Button";
+import { TUserContext } from "../src/shared/user";
+import { useUserContext } from "../src/context/UserContext";
+import MainLayout from "../layouts/MainLayout";
+import ShowImg from "../components/settings/ShowImg";
+import PhotoUploader from "../components/settings/PhotoUpload";
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
-	const [user, setUser] = useState<User | null>(null);
+	// const [user, setUser] = useState<TUserContext | null>(null);
+	const { user } = useUserContext();
 	
 	//fields
     const [email, setEmail] = useState<string>('');
@@ -27,30 +33,28 @@ function SettingsPage() {
 	}, [])
 
 	async function getUserInfo() {
-		const retour: RetourType | null = await GetMe();
-		if (!retour) {
-			setError('Error')
-			return ;
-		}
-		if (retour.message === SuccessMsg && retour.user) {
-			setUser(retour.user);
-			setUserInfoForForm(retour.user);
-		}
-		else
-			setUser(null);
+		try {
+            const response = await axios.get(`http://localhost:5001/users/me`, {
+                withCredentials: true,
+            })
+			setUserInfoForForm(response.data);
+            return response.data
+        } catch (error) {
+			setError(error.response.data)
+        }
 	}
 
-	function setUserInfoForForm(userInfo: User) {
+	function setUserInfoForForm(userInfo: TUserContext) {
 		setEmail(userInfo.email);
-		setFirstname(userInfo.first_name);
-		setLastname(userInfo.last_name);
-		setMainPicture(userInfo.profile_picture);
+		setFirstname(userInfo.firstName);
+		setLastname(userInfo.lastName);
+		setMainPicture(userInfo.picture);
 	}
 
 	async function saveUserInfo() {
 		try {
             const response = await axios.post(
-                `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/users/updatesettings`,
+                `http://localhost:5001/users/updatesettings`,
                 {
                     email: email,
                     lastname: lastname,
@@ -61,14 +65,10 @@ function SettingsPage() {
                 },
             );
             // console.log(response.data);
-            if (response.data.message === SuccessMsg) {
-                setError('');
-            } else {
-                setError(response.data.error);
-            }
+            setError('');
             return response.data;
         } catch (error) {
-            //to handle ? 
+			setError(error.response.data);
         }
 	}
 
@@ -91,7 +91,7 @@ function SettingsPage() {
 	return !user ? (
         <UserNotSignedIn />
     ) : (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        <MainLayout>
             <TitleSmall text={'Settings'} space="1" />
 
             <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -122,11 +122,11 @@ function SettingsPage() {
 						/>
 					</MultiplesInputOneRow>
 
-					<TextareaField name='biography' title="Biography" description="Write something about you here" onBlur={handleOnChangeBio} init={bio} />
-
-					<ShowPictures pictures={pictures} mainPicture={mainPicture} setPictures={setPictures} setMainPicture={setMainPicture} setError={setError} />
-
-					<PhotoUploader pictures={pictures} setPictures={setPictures} setMainPicture={setMainPicture} setError={setError} />
+					<ShowImg
+						picture={mainPicture}
+						setPicture={setMainPicture}
+						setError={setError}
+                	/>
 
                     <Button
                         text="Amend your profile"
@@ -136,7 +136,7 @@ function SettingsPage() {
                 </form>
 
             </div>
-        </div>
+        </MainLayout>
 	);
 }
 

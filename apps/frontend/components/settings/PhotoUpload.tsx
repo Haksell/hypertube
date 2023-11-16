@@ -1,15 +1,14 @@
+import React from 'react';
 import { useState, ChangeEvent } from 'react';
 import axios from 'axios';
-import { SuccessMsg } from '../../shared/errors';
 
 type Prop = {
-    pictures: string[];
-	setPictures: any;
-	setMainPicture: any;
+    picture: string;
+	setPicture: any;
 	setError: any;
 };
 
-function PhotoUploader({ pictures, setPictures, setMainPicture, setError }: Prop) {
+function PhotoUploader({ picture, setPicture, setError }: Prop) {
     const [imageUpdate, setImageUpdate] = useState<string | null>(null);
 
     async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
@@ -30,39 +29,40 @@ function PhotoUploader({ pictures, setPictures, setMainPicture, setError }: Prop
 
             try {
                 const response = await axios.post(
-                    `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/users/image`,
+                    `http://localhost:5001/users/image`,
                     formData,
                     { withCredentials: true },
                 );
-				if (response.data.message === SuccessMsg) {
-					const newListImg = [...pictures, response.data.info];
-					setPictures(newListImg);
-					setMainPicture(response.data.infobis);
-					setError('')
-				}
-				else {
-					setError(response.data.error)
-				}
-				// info
-            } catch {}
+				setPicture(response.data);
+				setError('')
+            } catch (error) {
+				setError(error.response.data)
+			}
         }
     };
 
     return (
-        <div className="relative w-32">
-            <label htmlFor="update-avatar">
-                Update avatar
-               
-            </label>
-			<input
+		<>
+		<input
 				id='update-avatar'
                     type="file"
                     accept="image/*"
-                    className=""
+                    className="hidden"
                     onChange={handleImageChange}
-                />
-        </div>
-    );
+                /></>
+	);
+        // <div className="relative w-32">
+            {/* <label htmlFor="update-avatar">
+                Update avatar
+            </label> */}
+			// <input
+			// 	id='update-avatar'
+            //         type="file"
+            //         accept="image/*"
+            //         className=""
+            //         onChange={handleImageChange}
+            //     />
+        // </div>
 }
 
 export default PhotoUploader;
