@@ -174,122 +174,106 @@ export async function login42(req: Request, res: Response) {
 
 export async function ConfirmEmail(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                email_confirm_id: confirmID,
-            },
-        })
-        if (users.length == 0) {
-            res.status(400).json(InvalidId)
-            return
-        }
-
-        if (users.length > 1) {
-            res.status(500).json('Link error (dup) - contact admin')
-            return
-        }
-        const user = users[0]
-        if (user.email_verified === true) {
-            res.status(400).json('already validated')
-            return
-        }
-
-        const retour = await prisma.user.update({
-            where: {
-                id: user.id,
-            },
-            data: {
-                email_verified: true,
-            },
-        })
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            email_confirm_id: confirmID,
+        },
+    })
+    if (users.length == 0) {
         res.status(400).json(InvalidId)
+        return
     }
+
+    if (users.length > 1) {
+        res.status(500).json('Link error (dup) - contact admin')
+        return
+    }
+    const user = users[0]
+    if (user.email_verified === true) {
+        res.status(400).json('already validated')
+        return
+    }
+
+    await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            email_verified: true,
+        },
+    })
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ForgotPwd(req: Request, res: Response) {
     const { email } = req.body
 
-    try {
-        const user = await prisma.user.findUnique({
-            where: {
-                email: email,
-            },
-        })
-        if (!user) {
-            res.status(400).json(UnknownUsername)
-            return
-        }
-
-        // generate a link to reset pwd
-        const confirmID: string = generateId()
-        // amend profile with the code
-        const retour = await prisma.user.update({
-            where: {
-                id: user.id,
-            },
-            data: {
-                reset_pwd: confirmID,
-            },
-        })
-        console.log(retour)
-
-        // send Email
-        // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
-        // sendEmail('Reset your password', email, emailBody);
-
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const user = await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+    })
+    if (!user) {
         res.status(400).json(UnknownUsername)
+        return
     }
+
+    // generate a link to reset pwd
+    const confirmID: string = generateId()
+    // amend profile with the code
+    const retour = await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            reset_pwd: confirmID,
+        },
+    })
+    console.log(retour)
+
+    // send Email
+    // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
+    // sendEmail('Reset your password', email, emailBody);
+
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ConfirmForgotPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                reset_pwd: confirmID,
-            },
-        })
-        if (users.length !== 1) {
-            res.status(400).json(InvalidId)
-            return
-        }
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            reset_pwd: confirmID,
+        },
+    })
+    if (users.length !== 1) {
         res.status(400).json(InvalidId)
+        return
     }
+    res.status(200).json({ msg: SuccessMsg })
 }
 
 export async function ResetPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
     const { password } = req.body
 
-    try {
-        const users = await prisma.user.findMany({
-            where: {
-                reset_pwd: confirmID,
-            },
-        })
-        if (users.length !== 1) {
-            res.status(400).json(InvalidId)
-            return
-        }
-        //amend pwd
-        const retour = await prisma.user.update({
-            where: {
-                id: users[0].id,
-            },
-            data: {
-                password: bcrypt.hashSync(password, users[0].salt),
-                reset_pwd: null,
-            },
-        })
-        res.status(200).json({ msg: SuccessMsg })
-    } catch (error) {
+    const users = await prisma.user.findMany({
+        where: {
+            reset_pwd: confirmID,
+        },
+    })
+    if (users.length !== 1) {
         res.status(400).json(InvalidId)
+        return
     }
+    //amend pwd
+    const retour = await prisma.user.update({
+        where: {
+            id: users[0].id,
+        },
+        data: {
+            password: bcrypt.hashSync(password, users[0].salt || ""), // users[0].salt is not null if authMethod is email, but typescript doesn't know that
+            reset_pwd: null,
+        },
+    })
+    res.status(200).json({ msg: SuccessMsg })
 }
