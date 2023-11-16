@@ -1,4 +1,5 @@
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
+import { TUserCookie } from '../types_backend/user-cookie'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
 import { sendEmail } from '../utils/mail'
@@ -85,8 +86,9 @@ export async function login(req: Request, res: Response) {
     const PHash = bcrypt.hashSync(Password, user[0].salt)
     if (PHash === user[0].password) {
         // * CREATE JWT TOKEN
+		const content: TUserCookie = { user_id: user[0].id, username: user[0].username, email: user[0].email }
         const token = jwt.sign(
-            { user_id: user[0].id, username: user[0].username, email: user[0].email },
+            content,
             process.env.TOKEN_KEY || '',
             {
                 expiresIn: '1h', // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
@@ -94,6 +96,7 @@ export async function login(req: Request, res: Response) {
         )
 
         user[0].token = token
+		res.cookie('token', token)
         res.status(200).send({ user: user[0] })
         return
     } else {
@@ -164,50 +167,46 @@ export async function ForgotPwd(req: Request, res: Response) {
 
 export async function ConfirmForgotPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    // console.log('confirm');
-
-    //recuperer USER
-    // const user: TableUser[] | null = await db.selectOneElemFromTable(
-    //     TableUsersName,
-    //     'reset_pwd',
-    //     confirmID,
-    // );
-    // // console.log(user);
-
-    // if (!user || user.length !== 1)
-    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
-
-    // return res.status(200).json({ msg: SuccessMsg, username: user[0].username });
-    return res.status(200).json({ msg: SuccessMsg })
+	try {
+		const users = await prisma.user.findMany({
+            where: {
+                reset_pwd: confirmID,
+            },
+        })
+		if (users.length !== 1)
+			return res.status(400).json(InvalidId)
+		return res.status(200).json({ msg: SuccessMsg })
+	}
+	catch (error) {
+		return res.status(400).json(InvalidId)
+	}
 }
 
 export async function ResetPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
     const { password } = req.body
-    // console.log('confirm');
 
-    // //recuperer USER
-    // const users: TableUser[] | null = await db.selectOneElemFromTable(
-    //     TableUsersName,
-    //     'reset_pwd',
-    //     confirmID,
-    // );
-    // // console.log(users);
-
-    // if (!users || users.length !== 1)
-    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
-
-    // const user: TableUser = users[0];
-    // const hash = await hashPassword(password);
-
-    // //amend user
-    // await db.AmendElemsFromTable(
-    //     TableUsersName,
-    //     'id',
-    //     user.id,
-    // 	['reset_pwd', 'password'],
-    //     ['', hash],
-    // );
-
-    return res.status(200).json({ msg: SuccessMsg })
+	try {
+		const users = await prisma.user.findMany({
+            where: {
+                reset_pwd: confirmID,
+            },
+        })
+		if (users.length !== 1)
+			return res.status(400).json(InvalidId)
+		//amend pwd
+		const retour = await prisma.user.update({
+			where: {
+				id: users[0].id,
+			},
+			data:{
+				password: bcrypt.hashSync(password, users[0].salt),
+				reset_pwd: null,
+			}
+		})
+		return res.status(200).json({ msg: SuccessMsg })
+	}
+	catch (error) {
+		return res.status(400).json(InvalidId)
+	}
 }
