@@ -1,6 +1,7 @@
 import { TUserContext } from '../shared/user'
 import axios from 'axios'
 import React, { useContext, useEffect, useState } from 'react'
+import { NotConnected } from '../shared/errors'
 
 interface Prop {
     user: TUserContext | null
@@ -22,8 +23,6 @@ export const UserProvider = ({ children }: any) => {
     const [user, setUser] = useState<TUserContext | null>(null)
 
     useEffect(() => {
-        console.log('first time using userprovider')
-		console.log(user)
         fetchUser()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -33,10 +32,11 @@ export const UserProvider = ({ children }: any) => {
             const response = await axios.get(`http://localhost:5001/users/me`, {
                 withCredentials: true,
             })
-			console.log('retour from fetchuser')
-			console.log(response.data)
-            setUser(response.data)
-        } catch (error: any) {}
+			if (response.data !== NotConnected)
+				setUser(response.data)            
+        } catch (error: any) {
+			setUser(null)
+		}
     }
 
     const verifUser = () => {
@@ -44,7 +44,6 @@ export const UserProvider = ({ children }: any) => {
     }
 
     const loginUser = (userData: TUserContext | null) => {
-        console.log('loginUser context !')
         setUser(userData)
     }
 

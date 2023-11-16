@@ -23,9 +23,9 @@ function SignInPage() {
     const { user, loginUser } = useUserContext();
 
 	useEffect(()=> {
-		console.log('user context=')
-		console.log(user)
-		loginUser(null)
+		console.log('user context=' + user)
+		// console.log(user)
+		// loginUser(null)
 	}, [])
 
     useEffect(() => {

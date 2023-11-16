@@ -7,24 +7,22 @@ import { formatUser } from '../utils/format';
 
 const prisma = new PrismaClient()
 
+//code 200 to avoid many messages
 export async function getMe(req: Request, res: Response) {
 	try {
-		console.log('test')
 		const decoded: TUserCookie = await getUserFromRequest(req);
-		console.log('test')
 		const user = await prisma.user.findUnique({
 			where: {
 				username: decoded.username,
 			}
 		})
-		console.log('test')
 		if (!user)
-			res.status(401).send(NotConnected)
+			res.status(200).send(NotConnected)
 
 		res.status(200).send(formatUser(user))
 	}
 	catch (error) {
-		res.status(401).send(NotConnected)
+		res.status(200).send(NotConnected)
 	}
 }
 
@@ -32,9 +30,7 @@ export async function getUserFromRequest(req: Request): Promise<TUserCookie> {
 	try {
 		const token = req.cookies.token
 		if (token) {
-			console.log('test1')
 			const decoded = await jwt.verify(token, process.env.TOKEN_KEY) as JwtPayload;
-			console.log('test2')
 			if (!decoded)
 				throw new Error(NotConnected)
 			const decodedCookie: TUserCookie = {

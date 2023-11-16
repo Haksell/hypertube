@@ -5,8 +5,8 @@ import Button from "../components/elems/Button";
 import { ErrorField } from "../components/elems/ErrorFields";
 import LinkText from "../components/elems/LinkText";
 import TitleSmall from "../components/elems/TitleSmall";
-import GetMe from "../components/backend/GetMe";
-import { User } from "../types/users";
+// import GetMe from "../components/backend/GetMe";
+// import { User } from "../types/users";
 import MultiplesInputOneRow from "../components/elems/MultiplesInputOneRow";
 import { DateInputField } from "../components/elems/DateInputField";
 import SelectInput from "../components/elems/SelectInput";
@@ -43,7 +43,7 @@ function SettingsPage() {
 	const [maxAge, setMaxAge] = useState<string>('');
 
 	useEffect(() => {
-		setMaxAge(compute18Y());
+		// setMaxAge(compute18Y());
 		getUserInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
