@@ -51,19 +51,21 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
         </div>
     )
 }
+
 const MoviesPage = () => {
     const [movies, setMovies] = useState<Movie[]>([])
-    const [isLoading, setIsLoading] = useState(false)
+
+    const shouldFetchMovies = () =>
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight
 
     const fetchMovies = async () => {
-        setIsLoading(true)
         try {
             const response = await axios.get('http://localhost:5001/movies')
             setMovies((prevMovies) => [...prevMovies, ...response.data])
+            if (shouldFetchMovies()) fetchMovies()
         } catch (error) {
             console.error('Error fetching movies:', error)
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -73,12 +75,7 @@ const MoviesPage = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (
-                window.innerHeight + document.documentElement.scrollTop !==
-                document.documentElement.offsetHeight
-            )
-                return
-            fetchMovies()
+            if (shouldFetchMovies()) fetchMovies()
         }
 
         window.addEventListener('scroll', handleScroll)
@@ -94,7 +91,6 @@ const MoviesPage = () => {
                         <MovieCard key={i} movie={movie} />
                     ))}
                 </div>
-                {isLoading && <p>Loading more movies...</p>}
             </div>
         </div>
     )
