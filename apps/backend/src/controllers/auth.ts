@@ -329,3 +329,8 @@ export async function ResetPwd(req: Request, res: Response) {
     })
     res.status(200).json({ msg: SuccessMsg })
 }
+
+export async function SignOut(req: Request, res: Response) {
+    res.clearCookie('token');
+    res.status(200).json(SuccessMsg);
+}

@@ -2,12 +2,13 @@ import {
     register,
     login,
     login42,
-	loginGithub,
-	loginFacebook,
+    loginGithub,
+    loginFacebook,
     ConfirmEmail,
     ForgotPwd,
     ConfirmForgotPwd,
     ResetPwd,
+    SignOut,
 } from '../controllers/auth'
 import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
@@ -40,7 +41,7 @@ const loginSchema = Joi.object({
 })
 
 const login42Schema = Joi.object({
-	code: Joi.string().required(),
+    code: Joi.string().required(),
 })
 
 const confirmEmailSchema = Joi.object({
@@ -57,6 +58,7 @@ const resetPwdSchema = Joi.object({
 
 router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
+router.get('/signout', asyncHandler(SignOut))
 router.post('/42', validator.body(login42Schema), asyncHandler(login42))
 router.post('/github', validator.body(login42Schema), asyncHandler(loginGithub))
 router.post('/facebook', validator.body(login42Schema), asyncHandler(loginFacebook))
@@ -67,6 +69,7 @@ router.get(
     validator.query(confirmEmailSchema),
     asyncHandler(ConfirmForgotPwd),
 )
+
 router.post(
     '/forgot/:confirmId',
     validator.query(confirmEmailSchema),

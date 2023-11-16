@@ -9,6 +9,7 @@ export const formatUser = (user: any): TUserContext => {
         id: user.user_id,
         username: user.username,
         authMethod: user.authMethod,
+		email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         picture: user.profile_picture,

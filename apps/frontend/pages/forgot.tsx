@@ -6,6 +6,7 @@ import LinkText from '../components/elems/LinkText'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import TramePage from '../components/elems/TramePage'
+import { useUserContext } from '../src/context/UserContext'
 import { SuccessMsg } from '../src/shared/errors'
 // import { useUserContext } from "../context/UserContext";
 import axios from 'axios'
@@ -18,8 +19,7 @@ function ForgotPasswordPage() {
     const [styleErrorEmail, setStyleErrorEmail] = useState<boolean>(false)
     const [styleError, setStyleError] = useState<boolean>(false)
     const [created, setCreated] = useState<boolean>(false)
-    // const { user } = useUserContext();
-    const user = null
+    const { user } = useUserContext();
 
     useEffect(() => {
         if (styleError === false) return
