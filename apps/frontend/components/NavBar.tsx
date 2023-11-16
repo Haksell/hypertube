@@ -54,19 +54,15 @@ const LinkNavBar: React.FC<{
                 currLink={currLink}
                 setCurrLink={setCurrLink}
             />
-            <ButtonLinkNavBar
-                text="Movies"
-                page="/movies"
-                currLink={currLink}
-                setCurrLink={setCurrLink}
-            />
         </div>
     </div>
 )
 
 const LogoNavBar = () => (
     <div className="flex flex-shrink-0 items-center">
-        <img className="h-12 w-auto" src="/navbar_logo.png" alt="Matcha" />
+        <Link href="/">
+            <img className="h-12 w-auto" src="/navbar_logo.png" alt="Matcha" />
+        </Link>
     </div>
 )
 
