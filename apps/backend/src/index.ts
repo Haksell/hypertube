@@ -8,25 +8,34 @@ import authRoutes from "./routes/auth.ts";
 import auth from "./middleware/auth.middleware.ts";
 import requestLoggerMiddleware from "./middleware/requestLogger.middleware.ts";
 import globalErrorMiddleware from "./middleware/globalError.middleware.ts";
+import usersRoutes from './routes/users.ts'
+import moviesRoutes from './routes/movies.ts'
 
-const port = process.env.PORT || 5001;
+const cookieParser = require('cookie-parser')
 
-intializeDB();
+const port = process.env.PORT || 5001
 
-const app = express();
+intializeDB()
+
+const app = express()
 
 app.use(
   urlencoded({ extended: true }),
   cors({
-    origin: "http://localhost:3000",
-	credentials: true,
-  })
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    }),
 );
 
+app.use(cookieParser());
 app.use(json());
 app.use(requestLoggerMiddleware);
 app.get("/", (req, res) => res.send("API Root"));
 
+app.use('/users', usersRoutes)
+app.use('/movies', moviesRoutes)
 app.use("/auth", authRoutes);
 
 app.post("/test", auth, (req, res) => {

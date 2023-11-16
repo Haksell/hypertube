@@ -1,17 +1,13 @@
-import React from 'react';
+import React from 'react'
 
 type Prop = {
-	children: any;
-	nbInRow?: string;
+    children: any
+    nbInRow?: string
 }
 
-function MultiplesInputOneRow({ children, nbInRow='2' }: Prop) {
-	const styleType: string = `mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-${nbInRow}`
-	return (
-        <div className={styleType}>
-            {children}
-        </div>
-    );
+function MultiplesInputOneRow({ children, nbInRow = '2' }: Prop) {
+    const styleType: string = `mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-${nbInRow}`
+    return <div className={styleType}>{children}</div>
 }
 
-export default MultiplesInputOneRow;
+export default MultiplesInputOneRow

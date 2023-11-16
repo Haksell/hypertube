@@ -1,104 +1,99 @@
-import React, { useEffect } from 'react'
-import { log } from 'logger'
+import NavBar from '../components/NavBar'
 import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 
-export const metadata = {
-	title: 'Store | Kitchen Sink',
+type Movie = {
+    title: string
+    thumbnail: string
+    year: number
+    length: number
+    imdbRating?: number
 }
 
-export default function Store(): JSX.Element {
-	log('Hey! This is the Store page.')
-
-	// check if there is a code in the params
-	useEffect(() => {
-		const oauth = async () => {
-			try {
-				const url = new URL(window.location.href)
-				const code = url.searchParams.get('code')
-				if (code) {
-					const res = await axios.post('http://localhost:5001/auth/42', {
-						code: code,
-					})
-					console.log(res.data)
-				}
-			} catch (error) {
-				console.log(error)
-			}
-		}
-
-		oauth()
-	}, [])
-
-	const sayHello = async () => {
-		try {
-			const res = await axios.get('http://localhost:5001/')
-			console.log(res.data)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	const login = async () => {
-		try {
-			const mail = 'tonio@example.com'
-			const pwd = 'Tonio'
-			const res = await axios.post('http://localhost:5001/auth/login', {
-				email: mail,
-				password: pwd,
-			})
-			console.log(res.data)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	const register = async () => {
-		try {
-			const uname = 'tonio2'
-			const mail = 'tonio2@example.com'
-			const pwd = 'Tonio'
-			const res = await axios.post('http://localhost:5001/auth/register', {
-				username: uname,
-				email: mail,
-				password: pwd,
-				firstName: 'Antoine',
-				lastName: 'Bouquet',
-			})
-			console.log(res.data)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	const test = async () => {
-		try {
-			const token = (document.getElementById('token') as HTMLInputElement).value
-			const res = await axios.post('http://localhost:5001/test', { token: token })
-			console.log(res.data)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	return (
-		<>
-			<button onClick={sayHello}>Say Hello</button>
-			<br />
-			<button onClick={login}>Login user1</button>
-			<br />
-			<button onClick={register}>Register new user</button>
-			<br />
-			<input id="token" />
-			<button onClick={test}>Test token</button>
-			<br />
-			<br />
-			<a
-				type="button"
-				href="https://api.intra.42.fr/oauth/authorize?client_id=88ebd807f809ddd25f6b6aa15d8f0e5a08ea725b5bf5fc80143c9e225f6b5ecc&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code
-"
-			>
-				Login 42
-			</a>
-		</>
-	)
+const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours}:${mins}`
 }
+
+const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
+    const [isHovered, setIsHovered] = useState(false)
+
+    return (
+        <div
+            className="relative group overflow-hidden cursor-pointer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <img
+                src={movie.thumbnail}
+                alt={movie.title}
+                width={230}
+                height={345}
+                className={`w-full h-auto transition-all duration-300 ease-in-out ${
+                    isHovered ? 'opacity-50' : ''
+                }`}
+            />
+            {isHovered && (
+                <div className="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold mb-2">
+                        {movie.title}
+                    </h3>
+                    {movie.imdbRating && (
+                        <div className="text-center text-sm">{movie.imdbRating} / 10</div>
+                    )}
+                    <div className="flex justify-between text-sm">
+                        <span>{movie.year}</span>
+                        <span>{formatDuration(movie.length)}</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+const MoviesPage = () => {
+    const [movies, setMovies] = useState<Movie[]>([])
+
+    const shouldFetchMovies = () =>
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight
+
+    const fetchMovies = async () => {
+        try {
+            const response = await axios.get('http://localhost:5001/movies')
+            setMovies((prevMovies) => [...prevMovies, ...response.data])
+            if (shouldFetchMovies()) fetchMovies()
+        } catch (error) {
+            console.error('Error fetching movies:', error)
+        }
+    }
+
+    useEffect(() => {
+        fetchMovies()
+    }, [])
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (shouldFetchMovies()) fetchMovies()
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
+    return (
+        <div className="min-h-screen bg-black">
+            <NavBar />
+            <div className="text-white">
+                <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1 p-4">
+                    {movies.map((movie, i) => (
+                        <MovieCard key={i} movie={movie} />
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default MoviesPage

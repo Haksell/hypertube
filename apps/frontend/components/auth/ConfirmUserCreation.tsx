@@ -1,22 +1,18 @@
-import TitleSmall from '../elems/TitleSmall';
-import LinkText from '../elems/LinkText';
-import TramePage from '../elems/TramePage';
-import TextPage from '../elems/TextPage';
+import LinkText from '../elems/LinkText'
+import TextPage from '../elems/TextPage'
+import TitleSmall from '../elems/TitleSmall'
+import TramePage from '../elems/TramePage'
 
 function ConfirmUserCreation() {
     return (
-		<TramePage>
+        <TramePage>
             <TitleSmall text={'Congratulations !'} />
-			<TextPage>
+            <TextPage>
                 <p>Last steps.. Check your inbox to confirm your email !</p>
-				<LinkText
-                    linkText="Get back home"
-                    link="/"
-					space='1'
-                />
-			</TextPage>
-		</TramePage>
-    );
+                <LinkText linkText="Get back home" link="/" space="1" />
+            </TextPage>
+        </TramePage>
+    )
 }
 
-export default ConfirmUserCreation;
+export default ConfirmUserCreation

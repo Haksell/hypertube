@@ -2,7 +2,18 @@ import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
 import { createValidator } from 'express-joi-validation'
 import Joi from 'joi'
-import { register, login, login42 } from '../controllers/auth'
+import {
+    register,
+    login,
+    ConfirmEmail,
+    ForgotPwd,
+    ConfirmForgotPwd,
+    ResetPwd,
+} from '../controllers/auth'
+
+import { validateConfirmIdParam } from '../middleware/atuh.confirm-id.body.middleware'
+import { validateResetPwdBody } from '../middleware/auth.checkPwd.middleware'
+import { validateForgotPwdBody } from '../middleware/auth.verife-email.middleware'
 
 const router: Router = express.Router()
 const validator = createValidator()
@@ -16,12 +27,21 @@ const registerSchema = Joi.object({
 })
 
 const loginSchema = Joi.object({
-	email: Joi.string().email().required(),
+	username: Joi.string().required(),
 	password: Joi.string().required(),
 })
 
 router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
 router.post('/42', asyncHandler(login42))
+router.get('/confirm/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmEmail))
+router.post('/forgotpwd', validateForgotPwdBody, asyncHandler(ForgotPwd))
+router.get('/forgot/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmForgotPwd))
+router.post(
+    '/forgot/:confirmId',
+    validateConfirmIdParam,
+    validateResetPwdBody,
+    asyncHandler(ResetPwd),
+)
 
 export default router

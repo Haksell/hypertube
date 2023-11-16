@@ -1,22 +1,18 @@
-import TitleSmall from '../elems/TitleSmall';
-import LinkText from '../elems/LinkText';
-import TramePage from '../elems/TramePage';
-import TextPage from '../elems/TextPage';
+import LinkText from '../elems/LinkText'
+import TextPage from '../elems/TextPage'
+import TitleSmall from '../elems/TitleSmall'
+import TramePage from '../elems/TramePage'
 
 function UserNotSignedIn() {
     return (
-		<TramePage>
+        <TramePage>
             <TitleSmall text={'You cannot be here...'} />
-			<TextPage>
+            <TextPage>
                 <p>Please sign in or sign up to access this page !</p>
-				<LinkText
-                    linkText="Sign In"
-                    link="/signin"
-					space='1'
-                />
-			</TextPage>
-		</TramePage>
-    );
+                <LinkText linkText="Sign In" link="/signin" space="1" />
+            </TextPage>
+        </TramePage>
+    )
 }
 
-export default UserNotSignedIn;
+export default UserNotSignedIn
