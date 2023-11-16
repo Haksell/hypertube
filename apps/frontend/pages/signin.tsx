@@ -10,6 +10,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useUserContext } from '../src/context/UserContext'
 
 function SignInPage() {
     const [username, setUsername] = useState<string>('')
@@ -19,8 +20,13 @@ function SignInPage() {
     const [styleErrorPwd, setStyleErrorPwd] = useState<boolean>(false)
     const [styleError, setStyleError] = useState<boolean>(false)
     const router = useRouter()
-    // const { user, loginUser } = useUserContext();
-    const user = null
+    const { user, loginUser } = useUserContext();
+
+	useEffect(()=> {
+		console.log('user context=')
+		console.log(user)
+		loginUser(null)
+	}, [])
 
     useEffect(() => {
         if (styleError === false) return
@@ -62,9 +68,12 @@ function SignInPage() {
                     withCredentials: true,
                 },
             )
-            console.log(response.data)
+            // console.log(response.data)
             if (response.data) {
-                // loginUser(response.data.user);
+				console.log('you are signed in!')
+				console.log(response.data)
+                loginUser(response.data);
+				console.log('done')
                 setError('')
                 setStyleError(false)
                 router.push('/')
@@ -74,7 +83,7 @@ function SignInPage() {
             console.log(error)
             setStyleError(true)
             setError(error.response.data)
-            // loginUser(null);
+            loginUser(null);
         }
     }
 

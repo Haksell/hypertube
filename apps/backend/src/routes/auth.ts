@@ -10,6 +10,7 @@ import {
     ForgotPwd,
     ConfirmForgotPwd,
     ResetPwd,
+	SignOut,
 } from '../controllers/auth'
 
 import { validateConfirmIdParam } from '../middleware/atuh.confirm-id.body.middleware'
@@ -35,6 +36,7 @@ const loginSchema = Joi.object({
 router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
 router.post('/42', asyncHandler(login42))
+router.get('/signout', asyncHandler(SignOut))
 router.get('/confirm/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmEmail))
 router.post('/forgotpwd', validateForgotPwdBody, asyncHandler(ForgotPwd))
 router.get('/forgot/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmForgotPwd))

@@ -3,6 +3,7 @@ import { NotConnected, SuccessMsg } from '../shared/msg-error'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { TUserCookie } from '../types_backend/user-cookie';
 import { PrismaClient } from '@prisma/client';
+import { formatUser } from '../utils/format';
 
 const prisma = new PrismaClient()
 
@@ -20,7 +21,7 @@ export async function getMe(req: Request, res: Response) {
 		if (!user)
 			res.status(401).send(NotConnected)
 
-		res.status(200).send({ msg: SuccessMsg, deco: user })
+		res.status(200).send(formatUser(user))
 	}
 	catch (error) {
 		res.status(401).send(NotConnected)

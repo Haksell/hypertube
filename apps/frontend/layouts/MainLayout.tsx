@@ -1,4 +1,5 @@
 import NavBar from '../components/NavBar'
+import { UserProvider } from '../src/context/UserContext'
 import React from 'react'
 
 const MainLayout = ({ children }) => {

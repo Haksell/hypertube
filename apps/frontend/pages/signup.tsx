@@ -9,7 +9,7 @@ import SelectInput from '../components/elems/SelectInput'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import MainLayout from '../layouts/MainLayout'
-// import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../src/context/UserContext'
 import {
     EmailTaken,
     InvalidEmail,
@@ -40,14 +40,10 @@ function SignUpPage() {
     const [styleErrorFirstname, setStyleErrorFirstname] = useState<boolean>(false)
     const [styleErrorLastname, setStyleErrorLastname] = useState<boolean>(false)
     const [styleError, setStyleError] = useState<boolean>(false)
-    // const { user } = useUserContext();
-    const user = null
+    const { user } = useUserContext();
     const [created, setCreated] = useState<boolean>(false)
 
-    const [maxAge, setMaxAge] = useState<string>('')
-
     useEffect(() => {
-        setMaxAge(compute18Y())
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
