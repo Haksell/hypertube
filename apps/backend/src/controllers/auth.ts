@@ -94,6 +94,7 @@ export async function login(req: Request, res: Response) {
         )
 
         user[0].token = token
+		res.cookie('token', token)
         res.status(200).send({ user: user[0] })
         return
     } else {
