@@ -14,15 +14,16 @@ model User {
   id Int @id @default(autoincrement())
   username String @unique
   email String @unique
-  firstName String
-  lastName String
-  password String
-  salt String
+  firstName String?
+  lastName String?
+  password String?
+  salt String?
   token String?
   email_confirm_id String?
   email_verified	Boolean @default(false)
   reset_pwd	String?
   language String @default("english")
   createdAt DateTime @default(now())
+  authMethod String @default("EMAIL")
   profile_picture String?
 }

@@ -55,8 +55,8 @@ function SignInPage() {
             const response = await axios.post(
                 `http://localhost:5001/auth/login`,
                 {
-                    Username: username,
-                    Password: password,
+                    username: username,
+                    password: password,
                 },
                 {
                     withCredentials: true,

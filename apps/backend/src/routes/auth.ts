@@ -1,42 +1,48 @@
+import express, { Router } from 'express'
+import asyncHandler from 'express-async-handler'
+import { createValidator } from 'express-joi-validation'
+import Joi from 'joi'
 import {
     register,
     login,
+	login42,
     ConfirmEmail,
     ForgotPwd,
     ConfirmForgotPwd,
     ResetPwd,
 } from '../controllers/auth'
+
 import { validateConfirmIdParam } from '../middleware/atuh.confirm-id.body.middleware'
 import { validateResetPwdBody } from '../middleware/auth.checkPwd.middleware'
 import { validateForgotPwdBody } from '../middleware/auth.verife-email.middleware'
-import { Request, Response } from 'express'
-import express, { Router } from 'express'
-import asyncHandler from 'express-async-handler'
 
 const router: Router = express.Router()
+const validator = createValidator()
 
-router.post('/register', asyncHandler(register))
-router.post('/login', asyncHandler(login))
-
-router.get('/confirm/:confirmId', validateConfirmIdParam, (req: Request, res: Response) => {
-    return ConfirmEmail(req, res)
+const registerSchema = Joi.object({
+	username: Joi.string().required(),
+	email: Joi.string().email().required(),
+	password: Joi.string().required(),
+	firstName: Joi.string().required(),
+	lastName: Joi.string().required(),
 })
 
-router.post('/forgotpwd', validateForgotPwdBody, (req: Request, res: Response) => {
-    return ForgotPwd(req, res)
+const loginSchema = Joi.object({
+	username: Joi.string().required(),
+	password: Joi.string().required(),
 })
 
-router.get('/forgot/:confirmId', validateConfirmIdParam, (req: Request, res: Response) => {
-    return ConfirmForgotPwd(req, res)
-})
-
+router.post('/register', validator.body(registerSchema), asyncHandler(register))
+router.post('/login', validator.body(loginSchema), asyncHandler(login))
+router.post('/42', asyncHandler(login42))
+router.get('/confirm/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmEmail))
+router.post('/forgotpwd', validateForgotPwdBody, asyncHandler(ForgotPwd))
+router.get('/forgot/:confirmId', validateConfirmIdParam, asyncHandler(ConfirmForgotPwd))
 router.post(
     '/forgot/:confirmId',
     validateConfirmIdParam,
     validateResetPwdBody,
-    (req: Request, res: Response) => {
-        return ResetPwd(req, res)
-    },
+    asyncHandler(ResetPwd),
 )
 
 export default router
