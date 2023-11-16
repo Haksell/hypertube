@@ -37,6 +37,10 @@ const loginSchema = Joi.object({
     password: Joi.string().required(),
 })
 
+const login42Schema = Joi.object({
+	code: Joi.string().required(),
+})
+
 const confirmEmailSchema = Joi.object({
     confirmId: Joi.string().required(),
 })
@@ -51,7 +55,7 @@ const resetPwdSchema = Joi.object({
 
 router.post('/register', validator.body(registerSchema), asyncHandler(register))
 router.post('/login', validator.body(loginSchema), asyncHandler(login))
-router.post('/42', asyncHandler(login42))
+router.post('/42', validator.body(login42Schema), asyncHandler(login42))
 router.get('/confirm/:confirmId', validator.query(confirmEmailSchema), asyncHandler(ConfirmEmail))
 router.post('/forgotpwd', validator.body(forgotPwdSchema), asyncHandler(ForgotPwd))
 router.get(
