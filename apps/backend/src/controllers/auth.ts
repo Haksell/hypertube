@@ -1,15 +1,12 @@
-import { sign } from 'crypto'
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
 import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
 import { sendEmail } from '../utils/mail'
 import { PrismaClient, User } from '@prisma/client'
-import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import { signJwt } from '../utils/jwt'
-import { get } from 'http'
 import { get42Token, get42User } from '../utils/axios'
 
 const prisma = new PrismaClient()
