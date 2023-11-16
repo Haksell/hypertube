@@ -1,3 +1,4 @@
+import { sign } from 'crypto'
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
 import { formatUser } from '../utils/format'
 import { generateId } from '../utils/generate-code'
@@ -7,7 +8,7 @@ import { PrismaClient, User } from '@prisma/client'
 import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import { signJwt } from '../utils/jwt'
 
 const prisma = new PrismaClient()
 
@@ -87,13 +88,7 @@ export async function login(req: Request, res: Response) {
     // Check if password is correct
     const PHash = bcrypt.hashSync(password, user.salt || '') // user.salt is not null if authMethos is email, but typescript doesn't know that
     if (PHash === user.password) {
-        // Create jwt token
-        const token = jwt.sign(
-            { user_id: user.id, username: user.username, email: user.email },
-            process.env.TOKEN_KEY || '',
-            { expiresIn: '1h' },
-        )
-
+        const token = signJwt(user)
         res.cookie('token', token)
         res.status(200).send(formatUser(user))
         return
@@ -156,11 +151,7 @@ export async function login42(req: Request, res: Response) {
         return
     }
 	
-    const token = jwt.sign(
-        { user_id: user.id, username: user.username, email },
-        process.env.TOKEN_KEY || '',
-        { expiresIn: '1h' },
-    )
+	const token = signJwt(user)
     res.cookie('token', token)
     res.status(200).send(formatUser(user))
     return
