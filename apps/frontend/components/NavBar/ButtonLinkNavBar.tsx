@@ -1,5 +1,5 @@
-import { Link } from 'next/link'
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
 
 type PropButtonLinkBar = {
     text: string
@@ -40,13 +40,11 @@ function ButtonLinkNavBar({
         setCurrLink(page)
     }
     return (
-        <>
-            <Link href={page}>
-                <p className={style} aria-current="page" onClick={() => handleChangePage(page)}>
-                    {text} {page}
-                </p>
-            </Link>
-        </>
+        <Link href={page}>
+            <p className={style} aria-current="page" onClick={() => handleChangePage(page)}>
+                {text} {page}
+            </p>
+        </Link>
     )
 }
 

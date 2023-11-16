@@ -1,6 +1,7 @@
 import NavBar from '../components/NavBar'
 import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 type Movie = {
@@ -15,35 +16,37 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
     const [isHovered, setIsHovered] = useState(false)
 
     return (
-        <div
-            className="relative group overflow-hidden cursor-pointer"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            <img
-                src={movie.thumbnail}
-                alt={movie.title}
-                width={230}
-                height={345}
-                className={`w-full h-auto transition-all duration-300 ease-in-out ${
-                    isHovered ? 'opacity-50' : ''
-                }`}
-            />
-            {isHovered && (
-                <div className="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out">
-                    <h3 className="text-base md:text-lg lg:text-xl font-bold mb-2">
-                        {movie.title}
-                    </h3>
-                    {movie.imdbRating && (
-                        <div className="text-center text-sm">{movie.imdbRating} / 10</div>
-                    )}
-                    <div className="flex justify-between text-sm">
-                        <span>{movie.year}</span>
-                        <span>{formatDuration(movie.length)}</span>
+        <Link href={`/movie/${movie.title}`}>
+            <div
+                className="relative group overflow-hidden cursor-pointer"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <img
+                    src={movie.thumbnail}
+                    alt={movie.title}
+                    width={230}
+                    height={345}
+                    className={`w-full h-auto transition-all duration-300 ease-in-out ${
+                        isHovered ? 'opacity-50' : ''
+                    }`}
+                />
+                {isHovered && (
+                    <div className="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out">
+                        <h3 className="text-base md:text-lg lg:text-xl font-bold mb-2">
+                            {movie.title}
+                        </h3>
+                        {movie.imdbRating && (
+                            <div className="text-center text-sm">{movie.imdbRating} / 10</div>
+                        )}
+                        <div className="flex justify-between text-sm">
+                            <span>{movie.year}</span>
+                            <span>{formatDuration(movie.length)}</span>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </Link>
     )
 }
 
