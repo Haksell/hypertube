@@ -82,6 +82,7 @@ export async function login(req: Request, res: Response) {
             'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
                 user.authMethod,
         )
+		return
     }
 
     // Check if password is correct
