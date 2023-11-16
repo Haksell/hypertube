@@ -1,6 +1,6 @@
 import { sign } from 'crypto'
 import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
-import { formatUser } from '../utils/format'
+import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
 import { sendEmail } from '../utils/mail'
@@ -126,13 +126,7 @@ export async function login42(req: Request, res: Response) {
         },
     })
     if (!user) {
-        // if login is already used, add a number at the end until it's not used anymore
-        let username = login
-        let i = 1
-        while (await prisma.user.findMany({ where: { username } })) {
-            username = `${login}${i}`
-            i++
-        }
+        const username = await generateUniqueUsername(login)
 
         user = await prisma.user.create({
             data: {
