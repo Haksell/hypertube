@@ -1,7 +1,7 @@
 import NavBar from '../components/NavBar'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
-const MainLayout = ({ children }) => {
+const MainLayout: React.FC<{ children?: ReactNode }> = ({ children }) => {
     return (
         <div>
             <NavBar />
