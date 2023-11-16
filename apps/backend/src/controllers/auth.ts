@@ -121,6 +121,7 @@ export async function login42(req: Request, res: Response) {
                 lastName: last_name,
                 email: email,
                 authMethod: 'FORTYTWO',
+				email_verified: true,
             },
         })
     } else if (user.authMethod !== 'FORTYTWO') {
