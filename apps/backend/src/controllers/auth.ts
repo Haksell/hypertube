@@ -167,7 +167,7 @@ export async function login42(req: Request, res: Response) {
         process.env.TOKEN_KEY || '',
         { expiresIn: '1h' },
     )
-    user.token = token
+    res.cookie('token', token)
     res.status(200).send(formatUser(user))
     return
 }
