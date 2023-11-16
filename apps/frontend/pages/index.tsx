@@ -1,4 +1,5 @@
 import NavBar from '../components/NavBar'
+import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
@@ -8,12 +9,6 @@ type Movie = {
     year: number
     length: number
     imdbRating?: number
-}
-
-const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    return `${hours}:${mins}`
 }
 
 const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
