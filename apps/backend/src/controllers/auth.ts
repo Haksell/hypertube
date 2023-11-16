@@ -7,6 +7,7 @@ import axios from 'axios'
 import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
+import { formatUser } from '../utils/format'
 
 const prisma = new PrismaClient()
 
@@ -65,31 +66,38 @@ export async function register(req: Request, res: Response) {
 export async function login(req: Request, res: Response) {
     const { username, password } = req.body
 
-    const user = await prisma.user.findMany({
+    const users = await prisma.user.findMany({
         where: {
             username: username,
         },
     })
 
-    if (user.length === 0) {
+    if (users.length === 0) {
         res.status(400).send('Invalid Credentials')
         return
     }
 
-    // * CHECK IF PASSWORD IS CORRECT
-    const PHash = bcrypt.hashSync(password, user[0].salt)
-    if (PHash === user[0].password) {
-        // * CREATE JWT TOKEN
+    const user = users[0]
+
+    if (user.authMethod !== 'EMAIL') {
+        res.status(400).send(
+            'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
+                user.authMethod,
+        )
+    }
+
+    // Check if password is correct
+    const PHash = bcrypt.hashSync(password, user.salt || '') // user.salt is not null if authMethos is email, but typescript doesn't know that
+    if (PHash === user.password) {
+        // Create jwt token
         const token = jwt.sign(
-            { user_id: user[0].id, username: user[0].username, email: user[0].email },
+            { user_id: user.id, username: user.username, email: user.email },
             process.env.TOKEN_KEY || '',
-            {
-                expiresIn: '1h', // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
-            },
+            { expiresIn: '1h' },
         )
 
         res.cookie('token', token)
-        res.status(200).send(user[0])
+        res.status(200).send(formatUser(user))
         return
     } else {
         res.status(400).send('Invalid Credentials')
@@ -140,6 +148,7 @@ export async function login42(req: Request, res: Response) {
                 firstName: first_name,
                 lastName: last_name,
                 email: email,
+                authMethod: 'FORTYTWO',
             },
         })
     } else {
@@ -161,7 +170,7 @@ export async function login42(req: Request, res: Response) {
         },
     )
     user.token = token
-    res.status(200).send(user)
+    res.status(200).send(formatUser(user))
     return
 }
 
@@ -268,9 +277,9 @@ export async function ResetPwd(req: Request, res: Response) {
             },
         })
         if (users.length !== 1) {
-			res.status(400).json(InvalidId)
-			return
-		}
+            res.status(400).json(InvalidId)
+            return
+        }
         //amend pwd
         const retour = await prisma.user.update({
             where: {

@@ -4,4 +4,5 @@ export type TUserContext = {
 	firstName: string;
 	lastName: string;
 	picture: string;
+	authMethod: string;
 }
