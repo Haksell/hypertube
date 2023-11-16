@@ -16,14 +16,14 @@ intializeDB()
 const app = express()
 
 app.use(
-  express.urlencoded(),
-  cors({
-    origin: "http://localhost:3000",
-	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-);
+    express.urlencoded(),
+    cors({
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    }),
+)
 
 app.use(urlencoded({ extended: true }))
 app.use(json())

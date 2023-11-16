@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express'
 
 type Movie = {
     title: string
@@ -56,5 +56,5 @@ let movies: Movie[] = [
 ]
 
 export async function getMovies(req: Request, res: Response) {
-    res.status(201).send(movies);
+    res.status(201).send(movies)
 }

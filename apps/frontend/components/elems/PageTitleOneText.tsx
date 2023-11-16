@@ -1,28 +1,24 @@
-import React from 'react';
-import TitleSmall from '../elems/TitleSmall';
-import LinkText from '../elems/LinkText';
-import MainLayout from '../../layouts/MainLayout';
-import TextPage from '../elems/TextPage';
+import MainLayout from '../../layouts/MainLayout'
+import LinkText from '../elems/LinkText'
+import TextPage from '../elems/TextPage'
+import TitleSmall from '../elems/TitleSmall'
+import React from 'react'
 
 type Prop = {
-	title: string;
-	textBody: string;
+    title: string
+    textBody: string
 }
 
-function PageTitleOneText({title, textBody}: Prop) {
+function PageTitleOneText({ title, textBody }: Prop) {
     return (
-		<MainLayout>
+        <MainLayout>
             <TitleSmall text={title} />
-			<TextPage>
+            <TextPage>
                 <p>{textBody}</p>
-				<LinkText
-                    linkText="Get back home"
-                    link="/"
-					space='1'
-                />
-			</TextPage>
-		</MainLayout>
-    );
+                <LinkText linkText="Get back home" link="/" space="1" />
+            </TextPage>
+        </MainLayout>
+    )
 }
 
-export default PageTitleOneText;
+export default PageTitleOneText

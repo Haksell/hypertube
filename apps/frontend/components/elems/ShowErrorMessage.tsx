@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 type Prop = {
-	error: string;
-	message: string;
+    error: string
+    message: string
 }
 function ShowErrorMessage({ error, message }: Prop) {
     return error !== '' ? (
@@ -11,7 +11,7 @@ function ShowErrorMessage({ error, message }: Prop) {
         </div>
     ) : (
         <></>
-    );
+    )
 }
 
-export default ShowErrorMessage;
+export default ShowErrorMessage

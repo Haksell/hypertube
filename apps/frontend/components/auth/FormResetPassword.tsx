@@ -1,7 +1,6 @@
-
 type Prop = {
-	error: string;
-	message: string;
+    error: string
+    message: string
 }
 function FormResetPassword({ error, message }: Prop) {
     return error !== '' ? (
@@ -10,7 +9,7 @@ function FormResetPassword({ error, message }: Prop) {
         </div>
     ) : (
         <></>
-    );
+    )
 }
 
-export default FormResetPassword;
+export default FormResetPassword

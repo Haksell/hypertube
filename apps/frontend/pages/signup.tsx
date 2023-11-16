@@ -1,8 +1,14 @@
-import React from 'react';
-import ShowErrorMessage from '../components/elems/ShowErrorMessage';
-import { ErrorField } from '../components/elems/ErrorFields';
-import Button from '../components/elems/Button';
-import { useEffect, useState } from 'react';
+import { compute18Y } from '../components/auth/ComputeAge'
+import ConfirmUserCreation from '../components/auth/ConfirmUserCreation'
+import UserAlreadySignedIn from '../components/auth/UserAlreadySignedIn'
+import Button from '../components/elems/Button'
+import { DateInputField } from '../components/elems/DateInputField'
+import { ErrorField } from '../components/elems/ErrorFields'
+import LinkText from '../components/elems/LinkText'
+import SelectInput from '../components/elems/SelectInput'
+import ShowErrorMessage from '../components/elems/ShowErrorMessage'
+import TitleSmall from '../components/elems/TitleSmall'
+import MainLayout from '../layouts/MainLayout'
 // import { useUserContext } from '../context/UserContext';
 import {
     EmailTaken,
@@ -16,94 +22,80 @@ import {
     MissingUsername,
     SuccessMsg,
     UsernameTaken,
-} from '../src/shared/errors';
-import axios from 'axios';
-import TitleSmall from '../components/elems/TitleSmall';
-import LinkText from '../components/elems/LinkText';
-import UserAlreadySignedIn from '../components/auth/UserAlreadySignedIn';
-import ConfirmUserCreation from '../components/auth/ConfirmUserCreation';
-import { DateInputField } from '../components/elems/DateInputField';
-import { compute18Y } from '../components/auth/ComputeAge';
-import SelectInput from '../components/elems/SelectInput';
-import MainLayout from '../layouts/MainLayout';
+} from '../src/shared/errors'
+import axios from 'axios'
+import React from 'react'
+import { useEffect, useState } from 'react'
 
 function SignUpPage() {
-    const [username, setUsername] = useState<string>('');
-    const [password, setpassword] = useState<string>('');
-    const [email, setemail] = useState<string>('');
-    const [firstname, setfirstname] = useState<string>('');
-    const [lastname, setlastname] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [styleErrorUsername, setStyleErrorUsername] =
-        useState<boolean>(false);
-    const [styleErrorPwd, setStyleErrorPwd] = useState<boolean>(false);
-    const [styleErrorEmail, setStyleErrorEmail] = useState<boolean>(false);
-    const [styleErrorFirstname, setStyleErrorFirstname] =
-        useState<boolean>(false);
-    const [styleErrorLastname, setStyleErrorLastname] =
-        useState<boolean>(false);
-    const [styleError, setStyleError] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>('')
+    const [password, setpassword] = useState<string>('')
+    const [email, setemail] = useState<string>('')
+    const [firstname, setfirstname] = useState<string>('')
+    const [lastname, setlastname] = useState<string>('')
+    const [error, setError] = useState<string>('')
+    const [styleErrorUsername, setStyleErrorUsername] = useState<boolean>(false)
+    const [styleErrorPwd, setStyleErrorPwd] = useState<boolean>(false)
+    const [styleErrorEmail, setStyleErrorEmail] = useState<boolean>(false)
+    const [styleErrorFirstname, setStyleErrorFirstname] = useState<boolean>(false)
+    const [styleErrorLastname, setStyleErrorLastname] = useState<boolean>(false)
+    const [styleError, setStyleError] = useState<boolean>(false)
     // const { user } = useUserContext();
-	const user = null
-    const [created, setCreated] = useState<boolean>(false);
+    const user = null
+    const [created, setCreated] = useState<boolean>(false)
 
-    const [maxAge, setMaxAge] = useState<string>('');
+    const [maxAge, setMaxAge] = useState<string>('')
 
     useEffect(() => {
-        setMaxAge(compute18Y());
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        setMaxAge(compute18Y())
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     function setFalseAll() {
-        setStyleErrorUsername(false);
-        setStyleErrorPwd(false);
-        setStyleErrorEmail(false);
-        setStyleErrorFirstname(false);
-        setStyleErrorLastname(false);
+        setStyleErrorUsername(false)
+        setStyleErrorPwd(false)
+        setStyleErrorEmail(false)
+        setStyleErrorFirstname(false)
+        setStyleErrorLastname(false)
     }
 
     useEffect(() => {
-        if (styleError === false) return;
-        if (error === '') setFalseAll();
+        if (styleError === false) return
+        if (error === '') setFalseAll()
         else {
-            setFalseAll();
-            if (
-                error === InvalidUsername ||
-                error === MissingUsername ||
-                error === UsernameTaken
-            )
-                setStyleErrorUsername(true);
-            else if (error === MissingPwd) setStyleErrorPwd(true);
-            else if (error === EmailTaken || error === InvalidEmail)
-                setStyleErrorEmail(true);
+            setFalseAll()
+            if (error === InvalidUsername || error === MissingUsername || error === UsernameTaken)
+                setStyleErrorUsername(true)
+            else if (error === MissingPwd) setStyleErrorPwd(true)
+            else if (error === EmailTaken || error === InvalidEmail) setStyleErrorEmail(true)
             else if (error === InvalidFirstName || error === MissingFirstName)
-                setStyleErrorFirstname(true);
+                setStyleErrorFirstname(true)
             else if (error === InvalidLastName || error === MissingLastName)
-                setStyleErrorLastname(true);
+                setStyleErrorLastname(true)
         }
-        setStyleError(false);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [error, styleError]);
+        setStyleError(false)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error, styleError])
 
     function handleOnChangeUsername(e: React.ChangeEvent<HTMLInputElement>) {
-        setUsername(e.target.value);
+        setUsername(e.target.value)
     }
     function handleOnChangePassword(e: React.ChangeEvent<HTMLInputElement>) {
-        setpassword(e.target.value);
+        setpassword(e.target.value)
     }
     function handleOnChangeEmail(e: React.ChangeEvent<HTMLInputElement>) {
-        setemail(e.target.value);
+        setemail(e.target.value)
     }
     function handleOnChangeFirstname(e: React.ChangeEvent<HTMLInputElement>) {
-        setfirstname(e.target.value);
+        setfirstname(e.target.value)
     }
     function handleOnChangeLastname(e: React.ChangeEvent<HTMLInputElement>) {
-        setlastname(e.target.value);
+        setlastname(e.target.value)
     }
 
     function handleSignUp(event: any) {
-        event.preventDefault();
-        signUpBackend();
+        event.preventDefault()
+        signUpBackend()
     }
 
     async function signUpBackend() {
@@ -120,21 +112,21 @@ function SignUpPage() {
                 {
                     withCredentials: true,
                 },
-            );
-            console.log(response.data);
+            )
+            console.log(response.data)
             if (response.data.msg === SuccessMsg) {
-                setError('');
-                setStyleError(false);
-                setCreated(true);
+                setError('')
+                setStyleError(false)
+                setCreated(true)
             } else {
-                setStyleError(true);
-                setError(response.data.error);
+                setStyleError(true)
+                setError(response.data.error)
             }
-            return response.data;
+            return response.data
         } catch (error) {
-			// console.log(error)
-			setStyleError(true);
-            setError(error.response.data);
+            // console.log(error)
+            setStyleError(true)
+            setError(error.response.data)
             //to handle ?
         }
     }
@@ -144,15 +136,12 @@ function SignUpPage() {
     ) : created ? (
         <ConfirmUserCreation />
     ) : (
-		<MainLayout>
+        <MainLayout>
             <TitleSmall text={'Become a member !'} space="1" />
 
             <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-2" action="#" onSubmit={handleSignUp}>
-                    <ShowErrorMessage
-                        error={error}
-                        message={'Impossible to sign up because '}
-                    />
+                    <ShowErrorMessage error={error} message={'Impossible to sign up because '} />
                     <ErrorField
                         name="username"
                         title="Username"
@@ -203,14 +192,10 @@ function SignUpPage() {
                     </div>
                 </form>
 
-                <LinkText
-                    firstText="Already a member?"
-                    linkText="Sign in"
-                    link="/signin"
-                />
+                <LinkText firstText="Already a member?" linkText="Sign in" link="/signin" />
             </div>
-		</MainLayout>
-    );
+        </MainLayout>
+    )
 }
 
-export default SignUpPage;
+export default SignUpPage

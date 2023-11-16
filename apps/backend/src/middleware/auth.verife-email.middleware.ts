@@ -1,17 +1,17 @@
-import { Request, Response } from 'express';
-import { isEmail } from '../utils/check-email';
-import { InvalidEmail, MissingEmail } from '../shared/msg-error';
+import { InvalidEmail, MissingEmail } from '../shared/msg-error'
+import { isEmail } from '../utils/check-email'
+import { Request, Response } from 'express'
 
 export function validateForgotPwdBody(req: Request, res: Response, next: any) {
-    const { email } = req.body;
+    const { email } = req.body
 
     if (!email) {
-        return res.status(400).json(MissingEmail);
+        return res.status(400).json(MissingEmail)
     }
 
     if (!isEmail(email)) {
-        return res.status(400).json(InvalidEmail);
+        return res.status(400).json(InvalidEmail)
     }
 
-    next();
+    next()
 }
