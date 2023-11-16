@@ -164,50 +164,46 @@ export async function ForgotPwd(req: Request, res: Response) {
 
 export async function ConfirmForgotPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
-    // console.log('confirm');
-
-    //recuperer USER
-    // const user: TableUser[] | null = await db.selectOneElemFromTable(
-    //     TableUsersName,
-    //     'reset_pwd',
-    //     confirmID,
-    // );
-    // // console.log(user);
-
-    // if (!user || user.length !== 1)
-    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
-
-    // return res.status(200).json({ msg: SuccessMsg, username: user[0].username });
-    return res.status(200).json({ msg: SuccessMsg })
+	try {
+		const users = await prisma.user.findMany({
+            where: {
+                reset_pwd: confirmID,
+            },
+        })
+		if (users.length !== 1)
+			return res.status(400).json(InvalidId)
+		return res.status(200).json({ msg: SuccessMsg })
+	}
+	catch (error) {
+		return res.status(400).json(InvalidId)
+	}
 }
 
 export async function ResetPwd(req: Request, res: Response) {
     const confirmID = req.params.confirmId
     const { password } = req.body
-    // console.log('confirm');
 
-    // //recuperer USER
-    // const users: TableUser[] | null = await db.selectOneElemFromTable(
-    //     TableUsersName,
-    //     'reset_pwd',
-    //     confirmID,
-    // );
-    // // console.log(users);
-
-    // if (!users || users.length !== 1)
-    //     return res.status(200).json({ message: ErrorMsg , error: InvalidId });
-
-    // const user: TableUser = users[0];
-    // const hash = await hashPassword(password);
-
-    // //amend user
-    // await db.AmendElemsFromTable(
-    //     TableUsersName,
-    //     'id',
-    //     user.id,
-    // 	['reset_pwd', 'password'],
-    //     ['', hash],
-    // );
-
-    return res.status(200).json({ msg: SuccessMsg })
+	try {
+		const users = await prisma.user.findMany({
+            where: {
+                reset_pwd: confirmID,
+            },
+        })
+		if (users.length !== 1)
+			return res.status(400).json(InvalidId)
+		//amend pwd
+		const retour = await prisma.user.update({
+			where: {
+				id: users[0].id,
+			},
+			data:{
+				password: bcrypt.hashSync(password, users[0].salt),
+				reset_pwd: null,
+			}
+		})
+		return res.status(200).json({ msg: SuccessMsg })
+	}
+	catch (error) {
+		return res.status(400).json(InvalidId)
+	}
 }

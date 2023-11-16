@@ -47,7 +47,7 @@ function ResetPasswordPage() {
     async function resetPasswordBackend() {
         try {
             const response = await axios.post(
-                `http://${process.env.REACT_APP_SERVER_ADDRESS}:3333/auth/forgot/${idConfirm}`,
+                `http://localhost:5001/auth/forgot/${idConfirm}`,
                 {
                     password: password,
                 },
@@ -56,7 +56,7 @@ function ResetPasswordPage() {
                 },
             )
             // console.log(response.data);
-            if (response.data.message === SuccessMsg) {
+            if (response.data.msg === SuccessMsg) {
                 setError('')
                 setStyleErrorPassword(false)
                 setCreated(true)
@@ -67,7 +67,10 @@ function ResetPasswordPage() {
             }
             return response.data
         } catch (error) {
-            //
+            setStyleErrorPassword(true)
+			if (error.response)
+            	setError(error.response.data)
+            setCreated(false)
         }
     }
 
@@ -101,6 +104,7 @@ function ResetPasswordPage() {
                             onBlur={handleOnChangePassword}
                             styleError={styleErrorPassword}
                             setStyleError={setStyleErrorPassword}
+							init={password}
                         />
 
                         <div>
