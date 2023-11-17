@@ -2,14 +2,16 @@ import LinkText from '../elems/LinkText'
 import TextPage from '../elems/TextPage'
 import TitleSmall from '../elems/TitleSmall'
 import TramePage from '../elems/TramePage'
+import { useTranslation } from 'next-i18next'
 
 function ConfirmUserCreation() {
+	const { t } = useTranslation('common')
     return (
         <TramePage>
-            <TitleSmall text={'Congratulations !'} />
+            <TitleSmall text={t('ConfirmUserCreation.congrate')} />
             <TextPage>
-                <p>Last steps.. Check your inbox to confirm your email !</p>
-                <LinkText linkText="Get back home" link="/" space="1" />
+                <p>{t('ConfirmUserCreation.lastSteps')}</p>
+                <LinkText linkText={t('getBack')} link="/" space="1" />
             </TextPage>
         </TramePage>
     )

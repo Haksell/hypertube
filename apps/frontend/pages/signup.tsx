@@ -135,7 +135,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="email"
-                        title={t('signup.email')}
+                        title={t('email')}
                         onBlur={handleOnChangeEmail}
                         styleError={styleErrorEmail}
                         setStyleError={setStyleErrorEmail}
@@ -151,7 +151,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="firstname"
-                        title={t('signup.firstname')}
+                        title={t('firstname')}
                         onBlur={handleOnChangeFirstname}
                         styleError={styleErrorFirstname}
                         setStyleError={setStyleErrorFirstname}
@@ -159,7 +159,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="lastname"
-                        title={t('signup.lastname')}
+                        title={t('lastname')}
                         onBlur={handleOnChangeLastname}
                         styleError={styleErrorLastname}
                         setStyleError={setStyleErrorLastname}

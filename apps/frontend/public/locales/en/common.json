@@ -1,27 +1,61 @@
 {
     "username": "Username",
     "password": "Password",
+    "lastname": "Last name",
+    "firstname": "First name",
     "signIn": "Sign In",
     "signUp": "Sign Up",
+    "email": "Email",
+    "NAM": "Not a member ?",
+    "settingsMsg": "Settings",
+    "getBack": "Get back home",
     "navBar": {
         "signOut": "Sign Out",
         "profile": "Profile",
-        "browsing": "Browsing",
-        "settings": "Settings"
+        "browsing": "Browsing"
+    },
+    "settings": {
+        "noSignUp": "Impossible to sign up because ",
+        "amend": "Amend your profile"
     },
     "signin": {
         "signinTitle": "Sign in to your account",
-        "NAM": "Not a member ?",
         "forgot": "Forgot password ?",
+        "log42": "Login with 42",
+        "logGit": "Login with Github",
+        "logFb": "Login with Facebook",
         "reset": "Reset Password"
     },
     "signup": {
         "signUpError": "Impossible to sign up because ",
         "AAM": "Already a member ?",
-        "lastname": "Last name",
-        "firstname": "First name",
-        "email": "Email",
         "member": "Become a member !"
+    },
+    "forgot": {
+        "title": "Forgot your password ?",
+        "noRecovery": "Impossible to recover because ",
+        "recoverPwd": "Recover password",
+        "rememberPwd": "Remember your password ?"
+    },
+    "confirm": {
+        "congrate": "Congratulations",
+        "linkLog": "Link validated. PLease log in",
+        "error": "Error..",
+        "linkVal": "link already validated."
+    },
+    "forgot2": {
+        "pwdChange": "Password changed",
+        "newLog": "You can now log in using your new password",
+        "selectNewPwd": "Select a new password !",
+        "noPwdChange": "Impossible to change password because ",
+        "newPwd": "New password",
+        "changePwd": "Change password",
+        "oups": "Oups...",
+        "linkDead": "Links not working here"
+    },
+    "404": {
+        "lostPage": "Page not found",
+        "sorry": "Sorry, we couldn't find the page you're looking for."
     },
     "errors": {
         "errorMsg": "error",
@@ -48,6 +82,7 @@
         "weakPwd": "password too weak",
 
         "invalidId": "Invalid Id",
+        "alreadyValid": "already validated",
 
         "invalidPhotoExtension": "Invalid photo extension",
         "emptyPhoto": "empty photo",
@@ -57,5 +92,20 @@
 
         "emptyPhotoId": "empty filename",
         "invalidPhotoId": "invalid filename"
+    },
+    "ConfirmMailRecoverySent": {
+        "check": "Check your emails..",
+        "recoveryLink": "A recovery link have been sent to your inbox."
+    },
+    "ConfirmUserCreation": {
+        "congrate": "Congratulations !",
+        "lastSteps": "Last steps.. Check your inbox to confirm your email !"
+    },
+    "UserAlreadySignedIn": {
+        "alreadySign": "You are already signed in"
+    },
+    "UserNotSignedIn": {
+        "getOut": "You cannot be here...",
+        "plsSign": "Please sign in or sign up to access this page !"
     }
 }

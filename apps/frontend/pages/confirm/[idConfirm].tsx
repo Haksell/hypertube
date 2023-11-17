@@ -41,14 +41,14 @@ function ConfirmEmailPage() {
         <TramePage>
             {retour && retour === ErMsg('SuccessMsg', t) && (
                 <>
-                    <TitleSmall text={'Congratulations'} />
-                    <TextPage center={true}>Link validated. Please log in</TextPage>
+                    <TitleSmall text={t('Confirm.congrate')} />
+                    <TextPage center={true}>{t('Confirm.linkLog')}</TextPage>
                 </>
             )}
-            {retour && retour === 'already validated' && (
+            {retour && retour === ErMsg('AlreadyValid', t) && (
                 <>
-                    <TitleSmall text={'Error..'} />
-                    <TextPage center={true}>Link already validated.</TextPage>
+                    <TitleSmall text={t('Confirm.error')} />
+                    <TextPage center={true}>{t('Confirm.linkVal')}</TextPage>
                 </>
             )}
         </TramePage>

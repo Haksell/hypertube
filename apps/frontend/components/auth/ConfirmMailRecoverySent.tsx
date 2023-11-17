@@ -2,14 +2,16 @@ import LinkText from '../elems/LinkText'
 import TextPage from '../elems/TextPage'
 import TitleSmall from '../elems/TitleSmall'
 import TramePage from '../elems/TramePage'
+import { useTranslation } from 'next-i18next'
 
 function ConfirmMailConfirmationSent() {
+	const { t } = useTranslation('common')
     return (
         <TramePage>
-            <TitleSmall text={'Check your emails..'} />
+            <TitleSmall text={t('ConfirmMailrecoverySent.check')} />
             <TextPage>
-                <p>A recovery link have been sent to your inbox.</p>
-                <LinkText linkText="Get back home" link="/" space="1" />
+                <p>{t('ConfirmMailRecoverySent.recoveryLink')}</p>
+                <LinkText linkText={t('getBack')} link="/" space="1" />
             </TextPage>
         </TramePage>
     )
