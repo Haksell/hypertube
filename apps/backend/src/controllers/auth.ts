@@ -14,12 +14,6 @@ const prisma = new PrismaClient()
 export async function register(req: Request, res: Response) {
     const { username, email, password, firstName, lastName } = req.body
 
-    // Check password is complex enough
-    if (password.length < 8) {
-        res.status(400).send('Password is too short')
-        return
-    }
-
     // Check if a user with email OR with username already exists
     let user = await prisma.user.findMany({
         where: {
