@@ -1,16 +1,18 @@
 import TextPage from '../../components/elems/TextPage'
 import TitleSmall from '../../components/elems/TitleSmall'
 import TramePage from '../../components/elems/TramePage'
-import { InvalidId, SuccessMsg } from '../../src/shared/errors'
+import { ErMsg } from '../../src/shared/errors'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'next-i18next'
 
 function ConfirmEmailPage() {
     const router = useRouter()
     const { idConfirm } = router.query
     const [retour, setRetour] = useState<string | null>(null)
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         if (idConfirm) {
@@ -29,7 +31,7 @@ function ConfirmEmailPage() {
             return response.data
         } catch (error) {
             if (error.response) {
-                if (error.response.data === InvalidId) router.push('/404')
+                if (error.response.data === ErMsg('InvalidId', t)) router.push('/404')
                 setRetour(error.response.data)
             } else setRetour(null)
         }
@@ -37,7 +39,7 @@ function ConfirmEmailPage() {
 
     return (
         <TramePage>
-            {retour && retour === SuccessMsg && (
+            {retour && retour === ErMsg('SuccessMsg', t) && (
                 <>
                     <TitleSmall text={'Congratulations'} />
                     <TextPage center={true}>Link validated. Please log in</TextPage>

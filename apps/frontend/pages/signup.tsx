@@ -10,22 +10,12 @@ import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import MainLayout from '../layouts/MainLayout'
 import { useUserContext } from '../src/context/UserContext'
-import {
-    EmailTaken,
-    InvalidEmail,
-    InvalidFirstName,
-    InvalidLastName,
-    InvalidUsername,
-    MissingFirstName,
-    MissingLastName,
-    MissingPwd,
-    MissingUsername,
-    SuccessMsg,
-    UsernameTaken,
-} from '../src/shared/errors'
+import { ErMsg } from '../src/shared/errors'
 import axios from 'axios'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SignUpPage() {
     const [username, setUsername] = useState<string>('')
@@ -42,6 +32,8 @@ function SignUpPage() {
     const [styleError, setStyleError] = useState<boolean>(false)
     const { user } = useUserContext();
     const [created, setCreated] = useState<boolean>(false)
+    const [maxAge, setMaxAge] = useState<string>('')
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,13 +52,13 @@ function SignUpPage() {
         if (error === '') setFalseAll()
         else {
             setFalseAll()
-            if (error === InvalidUsername || error === MissingUsername || error === UsernameTaken)
+            if (error === ErMsg('InvalidUsername', t) || error === ErMsg('MissingUsername', t) || error === ErMsg('UsernameTaken', t))
                 setStyleErrorUsername(true)
-            else if (error === MissingPwd) setStyleErrorPwd(true)
-            else if (error === EmailTaken || error === InvalidEmail) setStyleErrorEmail(true)
-            else if (error === InvalidFirstName || error === MissingFirstName)
+            else if (error === ErMsg('MissingPwd', t)) setStyleErrorPwd(true)
+            else if (error === ErMsg('EmailTaken', t) || error === ErMsg('InvalidEmail', t)) setStyleErrorEmail(true)
+            else if (error === ErMsg('InvalidFirstName', t) || error === ErMsg('MissingFirstName', t))
                 setStyleErrorFirstname(true)
-            else if (error === InvalidLastName || error === MissingLastName)
+            else if (error === ErMsg('InvalidLastName', t) || error === ErMsg('MissingLastName', t))
                 setStyleErrorLastname(true)
         }
         setStyleError(false)
@@ -128,14 +120,14 @@ function SignUpPage() {
         <ConfirmUserCreation />
     ) : (
         <MainLayout>
-            <TitleSmall text={'Become a member !'} space="1" />
+            <TitleSmall text={t('signup.member')} space="1" />
 
             <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-2" action="#" onSubmit={handleSignUp}>
-                    <ShowErrorMessage error={error} message={'Impossible to sign up because '} />
+                    <ShowErrorMessage error={error} message={t('signup.signUpError')} />
                     <ErrorField
                         name="username"
-                        title="Username"
+                        title={t('username')}
                         onBlur={handleOnChangeUsername}
                         styleError={styleErrorUsername}
                         setStyleError={setStyleErrorUsername}
@@ -143,7 +135,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="email"
-                        title="Email"
+                        title={t('signup.email')}
                         onBlur={handleOnChangeEmail}
                         styleError={styleErrorEmail}
                         setStyleError={setStyleErrorEmail}
@@ -151,7 +143,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="password"
-                        title="Password"
+                        title={t('password')}
                         onBlur={handleOnChangePassword}
                         styleError={styleErrorPwd}
                         setStyleError={setStyleErrorPwd}
@@ -159,7 +151,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="firstname"
-                        title="First name"
+                        title={t('signup.firstname')}
                         onBlur={handleOnChangeFirstname}
                         styleError={styleErrorFirstname}
                         setStyleError={setStyleErrorFirstname}
@@ -167,7 +159,7 @@ function SignUpPage() {
                     />
                     <ErrorField
                         name="lastname"
-                        title="Last name"
+                        title={t('signup.lastname')}
                         onBlur={handleOnChangeLastname}
                         styleError={styleErrorLastname}
                         setStyleError={setStyleErrorLastname}
@@ -176,17 +168,25 @@ function SignUpPage() {
 
                     <div className="pt-5">
                         <Button
-                            text="Sign Up"
+                            text={t('signUp')}
                             type="submit"
                             stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         />
                     </div>
                 </form>
 
-                <LinkText firstText="Already a member?" linkText="Sign in" link="/signin" />
+                <LinkText firstText={t('signup.AAM')} linkText={t('signIn')} link="/signin" />
             </div>
         </MainLayout>
     )
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default SignUpPage
