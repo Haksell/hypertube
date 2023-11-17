@@ -28,7 +28,7 @@ model User {
   profile_picture String?
 }
 
-model Movies {
-	id Int @id @default(autoincrement())
-	title String
-}
+// model Movies {
+// 	id Int @id @default(autoincrement())
+// 	title String
+// }

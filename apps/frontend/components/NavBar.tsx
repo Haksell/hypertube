@@ -29,12 +29,13 @@ const ButtonLinkNavBar: React.FC<{
 const LinkNavBar: React.FC<{
     currLink: string
     setCurrLink: React.Dispatch<React.SetStateAction<string>>
-}> = ({ currLink, setCurrLink }) => (
+	profileLink: string
+}> = ({ currLink, setCurrLink, profileLink }) => (
     <div className="flex items-center ml-6">
         <div className="flex space-x-4">
             <ButtonLinkNavBar
                 text="Profile"
-                page="/profile"
+                page={profileLink}
                 currLink={currLink}
                 setCurrLink={setCurrLink}
             />
@@ -91,7 +92,15 @@ const DropdownMenu = () => {
 
 function NavBar() {
     const [currLink, setCurrLink] = useState<string>('no')
+	const [profileLink, setProfileLink] = useState<string>('/profile')
     const router = useRouter()
+	const { user } = useUserContext()
+
+	useEffect(() => {
+		if (user) {
+			setProfileLink(`/profile/${user.id}`)
+		}
+	}, [user])
 
     useEffect(() => {
         if (router.pathname.match('/profile')) setCurrLink('/profile')
@@ -108,7 +117,7 @@ function NavBar() {
 				<div className="relative flex h-16 items-center justify-between">
 					<div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
 						<LogoNavBar />
-						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} />
+						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
 					</div>
 					<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 						<DropdownMenu />

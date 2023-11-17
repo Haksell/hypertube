@@ -1,4 +1,4 @@
-import { deleteImg, dowloadImg, getListUsers, getMe, getUser, updateSettings, uploadImg } from '../controllers/users'
+import { deleteImg, dowloadImg, getListUsers, getMe, getProfile, getUser, updateSettings, uploadImg } from '../controllers/users'
 import verifyToken from '../middleware/auth.middleware'
 import { imageFileFilter } from '../middleware/photo-middleware'
 import express, { Router } from 'express'
@@ -25,6 +25,8 @@ router.get('/me', verifyToken, asyncHandler(getMe))
 router.get('/', verifyToken, asyncHandler(getListUsers))
 
 router.get('/:id', verifyToken, validator.params(idShema), asyncHandler(getUser))
+
+router.get('/profile/:id', verifyToken, validator.params(idShema), asyncHandler(getProfile))
 
 router.post('/updatesettings', verifyToken, validator.body(updateSchema), asyncHandler(updateSettings))
 

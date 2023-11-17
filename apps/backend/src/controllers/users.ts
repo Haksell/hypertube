@@ -74,6 +74,36 @@ export async function getUser(req: Request, res: Response) {
 }
 
 //specific for Profile Page
+export async function getProfile(req: Request, res: Response) {
+	try {
+		const { id } = req.params
+		const idUser = parseInt(id)
+		if (isNaN(idUser)) {
+			res.status(400).send(InvalidId)
+			return
+		}
+
+		const user = await prisma.user.findUnique({
+			where: {
+				id: idUser,
+			}
+		})
+		if (!user) {
+			res.status(400).send(InvalidId)
+			return 
+		}
+		const image = user.profile_picture ? `http://localhost:5001/users/image/${user.profile_picture}` : null
+		const userReturned = {
+			username: user.username,
+			email: user.email,
+			profile_picture: image,
+		}
+		res.status(200).send(userReturned)
+	}
+	catch (error) {
+		res.status(400).send(InvalidId)
+	}
+}
 
 export function getUserFromRequest(req: Request): TUserCookie {
 	try {

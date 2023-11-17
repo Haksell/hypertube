@@ -5,15 +5,16 @@ import MainLayout from '../../layouts/MainLayout';
 import TitleSmall from '../../components/elems/TitleSmall';
 import PageTitleOneText from '../../components/elems/PageTitleOneText';
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn';
+import { TUserProfile } from '../../src/shared/user';
+import axios from 'axios';
 
 function ProfilePage() {
     const { user } = useUserContext();
 	const router = useRouter()
     const { profileID } = router.query
 	const id: string = typeof profileID === 'string' ? profileID : ''
-	const [userM, setUserM] = useState<UserExport | null>(null);
+	const [userProfile, setUserProfile] = useState<TUserProfile | null>(null);
 	const [idUser, setIdUser] = useState<number>(-1)
-	const [liked, setLiked] = useState<boolean>(false);
 	const [blocked, setBlocked] = useState<boolean>(false);
 	const [showReported, setShowReported] = useState<boolean>(true);
 	const [visible, setVisible] = useState<string>('carousel-2.svg')
@@ -52,25 +53,18 @@ function ProfilePage() {
 
 	async function getUserInfo() {
 		if (!(idUser > 0)) return ;
-		const retour: RetourType | null = await GetUser(idUser);
-		// console.log(retour)
-		if (retour && retour.message === SuccessMsg && retour.userM) {
-			setUserM(retour.userM);
-			setVisible(retour.userM.profile_picture);
-			if (retour.userReported)
-				setShowReported(!retour.userReported);
-			if (retour.userLiked)
-				setLiked(retour.userLiked);
-			if (retour.userBlocked)
-				setBlocked(retour.userBlocked);
+		try {
+			const response = await axios.get(`http://localhost:5001/users/profile/${idUser}`, {
+                withCredentials: true,
+            })
+			setUserProfile(response.data)
 		}
-		else {
-			setUserM(null);
-			setLiked(false);
+		catch (error) {
+			setUserProfile(null)
 		}
 	}
 
-    return user ? (userM ? (
+    return user ? (userProfile ? (
 		<MainLayout>
 			
             <TitleSmall text="Profile" space='1' />
