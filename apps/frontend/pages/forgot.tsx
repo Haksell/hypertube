@@ -79,15 +79,15 @@ function ForgotPasswordPage() {
         <ConfirmMailConfirmationSent />
     ) : (
         <TramePage>
-            <TitleSmall text={'Forgot your password?'} />
+            <TitleSmall text={t('forgot.title')} />
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
-                    <ShowErrorMessage error={error} message={'Impossible to recover because '} />
+                    <ShowErrorMessage error={error} message={t('forgot.noRecovery')} />
                     <ErrorField
                         name="email1"
                         type="email"
-                        title="Email"
+                        title={t('email')}
                         onBlur={handleOnChangeEmail}
                         init={email}
                         styleError={styleErrorEmail}
@@ -96,17 +96,17 @@ function ForgotPasswordPage() {
 
                     <div>
                         <Button
-                            text="Recover password"
+                            text={t('forgot.recoverPwd')}
                             type="submit"
                             stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         />
                     </div>
                 </form>
 
-                <LinkText firstText="Not a member?" linkText="Sign up" link="/signup" />
+                <LinkText firstText={t('NAM')} linkText={t('signUp')} link="/signup" />
                 <LinkText
-                    firstText="Remember your password?"
-                    linkText="Sign in"
+                    firstText={t('forgot.rememberPwd')}
+                    linkText={t('signIn')}
                     link="/signin"
                     space="1"
                 />
