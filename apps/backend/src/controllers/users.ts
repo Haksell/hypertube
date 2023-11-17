@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { EmailTaken, EmptyPhoto, InvalidPhotoExtension, InvalidPhotoId, NotConnected, PhotoTooBig, SuccessMsg } from '../shared/msg-error'
+import { EmailTaken, EmptyPhoto, InvalidId, InvalidPhotoExtension, InvalidPhotoId, NotConnected, PhotoTooBig, SuccessMsg } from '../shared/msg-error'
 import { TUserCookie } from '../types_backend/user-cookie';
 import { PrismaClient } from '@prisma/client';
 import { formatUser } from '../utils/format';
@@ -25,6 +25,55 @@ export async function getMe(req: Request, res: Response) {
 		res.status(400).send(NotConnected)
 	}
 }
+
+export async function getListUsers(req: Request, res: Response) {
+	try {
+		const users = await prisma.user.findMany({
+			select: {
+				id: true,
+				username: true
+			}
+		})
+		res.status(200).send(users)
+	}
+	catch {
+		res.status(400).send('Error fetching users')
+	}
+}
+
+//specific for RESTful API requirements
+export async function getUser(req: Request, res: Response) {
+	try {
+		const { id } = req.params
+		const idUser = parseInt(id)
+		if (isNaN(idUser)) {
+			res.status(400).send(InvalidId)
+			return
+		}
+
+		const user = await prisma.user.findUnique({
+			where: {
+				id: idUser,
+			}
+		})
+		if (!user) {
+			res.status(400).send(InvalidId)
+			return 
+		}
+		const image = user.profile_picture ? `http://localhost:5001/users/image/${user.profile_picture}` : null
+		const userReturned = {
+			username: user.username,
+			email: user.email,
+			profile_picture: image,
+		}
+		res.status(200).send(userReturned)
+	}
+	catch (error) {
+		res.status(400).send(InvalidId)
+	}
+}
+
+//specific for Profile Page
 
 export function getUserFromRequest(req: Request): TUserCookie {
 	try {

@@ -27,3 +27,8 @@ model User {
   authMethod String @default("EMAIL")
   profile_picture String?
 }
+
+model Movies {
+	id Int @id @default(autoincrement())
+	title String
+}
