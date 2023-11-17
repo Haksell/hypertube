@@ -18,6 +18,7 @@ import { SuccessMsg } from "../shared/errors";
 import PhotoUploader from "../components/settings/PhotoUpload";
 import ShowPictures from "../components/settings/ShowPictures";
 import CheckboxAskGeoModify from "../components/settings/CheckboxAskGeo";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -251,6 +252,14 @@ function SettingsPage() {
             </div>
         </div>
 	);
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default SettingsPage;

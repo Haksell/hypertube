@@ -6,11 +6,13 @@ import LinkText from '../components/elems/LinkText'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import TramePage from '../components/elems/TramePage'
-import { SuccessMsg } from '../src/shared/errors'
+import { ErMsg } from '../src/shared/errors'
 // import { useUserContext } from "../context/UserContext";
 import axios from 'axios'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState<string>('')
@@ -20,6 +22,7 @@ function ForgotPasswordPage() {
     const [created, setCreated] = useState<boolean>(false)
     // const { user } = useUserContext();
     const user = null
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         if (styleError === false) return
@@ -54,7 +57,7 @@ function ForgotPasswordPage() {
                 },
             )
             // console.log(response.data);
-            if (response.data.msg === SuccessMsg) {
+            if (response.data.msg === ErMsg('MSuccessMsg', t)) {
                 setError('')
                 setStyleError(false)
                 setCreated(true)
@@ -110,6 +113,14 @@ function ForgotPasswordPage() {
             </div>
         </TramePage>
     )
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default ForgotPasswordPage

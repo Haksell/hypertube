@@ -1,10 +1,61 @@
 {
-    "sign_title": "Sign in to your account",
     "username": "Username",
     "password": "Password",
-    "sign_in": "Sign In",
-    "NAM": "Not a member ?",
-    "sign_up": "Sign up",
-    "forgot": "Forgot password ?",
-    "reset": "Reset Password"
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "navBar": {
+        "signOut": "Sign Out",
+        "profile": "Profile",
+        "browsing": "Browsing",
+        "settings": "Settings"
+    },
+    "signin": {
+        "signinTitle": "Sign in to your account",
+        "NAM": "Not a member ?",
+        "forgot": "Forgot password ?",
+        "reset": "Reset Password"
+    },
+    "signup": {
+        "signUpError": "Impossible to sign up because ",
+        "AAM": "Already a member ?",
+        "lastname": "Last name",
+        "firstname": "First name",
+        "email": "Email",
+        "member": "Become a member !"
+    },
+    "errors": {
+        "errorMsg": "error",
+        "successMsg": "Success",
+        "NotConnected": "not connected",
+        "uknownUsername": "unknown user",
+        "invalidPassword": "invalid password",
+        "emailNotVerified": "email is not verified",
+        "missingPwd": "Missing password",
+        "missingUsername": "Missing username",
+
+        "invalidUsername": "invalid username format",
+        "usernameTaken": "username not available",
+        "emailTaken": "already an account with this email",
+        "invalidEmail": "invalid email",
+        "invalidFirstName": "wrong first name format",
+        "invalidLastName": "wrong last name format",
+        "wrongEmailFormat": "wrong email format",
+
+        "missingEmail": "Missing email",
+        "missingFirstName": "Missing first name",
+        "missingLastName": "Missing last name",
+
+        "weakPwd": "password too weak",
+
+        "invalidId": "Invalid Id",
+
+        "invalidPhotoExtension": "Invalid photo extension",
+        "emptyPhoto": "empty photo",
+        "photoTooBig": "size too big for picture",
+        "photoNbLimit": "too many pictures in profile",
+        "photoResolution": "incorrect rsolution for picture",
+
+        "emptyPhotoId": "empty filename",
+        "invalidPhotoId": "invalid filename"
+    }
 }

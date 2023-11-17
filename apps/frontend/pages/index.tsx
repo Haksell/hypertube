@@ -1,6 +1,7 @@
 import NavBar from '../components/NavBar'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 type Movie = {
     title: string
@@ -94,6 +95,14 @@ const MoviesPage = () => {
             </div>
         </div>
     )
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default MoviesPage

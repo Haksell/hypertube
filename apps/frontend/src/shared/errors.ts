@@ -1,57 +1,54 @@
-//message
-export const ErrorMsg: string = 'error'
-export const SuccessMsg: string = 'Success'
-export const NotConnected: string = 'not connected'
+import { useTranslation } from 'next-i18next'
 
-//sign in
-export const UnknownUsername: string = 'unknown user'
-export const InvalidPassword: string = 'invalid password'
-export const EmailNotVerified: string = 'email is not verified'
+type ErrorArray = {
+    key: string;
+    value: string;
+};  
 
-export const MissingPwd: string = 'Missing password'
-export const MissingUsername: string = 'Missing username'
+export const ErMsg = (key: string, t: (key: string) => string): string | null => {
 
-//sign up
-export const InvalidUsername: string = 'invalid username format'
-export const UsernameTaken: string = 'username not available'
-export const EmailTaken: string = 'already an account with this email'
-export const InvalidEmail: string = 'invalid email'
-export const InvalidFirstName: string = 'Wrong first name format'
-export const InvalidLastName: string = 'Wrong last name format'
-export const WrongEmailFormat: string = 'Wrong email format'
-export const InvalidDateBirth: string = 'Wrong date of birth'
-export const InvalidGender: string = 'Wrong gender'
-export const InvalidInterest: string = 'invalid tag'
-export const InvalidIPreference: string = 'invalid preference'
-export const InvalidBio: string = 'invalid bio'
+    const errorArray: ErrorArray[] = [
+        //message
+        { key: 'ErrorMsg', value: t('errorMsg') },
+        { key: 'SuccessMsg', value: t('successMsg') },
+        { key: 'NotConnected', value: t('notConnected') },
+        //sign in
+        { key: 'UnknownUsername', value: t('errors.unknownUsername') },
+        { key: 'InvalidPassword', value: t('errors.invalidPassword') },
+        { key: 'EmailNotVerified', value: t('errors.emailNotVerified') },
+        { key: 'MissingPwd', value: t('errors.missingPwd') },
+        { key: 'MissingUsername', value: t('errors.missingUsername') },
+        //sign up
+        { key: 'InvalidUsername', value: t('errors.invalidUsername') },
+        { key: 'UsernameTaken', value: t('errors.usernameTaken') },
+        { key: 'EmailTaken', value: t('errors.emailTaken') },
+        { key: 'InvalidEmail', value: t('errors.invalidEmail') },
+        { key: 'InvalidFirstName', value: t('errors.invalidFirstName') },
+        { key: 'InvalidLastName', value: t('errors.invalidLastName') },
+        { key: 'WrongEmailFormat', value: t('errors.wrongEmailFormat') },
+        { key: 'InvalidDateBirth', value: t('errors.invalidDateBirth') },
+        { key: 'InvalidGender', value: t('errors.invalidGender') },
+        { key: 'InvalidInterest', value: t('errors.invalidInterest') },
+        { key: 'InvalidPreference', value: t('errors.invalidPreference') },
+        { key: 'InvalidBio', value: t('errors.invalidBio') },
+        { key: 'MissingEmail', value: t('errors.missingEmail') },
+        { key: 'MissingFirstName', value: t('errors.missingFirstName') },
+        { key: 'MissingLastName', value: t('errors.missingLastName') },
+        { key: 'MissingDateBirth', value: t('errors.missingDateBirth') },
+        { key: 'MissingGender', value: t('errors.missingGender') },
+        { key: 'WeakPwd', value: t('errors.weakPwd') },
+        { key: 'InvalidId', value: t('errors.invalidId') },
+        //images
+        { key: 'InvalidPhotoExtension', value: t('errors.invalidPhotoExtension') },
+        { key: 'EmptyPhoto', value: t('errors.emptyPhoto') },
+        { key: 'PhotoTooBig', value: t('errors.photoTooBig') },
+        { key: 'PhotoNbLimit', value: t('errors.photoNbLimit') },
+        { key: 'PhotoResolution', value: t('errors.photoResolution') },
+        //request image
+        { key: 'EmptyPhotoId', value: t('errors.emptyPhotoId') },
+        { key: 'InvalidPhotoId', value: t('errors.invalidPhotoId') },
+      ];
 
-export const MissingEmail: string = 'Missing email'
-export const MissingFirstName: string = 'Missing first name'
-export const MissingLastName: string = 'Missing last name'
-export const MissingDateBirth: string = 'Missing date of birth'
-export const MissingGender: string = 'Missing gender'
-
-export const WeakPwd: string = 'password too weak'
-
-//
-export const InvalidId: string = 'Invalid Id'
-
-//images
-export const InvalidPhotoExtension: string = 'Invalid photo extension'
-export const EmptyPhoto: string = 'empty photo'
-export const PhotoTooBig: string = 'size too big for picture'
-export const PhotoNbLimit: string = 'too many pictures in your profile'
-export const PhotoResolution: string = 'incorrect resolution for picture'
-//request image
-export const EmptyPhotoId: string = 'empty filename'
-export const InvalidPhotoId: string = 'invalid filename'
-
-//likes
-export const CannotLikeOtherPhotoEmpty: string = 'user does not have a profile picture'
-export const CannotLikeYourPhotoEmpty: string = 'you do not have a profile picture'
-export const ProfileAlreadyLiked: string = 'already in your like'
-export const ProfileNotLiked: string = 'cannot unlike because is not in your likes'
-
-//block
-export const AlreadyBlocked: string = 'profile already blocked'
-export const ProfileNotBlocked: string = 'cannot unblock because profile not blocked'
+      const item = errorArray.find((item) => item.key === key);
+      return item ? item.value : null;
+};

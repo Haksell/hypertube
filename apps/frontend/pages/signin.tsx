@@ -5,12 +5,12 @@ import LinkText from '../components/elems/LinkText'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import MainLayout from '../layouts/MainLayout'
-import { EmailNotVerified, InvalidPassword, UnknownUsername } from '../src/shared/errors'
+import { ErMsg } from '../src/shared/errors'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useTranslation, Trans } from 'next-i18next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SignInPage() {
@@ -27,13 +27,13 @@ function SignInPage() {
 
     useEffect(() => {
         if (styleError === false) return
-        if (error === '' || error === EmailNotVerified) {
+        if (error === '' || error === ErMsg('EmailNotVerified', t)) {
             setStyleErrorUsername(false)
             setStyleErrorPwd(false)
-        } else if (error === UnknownUsername) {
+        } else if (error === ErMsg('UnknownUsername', t)) {
             setStyleErrorUsername(true)
             setStyleErrorPwd(true)
-        } else if (error === InvalidPassword) {
+        } else if (error === ErMsg('InvalidPassword', t)) {
             setStyleErrorUsername(false)
             setStyleErrorPwd(true)
         }
@@ -85,7 +85,7 @@ function SignInPage() {
         <UserAlreadySignedIn />
     ) : (
 		<MainLayout>
-            <TitleSmall text={t('sign_title')} />
+            <TitleSmall text={t('signin.signinTitle')} />
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
                     <ShowErrorMessage error={error} message={''} />
@@ -108,7 +108,7 @@ function SignInPage() {
 
                     <div>
                         <Button
-                            text={t('sign_in')}
+                            text={t('signIn')}
                             type="submit"
                             stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         />
@@ -116,13 +116,13 @@ function SignInPage() {
                 </form>
 
                 <LinkText
-                    firstText={t('NAM')}
+                    firstText={t('signin.NAM')}
                     linkText={t('sign_up')}
                     link="/signup"
                 />
                 <LinkText
-                    firstText={t('forgot')}
-                    linkText={t('reset')}
+                    firstText={t('signin.forgot')}
+                    linkText={t('signin.reset')}
                     link="/forgot"
                     space="1"
                 />

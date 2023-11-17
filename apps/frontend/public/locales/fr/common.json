@@ -1,10 +1,61 @@
 {
-    "sign_title": "Connexion au compte",
     "username": "Identifiant",
     "password": "Mot de passe",
-    "sign_in": "Connexion",
-    "NAM": "Pas encore membre ?",
-    "sign_up": "Inscription",
-    "forgot": "Mot de passe oublié ?",
-    "reset": "Changer de mot de passe"
+    "signIn": "Se connecter",
+    "signUp": "Inscription",
+    "navBar": {
+        "signOut": "Se déconnecter",
+        "profile": "Profil",
+        "browsing": "Rechercher",
+        "settings": "Paramètres"
+    },
+    "signin": {
+        "signinTitle": "Connexion au compte",
+        "NAM": "Pas encore membre ?",
+        "forgot": "Mot de passe oublié ?",
+        "reset": "Changer de mot de passe"
+    },
+    "signup": {
+        "signUpError": "Impossible de s'inscrire, ",
+        "AAM": "Déjà membre ?",
+        "lastname": "Nom",
+        "firstname": "Prénom",
+        "email": "Email",
+        "member": "Deviens membre !"
+    },
+    "errors": {
+        "errorMsg": "erreur",
+        "successMsg": "Succès",
+        "NotConnected": "déconnecté",
+        "uknownUsername": "utilisateur inconnus",
+        "invalidPassword": "mot de passe invalide",
+        "emailNotVerified": "l'email n'est pas vérifié",
+        "missingPwd": "Mot de passe manquant",
+        "missingUsername": "Identifiant manquant",
+
+        "invalidUsername": "format d'identifiant invalide",
+        "usernameTaken": "identifiant déjà pris",
+        "emailTaken": "un compte possède déjà cet email",
+        "invalidEmail": "email invalide",
+        "invalidFirstName": "mauvais format de prénom",
+        "invalidLastName": "mauvais format de nom",
+        "wrongEmailFormat": "mauvais format d'email",
+
+        "missingEmail": "Email manquant",
+        "missingFirstName": "Prénom manquant",
+        "missingLastName": "Nom manquant",
+
+        "weakPwd": "mot de passe trop faible",
+
+        "invalidId": "Id invalide",
+
+        "invalidPhotoExtension": "Extension de photo invalide",
+        "emptyPhoto": "photo vide",
+        "photoTooBig": "l'image est trop volumineuse",
+        "photoNbLimit": "nombre d'image dépasse pour ce profil",
+        "photoResolution": "résolution d'image incorrecte",
+
+        "emptyPhotoId": "identifiant d'image vide",
+        "invalidPhotoId": "identifiant d'image invalide"
+    }
 }
