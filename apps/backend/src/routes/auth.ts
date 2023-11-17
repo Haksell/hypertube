@@ -16,7 +16,7 @@ import { createValidator } from 'express-joi-validation'
 import Joi from 'joi'
 
 const router: Router = express.Router()
-const validator = createValidator()
+const validator = createValidator({passError: true})
 
 const passwordSchema = Joi.string()
     .required()
