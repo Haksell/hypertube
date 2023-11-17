@@ -28,7 +28,19 @@ model User {
   profile_picture String?
 }
 
-// model Movies {
-// 	id Int @id @default(autoincrement())
-// 	title String
-// }
+model Movies {
+	id Int @id @default(autoincrement())
+	createdAt DateTime @default(now())
+	movie_id Int
+	imdb_code String
+	title String
+	file String?
+	dateDownload DateTime?
+	year Int
+	rating Int
+	runtime Int
+	genres String?
+	summary String?
+	language String
+	background_image String
+}
