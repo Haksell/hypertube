@@ -1,5 +1,11 @@
-import { InvalidId, SuccessMsg, UnknownUsername } from '../shared/msg-error'
-import { get42Token, get42User, getFacebookToken, getFacebookUser, getGithubToken, getGithubUser } from '../utils/axios'
+import {
+    get42Token,
+    get42User,
+    getFacebookToken,
+    getFacebookUser,
+    getGithubToken,
+    getGithubUser,
+} from '../utils/axios'
 import { formatUser, generateUniqueUsername } from '../utils/format'
 import { generateId } from '../utils/generate-code'
 import { generateEmailBodyForgotPwd, generateEmailBodyNewUser } from '../utils/generateBodyEmail'
@@ -22,7 +28,7 @@ export async function register(req: Request, res: Response) {
     })
 
     if (user.length > 0) {
-        res.status(400).send('User already exists. Please login')
+        res.status(400).send('userEmailExists')
         return
     }
 
@@ -33,7 +39,7 @@ export async function register(req: Request, res: Response) {
     })
 
     if (user.length > 0) {
-        res.status(400).send('Username is already taken. Please try another')
+        res.status(400).send('userUsernameExists')
         return
     }
 
@@ -54,7 +60,7 @@ export async function register(req: Request, res: Response) {
     // const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
     // sendEmail('Verify your account', Email, emailBody);
 
-    res.status(201).send(SuccessMsg)
+    res.status(201).send('userCreated')
 }
 
 export async function login(req: Request, res: Response) {
@@ -67,15 +73,12 @@ export async function login(req: Request, res: Response) {
     })
 
     if (!user) {
-        res.status(400).send('Invalid Credentials')
+        res.status(400).send('invalidCredentials')
         return
     }
 
     if (user.authMethod !== 'EMAIL') {
-        res.status(400).send(
-            'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
-                user.authMethod,
-        )
+        res.status(400).send('wrongAuthMethod' + user.authMethod)
         return
     }
 
@@ -87,7 +90,7 @@ export async function login(req: Request, res: Response) {
         res.status(200).send(formatUser(user))
         return
     } else {
-        res.status(400).send('Invalid Credentials')
+        res.status(400).send('invalidCredentials')
         return
     }
 }
@@ -119,10 +122,7 @@ export async function login42(req: Request, res: Response) {
             },
         })
     } else if (user.authMethod !== 'FORTYTWO') {
-        res.status(400).send(
-            'An account with this email already exists. Please use the usual login method: ' +
-                user.authMethod,
-        )
+        res.status(400).send('wrongAuthMethod' + user.authMethod)
         return
     }
 
@@ -133,7 +133,7 @@ export async function login42(req: Request, res: Response) {
 }
 
 export async function loginGithub(req: Request, res: Response) {
-	const { code } = req.body
+    const { code } = req.body
     const access_token = await getGithubToken(code)
     const { login, email, avatar_url } = await getGithubUser(access_token)
 
@@ -154,14 +154,11 @@ export async function loginGithub(req: Request, res: Response) {
                 email: email,
                 authMethod: 'GITHUB',
                 email_verified: true,
-				profile_picture: avatar_url,
+                profile_picture: avatar_url,
             },
         })
     } else if (user.authMethod !== 'GITHUB') {
-        res.status(400).send(
-            'An account with this email already exists. Please use the usual login method: ' +
-                user.authMethod,
-        )
+        res.status(400).send('wrongAuthMethod' + user.authMethod)
         return
     }
 
@@ -172,7 +169,7 @@ export async function loginGithub(req: Request, res: Response) {
 }
 
 export async function loginFacebook(req: Request, res: Response) {
-	const { code } = req.body
+    const { code } = req.body
     const access_token = await getFacebookToken(code)
     const { name, email } = await getFacebookUser(access_token)
 
@@ -196,10 +193,7 @@ export async function loginFacebook(req: Request, res: Response) {
             },
         })
     } else if (user.authMethod !== 'FACEBOOK') {
-        res.status(400).send(
-            'An account with this email already exists. Please use the usual login method: ' +
-                user.authMethod,
-        )
+        res.status(400).send('wrongAuthMethod' + user.authMethod)
         return
     }
 
@@ -217,17 +211,17 @@ export async function ConfirmEmail(req: Request, res: Response) {
         },
     })
     if (users.length == 0) {
-        res.status(400).json(InvalidId)
+        res.status(400).json('invalidConfirmId')
         return
     }
 
     if (users.length > 1) {
-        res.status(500).json('Link error (dup) - contact admin')
+        res.sendStatus(500)
         return
     }
     const user = users[0]
     if (user.email_verified === true) {
-        res.status(400).json('already validated')
+        res.status(400).json('alreadyValidated')
         return
     }
 
@@ -239,7 +233,7 @@ export async function ConfirmEmail(req: Request, res: Response) {
             email_verified: true,
         },
     })
-    res.status(200).json({ msg: SuccessMsg })
+    res.status(200).json('mailConfirmed')
 }
 
 export async function ForgotPwd(req: Request, res: Response) {
@@ -251,15 +245,12 @@ export async function ForgotPwd(req: Request, res: Response) {
         },
     })
     if (!user) {
-        res.status(400).json(UnknownUsername)
+        res.status(200).send('emailSent')
         return
     }
 
     if (user.authMethod !== 'EMAIL') {
-        res.status(400).send(
-            'An account with this username has been found but is using a different login method. Please use the usual login method: ' +
-                user.authMethod,
-        )
+        res.status(400).send('wrongAuthMethod' + user.authMethod)
         return
     }
 
@@ -280,7 +271,7 @@ export async function ForgotPwd(req: Request, res: Response) {
     // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
     // sendEmail('Reset your password', email, emailBody);
 
-    res.status(200).json({ msg: SuccessMsg })
+    res.status(200).send('emailSent')
 }
 
 export async function ConfirmForgotPwd(req: Request, res: Response) {
@@ -291,10 +282,10 @@ export async function ConfirmForgotPwd(req: Request, res: Response) {
         },
     })
     if (users.length !== 1) {
-        res.status(400).json(InvalidId)
+        res.status(400).send('invalidConfirmId')
         return
     }
-    res.status(200).json({ msg: SuccessMsg })
+    res.status(200).send('validConfirmId')
 }
 
 export async function ResetPwd(req: Request, res: Response) {
@@ -304,11 +295,11 @@ export async function ResetPwd(req: Request, res: Response) {
     const users = await prisma.user.findMany({
         where: {
             reset_pwd: confirmID,
-			authMethod: 'EMAIL',
+            authMethod: 'EMAIL',
         },
     })
     if (users.length !== 1) {
-        res.status(400).json(InvalidId)
+        res.status(400).json('invalidConfirmId')
         return
     }
     //amend pwd
@@ -321,10 +312,10 @@ export async function ResetPwd(req: Request, res: Response) {
             reset_pwd: null,
         },
     })
-    res.status(200).json({ msg: SuccessMsg })
+    res.status(200).json('pwdReseted')
 }
 
 export async function SignOut(req: Request, res: Response) {
-    res.clearCookie('token');
-    res.status(200).json(SuccessMsg);
+    res.clearCookie('token')
+    res.status(200).send('signOut')
 }
