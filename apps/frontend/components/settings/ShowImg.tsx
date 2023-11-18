@@ -65,7 +65,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
         deletePictureBackend()
     }
     return (
-        <div className="relative w-40">
+        <div className="relative w-40 flex items-center justify-center">
             <img className="w-40 h-40 object-cover" src={link} alt={altImage} />
             <div className="group absolute top-0 left-0 w-full h-full opacity-0 transition-opacity hover:opacity-100">
 				<label className="block text-sm font-semibold py-1 text-gray-900 dark:text-gray w-full text-center bg-white bg-opacity-60 cursor-pointer">

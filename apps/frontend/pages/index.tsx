@@ -60,7 +60,7 @@ const MoviesPage = () => {
 
     const fetchMovies = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/movies')
+            const response = await axios.get('http://localhost:5001/movies?sort=seeds&limit=20&offset=0')
             setMovies((prevMovies) => [...prevMovies, ...response.data])
             if (shouldFetchMovies()) fetchMovies()
         } catch (error) {
