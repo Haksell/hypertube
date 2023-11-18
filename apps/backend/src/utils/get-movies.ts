@@ -1,7 +1,8 @@
 import axios from 'axios'
-import { Movie } from '../types_backend/movies'
+import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
+import { Request } from 'express'
 
-export async function getMoviesFromYTS(limit: number, page: number): Promise<Movie[]> {
+export async function getMoviesFromYTS(params: number, page: number): Promise<Movie[]> {
     try {
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json?limit=${limit}`)
         const moviesYTS = response.data.data.movies
@@ -101,4 +102,40 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 		// console.log('cannot get '+movie_id)
 		return null
 	}
+}
+
+export function convertRequestParams(req: Request): TRequestGetMovie {
+    const { genra, grade, prod, sort, limit, offset } = req.query
+    console.log('params: limit=' + limit + ', offset=' + offset)
+    const limitNB: number = extractInt(true, limit, 'limit')
+    const offsetNB: number = extractInt(true, offset, 'offset')
+    const gradeNB: number = extractInt(false, grade, 'grade')
+    const prodNB: number = extractInt(false, prod, 'prod')
+	const sortStr: string = extractStr(true, sort, 'sort', 'seeds')
+	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
+	const genresStr: string = extractStr(false, genra, 'genra')
+	const genraTab: string[] = genresStr === '' ? [] : genresStr.split(',')
+    let params: TRequestGetMovie = {
+        genra: genraTab,
+        grade: gradeNB,
+        prod: prodNB,
+        sort: sortStr,
+        limit: limitNB,
+        offset: offsetNB,
+    }
+    return params
+}
+
+function extractInt(mandatory: boolean, variable: any, name: string): number {
+    if (!mandatory && !variable) return 0
+    if (mandatory && !variable) throw new CustomError(`params ${name} is mandatory`)
+    const limitNB: number = Array.isArray(variable) ? parseInt(variable[0]) : parseInt(variable)
+    return limitNB
+}
+
+function extractStr(mandatory: boolean, variable: any, name: string, def?: string): string {
+    if (!mandatory && !variable) return def ? def : ''
+    if (mandatory && !variable) throw new CustomError(`params ${name} is mandatory`)
+    const str: string = Array.isArray(variable) ? variable[0] : variable
+    return str
 }
