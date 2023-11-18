@@ -5,8 +5,10 @@ import { Request, Response } from 'express'
 export async function getMovies(req: Request, res: Response) {
     try {
         const params = convertRequestParams(req)
-        const moviesYTS: Movie[] = await getMoviesFromYTS(15, 1)
-        const moviesEZTV: Movie[] = await getMoviesEZTV(5, 1)
+		const repartition: number = Math.floor((params.limit / 4) * 3)
+		console.log('repart='+repartition)
+        const moviesYTS: Movie[] = await getMoviesFromYTS(repartition, params)
+        const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit - repartition, params)
 
         // assemble both
         let movies: Movie[] = []

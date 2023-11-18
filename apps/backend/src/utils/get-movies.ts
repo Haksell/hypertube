@@ -2,9 +2,9 @@ import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
 
-export async function getMoviesFromYTS(params: number, page: number): Promise<Movie[]> {
+export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
-        const response = await axios.get(`https://yts.mx/api/v2/list_movies.json?limit=${limit}`)
+        const response = await axios.get(`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`)
         const moviesYTS = response.data.data.movies
         const movies: Movie[] = []
 
@@ -17,10 +17,8 @@ export async function getMoviesFromYTS(params: number, page: number): Promise<Mo
                 imdbRating: elem.rating,
 				source: 'YTS'
             }
-			// console.log(oneMovie.title + ' => '+ elem.imdb_code)
             movies.push(oneMovie)
         }
-        // console.log(movies)
 		return movies
     } catch (error) {
 		return []
@@ -35,9 +33,9 @@ type InfoMovie = {
 }
 
 // get movies from EZTV source and update them with movieDB source
-export async function getMoviesEZTV(limit: number, page: number): Promise<Movie[]> {
+export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
 	try {
-		const response = await axios.get(`https://eztv.re/api/get-torrents?limit=${limit}&page=${page}`)
+		const response = await axios.get(`https://eztv.re/api/get-torrents?limit=${limit}&page=${params.offset}`)
 		const moviesEZTV = response.data.torrents
 		const movies: Movie[] = []
 
@@ -106,7 +104,6 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 
 export function convertRequestParams(req: Request): TRequestGetMovie {
     const { genra, grade, prod, sort, limit, offset } = req.query
-    console.log('params: limit=' + limit + ', offset=' + offset)
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
     const gradeNB: number = extractInt(false, grade, 'grade')
@@ -128,7 +125,7 @@ export function convertRequestParams(req: Request): TRequestGetMovie {
 
 function extractInt(mandatory: boolean, variable: any, name: string): number {
     if (!mandatory && !variable) return 0
-    if (mandatory && !variable) throw new CustomError(`params ${name} is mandatory`)
+    if (mandatory && !variable && variable !== 0) throw new CustomError(`params ${name} is mandatory`)
     const limitNB: number = Array.isArray(variable) ? parseInt(variable[0]) : parseInt(variable)
     return limitNB
 }
