@@ -1,15 +1,6 @@
-import axios from 'axios'
 import { Request, Response } from 'express'
 import { getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
-
-type Movie = {
-    title: string
-    thumbnail: string
-    year: number
-    length: number
-    imdbRating?: number
-	source: 'EZTV' | 'YTS'
-}
+import { Movie } from '../types_backend/movies'
 
 export async function getMovies(req: Request, res: Response) {
     const moviesYTS: Movie[] = await getMoviesFromYTS(15, 1)

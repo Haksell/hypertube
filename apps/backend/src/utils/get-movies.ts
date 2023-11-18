@@ -1,3 +1,6 @@
+import axios from 'axios'
+import { Movie } from '../types_backend/movies'
+
 export async function getMoviesFromYTS(limit: number, page: number): Promise<Movie[]> {
     try {
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json?limit=${limit}`)
