@@ -14,7 +14,6 @@ type Movie = {
 export async function getMovies(req: Request, res: Response) {
     const moviesYTS: Movie[] = await getMoviesFromYTS(15, 1)
 	const moviesEZTV: Movie[] = await getMoviesEZTV(5,1)
-
 	
 	// assemble both
 	let movies: Movie[] = []
