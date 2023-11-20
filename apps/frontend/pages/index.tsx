@@ -56,8 +56,8 @@ type FilterProps = {
 
 const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => {
     return (
-        <div className="relative grow">
-            <label htmlFor={id} className="block mb-2 font-bold text-gray-900 dark:text-white">
+        <div className="relative w-52 mr-2">
+            <label htmlFor={id} className="block mb-2 font-bold text-white">
                 {label}:
             </label>
             <select
@@ -86,6 +86,7 @@ const MoviesPage = () => {
     const [sortBy, setSortBy] = useState('')
     const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
+    let isFetchingFromScroll = false
 
     const shouldFetchMovies = () => {
         return (
@@ -96,19 +97,20 @@ const MoviesPage = () => {
 
     const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
         try {
+            const params = {
+                offset: offset,
+                limit: limit,
+                downloaded,
+            }
+            if (search) params['search'] = search
+            if (genre) params['genre'] = genre
+            if (yearRange) params['yearRange'] = yearRange
+            if (minGrade) params['minGrade'] = minGrade
+            if (language) params['language'] = language
+            if (sortBy) params['sortBy'] = sortBy
+            else params['sortBy'] = 'seeds'
             const response = await axios.get('http://localhost:5001/movies', {
-                params: {
-                    offset,
-                    limit,
-                    search,
-                    genre,
-                    yearRange,
-                    minGrade,
-                    language,
-                    sortBy,
-                    type: newType,
-                    downloaded,
-                },
+                params: params,
             })
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + limit)
@@ -121,8 +123,12 @@ const MoviesPage = () => {
         if (shouldFetchMovies()) fetchMovies()
     }, [fetchCount])
 
-    const handleScroll = () => {
-        if (shouldFetchMovies()) fetchMovies()
+    const handleScroll = async () => {
+        if (!isFetchingFromScroll) {
+            isFetchingFromScroll = true
+            if (shouldFetchMovies()) await fetchMovies()
+            isFetchingFromScroll = false
+        }
     }
 
     useEffect(() => {

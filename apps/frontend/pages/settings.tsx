@@ -12,11 +12,13 @@ import { TUserContext } from "../src/shared/user";
 import { useUserContext } from "../src/context/UserContext";
 import MainLayout from "../layouts/MainLayout";
 import ShowImg from "../components/settings/ShowImg";
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
 	const { user } = useUserContext();
+	const { t } = useTranslation('common')
 	
 	//fields
     const [email, setEmail] = useState<string>('');
@@ -90,31 +92,31 @@ function SettingsPage() {
         <UserNotSignedIn />
     ) : (
         <MainLayout>
-            <TitleSmall text={'Settings'} space="1" />
+            <TitleSmall text={t('settingsMsg')} space="1" />
 
             <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-2" action="#" onSubmit={handleSaveSettings}>
                     <ShowErrorMessage
                         error={error}
-                        message={'Impossible to sign up because '}
+                        message={t('settings.noSignUp')}
                     />
                     <ErrorField
                         name="email1"
 						type='email'
-                        title="Email"
+                        title={t('email')}
                         onBlur={handleOnChangeEmail}
 						init={email}
                     />
 					<MultiplesInputOneRow nbInRow="2">
 						<ErrorField
 							name="firstname"
-							title="First name"
+							title={t('firstname')}
 							onBlur={handleOnChangeFirstname}
 							init={firstname}
 						/>
 						<ErrorField
 							name="lastname"
-							title="Last name"
+							title={t('lastname')}
 							onBlur={handleOnChangeLastname}
 							init={lastname}
 						/>
@@ -127,7 +129,7 @@ function SettingsPage() {
                 	/>
 
                     <Button
-                        text="Amend your profile"
+                        text={t('settings.amend')}
                         type="submit"
                         stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     />

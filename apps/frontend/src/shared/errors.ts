@@ -38,6 +38,7 @@ export const ErMsg = (key: string, t: (key: string) => string): string | null =>
         { key: 'MissingGender', value: t('errors.missingGender') },
         { key: 'WeakPwd', value: t('errors.weakPwd') },
         { key: 'InvalidId', value: t('errors.invalidId') },
+        { key: "AlreadyValid", value: t('errors.alreadyValid') },
         //images
         { key: 'InvalidPhotoExtension', value: t('errors.invalidPhotoExtension') },
         { key: 'EmptyPhoto', value: t('errors.emptyPhoto') },

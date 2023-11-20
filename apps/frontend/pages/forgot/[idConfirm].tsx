@@ -88,21 +88,21 @@ function ResetPasswordPage() {
     return retour && retour === ErMsg('SuccessMsg', t) ? (
         created ? (
             <PageTitleOneText
-                title="Password changed"
-                textBody="You can now log in using your new password"
+                title={t('forgot2.pwdChange')}
+                textBody={t('forgot2.newLog')}
             />
         ) : (
             <MainLayout>
-                <TitleSmall text={`Select a new password !`} />
+                <TitleSmall text={t('forgot2.selectNewPwd')} />
                 <TextPage>
                     <form className="space-y-6" action="#" onSubmit={handleSignIn}>
                         <ShowErrorMessage
                             error={error}
-                            message={'Impossible to change password because '}
+                            message={t('forgot2.noPwdChange')}
                         />
                         <ErrorField
                             name="password"
-                            title="New password"
+                            title={t('forgot2.newPwd')}
                             onBlur={handleOnChangePassword}
                             styleError={styleErrorPassword}
                             setStyleError={setStyleErrorPassword}
@@ -111,19 +111,19 @@ function ResetPasswordPage() {
 
                         <div>
                             <Button
-                                text="Change password"
+                                text={t('forgot2.changePwd')}
                                 type="submit"
                                 stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             />
                         </div>
                     </form>
 
-                    <LinkText linkText="Get back home" link="/" />
+                    <LinkText linkText={t('getBack')} link="/" />
                 </TextPage>
             </MainLayout>
         )
     ) : (
-        <PageTitleOneText title="Oups..." textBody="Links not working here" />
+        <PageTitleOneText title={t('forgot2.oups')} textBody={t('forgot2.linkDead')} />
     )
 }
 

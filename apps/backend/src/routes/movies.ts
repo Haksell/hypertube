@@ -9,10 +9,12 @@ const router: Router = express.Router()
 const validator = createValidator()
 
 const movieSchema = Joi.object({
-    genra: Joi.string(),
-    grade: Joi.number(),
-	prod: Joi.number(),
-    sort: Joi.string(),
+    genre: Joi.string(),
+    minGrade: Joi.number(),
+	yearRange: Joi.number(),
+	language: Joi.string(),
+    sortBy: Joi.string(),
+	search: Joi.string(),
 	limit: Joi.number().required(),
 	offset: Joi.number().required(),
 })
