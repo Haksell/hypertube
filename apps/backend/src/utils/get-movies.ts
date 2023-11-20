@@ -2,9 +2,22 @@ import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
 
+//`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
-        const response = await axios.get(`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`)
+        const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
+			{
+				params: {
+					limit: limit,
+					page: params.offset,
+					sort_by: params.sort,
+					query_term: 0,
+					genre: params.genra,
+					minimum_rating: 0,
+			}
+		})
+		console.log(response.config.url)
+		console.log(response.config.params)
         const moviesYTS = response.data.data.movies
         const movies: Movie[] = []
 
@@ -15,7 +28,13 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
                 year: elem.year,
                 length: elem.runtime,
                 imdbRating: elem.rating,
-				source: 'YTS'
+				imdb_code: elem.imdb_code,
+				langage: elem.language,
+				genre: elem.genres,
+				seeds: elem.torrents.seeds,
+				quality: elem.torrents.quality,
+				url: elem.torrents.url,
+				source: 'YTS',
             }
             movies.push(oneMovie)
         }
@@ -50,6 +69,12 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
                 year: elem.year,
                 length: elem.runtime,
                 imdbRating: elem.rating,
+				imdb_code: elem.imdb_code,
+				langage: '',
+				genre: [],
+				seeds: elem.seeds,
+				quality: '',
+				url: elem.torrent_url,
 				source: 'EZTV'
 			}
 			if (info) {
@@ -124,7 +149,7 @@ export function convertRequestParams(req: Request): TRequestGetMovie {
 }
 
 function extractInt(mandatory: boolean, variable: any, name: string): number {
-    if (!mandatory && !variable) return 0
+    if (!mandatory && !variable) return -1
     if (mandatory && !variable && variable !== 0) throw new CustomError(`params ${name} is mandatory`)
     const limitNB: number = Array.isArray(variable) ? parseInt(variable[0]) : parseInt(variable)
     return limitNB
