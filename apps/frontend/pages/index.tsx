@@ -35,14 +35,13 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     className={`w-full h-auto transition-all duration-300 ease-in-out ${
                         isHovered ? 'opacity-50' : ''
                     }`}
-                />TV Showsext-center text-sm">{movie.imdbRating} / 10</div>
-                        )}
-                        <div className="flex justify-between text-sm">
-                            <span>{movie.year}</span>
-                            <span>{formatDuration(movie.length)}</span>
-                        </div>
+                />
+                <div>
+                    <div className="flex justify-between text-sm">
+                        <span>{movie.year}</span>
+                        <span>{formatDuration(movie.length)}</span>
                     </div>
-                )}
+                </div>
             </div>
         </Link>
     )
