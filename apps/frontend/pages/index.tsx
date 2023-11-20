@@ -1,10 +1,11 @@
 import NavBar from '../components/NavBar'
 import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next'
 
 type Movie = {
     title: string
@@ -87,6 +88,7 @@ const MoviesPage = () => {
     const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
+	const { t } = useTranslation('common')
 
     const shouldFetchMovies = () => {
         return (
@@ -187,7 +189,7 @@ const MoviesPage = () => {
                         <input
                             type="text"
                             className="bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none"
-                            placeholder="Search movies by name..."
+                            placeholder={t('index.searchMovies')}
                             onChange={(e) => setSearch(e.target.value)}
                             aria-label="Search movies"
                         />
@@ -198,22 +200,22 @@ const MoviesPage = () => {
                         className="hidden sm:block bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
                         onClick={() => fetchMovies(0)}
                     >
-                        Search
+                        {t('index.search')}
                     </button>
                 </div>
                 <div className="flex flex-wrap justify-center items-center px-5 w-full max-w-7xl gap-4 mt-4">
                     <Filter
                         id="genre"
-                        label="Genre"
+                        label={t('index.genre.name')}
                         handleChange={setGenre}
                         options={[
-                            { value: 'drama', label: 'Drama' },
-                            { value: 'action', label: 'Action' },
+                            { value: 'drama', label: t('index.genre.drama') },
+                            { value: 'action', label: t('index.genre.action') },
                         ]}
                     />
                     <Filter
                         id="year"
-                        label="Production Year"
+                        label={t('index.year')}
                         handleChange={setYearRange}
                         options={[
                             { value: '2022,2023', label: '2022 - now' },
@@ -222,7 +224,7 @@ const MoviesPage = () => {
                     />
                     <Filter
                         id="grade"
-                        label="Grade"
+                        label={t('index.grade')}
                         handleChange={setMinGrade}
                         options={[
                             { value: '9', label: '9+' },
@@ -231,20 +233,20 @@ const MoviesPage = () => {
                     />
                     <Filter
                         id="language"
-                        label="Language"
+                        label={t('index.lang.name')}
                         handleChange={setLanguage}
                         options={[
-                            { value: 'english', label: 'English' },
-                            { value: 'french', label: 'French' },
+                            { value: 'english', label: t('index.lang.english') },
+                            { value: 'french', label: t('index.lang.french') },
                         ]}
                     />
                     <Filter
                         id="sort"
-                        label="Sort by"
+                        label={t('index.sort.name')}
                         handleChange={setSortBy}
                         options={[
-                            { value: 'rating', label: 'Rating' },
-                            { value: 'year', label: 'Year' },
+                            { value: 'rating', label: t('index.sort.rating') },
+                            { value: 'year', label: t('index.sort.year') },
                         ]}
                     />
                     <Filter
@@ -263,7 +265,7 @@ const MoviesPage = () => {
                         onClick={() => fetchMovies(0)}
                         style={{ boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)' }}
                     >
-                        Search
+                        {t('index.search')}
                     </button>
                 </div>
             </div>

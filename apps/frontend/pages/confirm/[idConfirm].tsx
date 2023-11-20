@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
+import type { GetServerSideProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ConfirmEmailPage() {
     const router = useRouter()
@@ -54,5 +56,11 @@ function ConfirmEmailPage() {
         </TramePage>
     )
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+      ...await serverSideTranslations(locale as string, ['common']),
+    },
+})
 
 export default ConfirmEmailPage

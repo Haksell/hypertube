@@ -14,6 +14,8 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
+import type { GetServerSideProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ResetPasswordPage() {
     const router = useRouter()
@@ -126,5 +128,11 @@ function ResetPasswordPage() {
         <PageTitleOneText title={t('forgot2.oups')} textBody={t('forgot2.linkDead')} />
     )
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+      ...await serverSideTranslations(locale as string, ['common']),
+    },
+})
 
 export default ResetPasswordPage

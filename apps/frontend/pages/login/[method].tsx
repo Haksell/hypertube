@@ -4,12 +4,15 @@ import axios from 'axios'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
 
 export default function Login42(): JSX.Element {
     const { loginUser } = useUserContext()
     const router = useRouter()
     const { method } = router.query
     const [error, setError] = useState(false)
+	const { t } = useTranslation('common')
 
     const oauth = async () => {
         try {
@@ -47,16 +50,16 @@ export default function Login42(): JSX.Element {
             >
                 <div className="block max-w-sm p-6 border rounded-lg shadow bg-gray-800 border-gray-700">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
-                        The authentication failed
+                        {t('login.authFail')}
                     </h5>
                     <p className="font-normal text-gray-400 mb-4">
-                        Your account is still here. You probably just need to try again.
+                        {t('login.accountTryAgain')}
                     </p>
                     <a
                         href="/signin"
                         className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                        Try again
+                        {t('login.tryAgain')}
                         <svg
                             className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
                             aria-hidden="true"
@@ -88,23 +91,8 @@ export default function Login42(): JSX.Element {
     )
 }
 
-export async function getStaticPaths() {
-    // Define the methods you want to pre-render
-    const methods = ['42', 'github', 'facebook']
-
-    // Generate paths with `params` according to the methods
-    const paths = methods.map((method) => ({
-        params: { method },
-    }))
-
-    // Return the paths and fallback strategy
-    return { paths, fallback: false }
-}
-
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ['common'])),
-        },
-    }
-}
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+      ...await serverSideTranslations(locale as string, ['common']),
+    },
+})

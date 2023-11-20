@@ -53,6 +53,39 @@
         "oups": "Oups...",
         "linkDead": "Links not working here"
     },
+    "login": {
+        "authFail": "The authentication failed",
+        "accountTryAgain": "Your account is still here. You probably just need to try again.",
+        "tryAgain": "Try again"
+    },
+    "index": {
+        "movies": "Movies",
+        "tv": "TV shows",
+        "availability": {
+           "name": "Availability",
+           "all": "All",
+           "server": "On Server"
+        },
+        "searchMovies": "Search movies by name...",
+        "search": "Search",
+        "genre": {
+            "name": "Genre",
+            "drama": "Drama",
+            "action": "Action"
+        },
+        "year": "Production Year",
+        "grade": "Grade",
+        "lang": {
+            "name": "Language",
+            "english": "English",
+            "french": "French"
+        },
+        "sort": {
+            "name": "Sort by",
+            "rating": "Rating",
+            "year": "Year"
+        }
+    },
     "404": {
         "lostPage": "Page not found",
         "sorry": "Sorry, we couldn't find the page you're looking for."
@@ -107,5 +140,20 @@
     "UserNotSignedIn": {
         "getOut": "You cannot be here...",
         "plsSign": "Please sign in or sign up to access this page !"
-    }
+    },
+    "invalidInput": "Invalid Input",
+    "userEmailExists": "This email is already used",
+    "userUsernameExists": "This username is already taken",
+    "userCreated": "Registration successful",
+    "invalidCredentials": "Invalid credentials",
+    "wrongAuthMethodEMAIL": "An account already exists using email authentication",
+    "wrongAuthMethodGITHUB": "An account already exists using GitHub authentication",
+    "wrongAuthMethod[METHOD]": "An account already exists using method authentication",
+    "invalidConfirmId": "Confirmation code incorrect",
+    "alreadyValidated": "Email already validated",
+    "mailConfirmed": "Email confirmed",
+    "emailSent": "If this account exists, an email has been sent to your inbox",
+    "validConfirmId": "Confirmation code correct",
+    "pwdReseted": "Password successfully updated",
+    "signOut": "You're logged out"
 }
