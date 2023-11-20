@@ -2,20 +2,31 @@ import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
 
+type TRequete = {
+	limit: number
+	page: number
+	sort_by: string
+	query_term?: string
+	genre?: string
+	minimum_rating? : number
+}
+
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
+		const parameters: TRequete = {
+			limit: limit,
+			page: params.offset,
+			sort_by: params.sort,
+		}
+		if (limit === 125) parameters.query_term = '0'
+		if (params.genre.length !== 0) parameters.genre = tabToString(params.genre)
+		if (params.grade !== -1) parameters.minimum_rating = params.grade
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
 			{
-				params: {
-					limit: limit,
-					page: params.offset,
-					sort_by: params.sort,
-					query_term: 0,
-					genre: params.genra,
-					minimum_rating: 0,
-			}
+				params: parameters
 		})
+
 		console.log(response.config.url)
 		console.log(response.config.params)
         const moviesYTS = response.data.data.movies
@@ -42,6 +53,20 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
     } catch (error) {
 		return []
     }
+}
+
+function tabToString(tab: string[]): string {
+	let str: string = ''
+	let i = 0
+	for (const elem of tab) {
+		if (i === 0)
+			str = elem
+		else {
+			str = str + ',' + elem
+		}
+		i = i + 1
+	}
+	return str
 }
 
 type InfoMovie = {
@@ -127,18 +152,24 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 	}
 }
 
+// 	yearRange: Joi.number(),
+// 	language: Joi.string(),
+// 	search: Joi.string(),
+
+
 export function convertRequestParams(req: Request): TRequestGetMovie {
-    const { genra, grade, prod, sort, limit, offset } = req.query
+    const { genre, minGrade, prod, sortBy, limit, offset } = req.query
+	console.log('here we come')
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
-    const gradeNB: number = extractInt(false, grade, 'grade')
+    const gradeNB: number = extractInt(false, minGrade, 'minGrade')
     const prodNB: number = extractInt(false, prod, 'prod')
-	const sortStr: string = extractStr(true, sort, 'sort', 'seeds')
+	const sortStr: string = extractStr(true, sortBy, 'sortBy', 'seeds')
 	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
-	const genresStr: string = extractStr(false, genra, 'genra')
-	const genraTab: string[] = genresStr === '' ? [] : genresStr.split(',')
+	const genresStr: string = extractStr(false, genre, 'genre')
+	const genreTab: string[] = genresStr === '' ? [] : genresStr.split(',')
     let params: TRequestGetMovie = {
-        genra: genraTab,
+        genre: genreTab,
         grade: gradeNB,
         prod: prodNB,
         sort: sortStr,

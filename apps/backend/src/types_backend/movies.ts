@@ -15,7 +15,7 @@ export type Movie = {
 }
 
 export type TRequestGetMovie = {
-    genra: string[]
+    genre: string[]
     grade: number
     prod: number
     sort: string

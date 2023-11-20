@@ -3,11 +3,26 @@ import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/
 import { Request, Response } from 'express'
 
 export async function getMovies(req: Request, res: Response) {
+	console.log('coming first')
     try {
         const params = convertRequestParams(req)
+		console.log(params)
 		const repartition: number = Math.floor((params.limit / 4) * 3)
         const moviesYTS: Movie[] = await getMoviesFromYTS(repartition, params)
         // const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit - repartition, params)
+
+
+		// let movies
+		// if (downloaded == false)
+		// 	if (source == 'tvShow') {
+		// 		movies = fetchFromEZTV(param)
+		// 	} else {
+
+		// 	}
+		// } else {
+		// 	fetchFromDB(type=source)
+		// }
+
 
         // assemble both
         let movies: Movie[] = []

@@ -1,10 +1,10 @@
 import NavBar from '../components/NavBar'
 import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 type Movie = {
     title: string
@@ -64,7 +64,7 @@ type FilterProps = {
 const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => {
     return (
         <div className="relative w-52 mr-2">
-            <label htmlFor={id} className="block mb-2 font-bold text-gray-900 dark:text-white">
+            <label htmlFor={id} className="block mb-2 font-bold text-white">
                 {label}:
             </label>
             <select
@@ -91,6 +91,7 @@ const MoviesPage = () => {
     const [minGrade, setMinGrade] = useState('')
     const [language, setLanguage] = useState('')
     const [sortBy, setSortBy] = useState('')
+    let isFetchingFromScroll = false
 
     const shouldFetchMovies = () => {
         return (
@@ -101,17 +102,19 @@ const MoviesPage = () => {
 
     const fetchMovies = async (offset: number = fetchCount) => {
         try {
+            const params = {
+                offset: offset,
+                limit: limit,
+            }
+            if (search) params['search'] = search
+            if (genre) params['genre'] = genre
+            if (yearRange) params['yearRange'] = yearRange
+            if (minGrade) params['minGrade'] = minGrade
+            if (language) params['language'] = language
+            if (sortBy) params['sortBy'] = sortBy
+            else params['sortBy'] = 'seeds'
             const response = await axios.get('http://localhost:5001/movies', {
-                params: {
-                    offset,
-                    limit,
-                    search,
-                    genre,
-                    yearRange,
-                    minGrade,
-                    language,
-                    sortBy,
-                },
+                params: params,
             })
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + limit)
@@ -124,8 +127,12 @@ const MoviesPage = () => {
         if (shouldFetchMovies()) fetchMovies()
     }, [fetchCount])
 
-    const handleScroll = () => {
-        if (shouldFetchMovies()) fetchMovies()
+    const handleScroll = async () => {
+        if (!isFetchingFromScroll) {
+            isFetchingFromScroll = true
+            if (shouldFetchMovies()) await fetchMovies()
+            isFetchingFromScroll = false
+        }
     }
 
     useEffect(() => {
