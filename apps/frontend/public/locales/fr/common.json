@@ -1,27 +1,61 @@
 {
     "username": "Identifiant",
     "password": "Mot de passe",
-    "signIn": "Se connecter",
+    "lastname": "Nom",
+    "firstname": "Prénom",
+    "signIn": "Connexion",
     "signUp": "Inscription",
+    "email": "Email",
+    "NAM": "Pas encore membre ?",
+    "settingsMsg": "Paramètres",
+    "getBack": "Retour à l'accueil",
     "navBar": {
         "signOut": "Se déconnecter",
         "profile": "Profil",
-        "browsing": "Rechercher",
-        "settings": "Paramètres"
+        "browsing": "Rechercher"
+    },
+    "settings": {
+        "noSignUp": "Impossible de s'inscrire, ",
+        "amend": "Modifier votre profil"
     },
     "signin": {
         "signinTitle": "Connexion au compte",
-        "NAM": "Pas encore membre ?",
         "forgot": "Mot de passe oublié ?",
+        "log42": "Connexion avec 42",
+        "logGit": "Connexion avec Github",
+        "logFb": "Connexion avec Facebook",
         "reset": "Changer de mot de passe"
     },
     "signup": {
         "signUpError": "Impossible de s'inscrire, ",
         "AAM": "Déjà membre ?",
-        "lastname": "Nom",
-        "firstname": "Prénom",
-        "email": "Email",
         "member": "Deviens membre !"
+    },
+    "forgot": {
+        "title": "Mot de passe oublié ?",
+        "noRecovery": "Impossible de changer car ",
+        "recoverPwd": "Changer de mot de passe",
+        "rememberPwd": "Mot de passe retrouvé ?"
+    },
+    "confirm": {
+        "congrate": "Felicitation",
+        "linkLog": "Lien validé. Reconnectez-vous",
+        "error": "Erreur..",
+        "linkVal": "lien déjà validé."
+    },
+    "forgot2": {
+        "pwdChange": "Mot de passe changé",
+        "newLog": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+        "selectNewPwd": "Sélectionner un nouveau mot de passe !",
+        "noPwdChange": "Impossible de changer de mot de passe, ",
+        "newPwd": "Nouveau mot de passe",
+        "changePwd": "Changement de mot de passe",
+        "oups": "Oups...",
+        "linkDead": "Le lien ne marche pas ici"
+    },
+    "404": {
+        "lostPage": "Nous ne trouvons pas la page",
+        "sorry": "Désolé, nous n'avons pas trouvé la page que vous cherchez."
     },
     "errors": {
         "errorMsg": "erreur",
@@ -48,6 +82,7 @@
         "weakPwd": "mot de passe trop faible",
 
         "invalidId": "Id invalide",
+        "alreadyValid": "déjà validé",
 
         "invalidPhotoExtension": "Extension de photo invalide",
         "emptyPhoto": "photo vide",
@@ -57,5 +92,20 @@
 
         "emptyPhotoId": "identifiant d'image vide",
         "invalidPhotoId": "identifiant d'image invalide"
+    },
+    "ConfirmMailRecoverySent": {
+        "check": "Regarder vos emails..",
+        "recoveryLink": "Un lien de récupération a été envoyé à votre boîte de réception."
+    },
+    "ConfirmUserCreation": {
+        "congrate": "Felicitation !",
+        "lastSteps": "Dernières étapes.. Vérifiez votre boîte de réception pour confirmer votre email!"
+    },
+    "UserAlreadySignedIn": {
+        "alreadySign": "Vous êtes déjà connecté"
+    },
+    "UserNotSignedIn": {
+        "getOut": "Vous ne pouvez pas être ici...",
+        "plsSign": "Veuillez vous connecter ou vous inscrire pour accéder à cette page !"
     }
 }

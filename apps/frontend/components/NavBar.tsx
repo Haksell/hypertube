@@ -35,7 +35,7 @@ const LinkNavBar: React.FC<{
     const { t } = useTranslation('common');
 
     return (
-        <div className="flex items-center pt-2 ml-6 hidden sm:block">
+        <div className="flex items-center pt-2 ml-6 hidden min-[770px]:block">
             <div className="flex space-x-4">
                 <ButtonLinkNavBar
                     text={t('navBar.profile')}
@@ -50,7 +50,7 @@ const LinkNavBar: React.FC<{
                     setCurrLink={setCurrLink}
                 />
                 <ButtonLinkNavBar
-                    text={t('navBar.settings')}
+                    text={t('settingsMsg')}
                     page="/settings"
                     currLink={currLink}
                     setCurrLink={setCurrLink}
@@ -61,9 +61,9 @@ const LinkNavBar: React.FC<{
 };
 
 const LogoNavBar = () => (
-    <div className="flex flex-shrink-0 items-center pl-5">
+    <div className="flex flex-shrink-0 items-center sm:pl-5">
         <Link href="/">
-            <img className="h-12 w-auto" src="/navbar_logo.png" alt="Matcha" />
+            <img className="h-8 w-auto sm:h-12" src="/navbar_logo.png" alt="Matcha" />
         </Link>
     </div>
 )
@@ -98,7 +98,7 @@ function MobileMenuBoutton({
     setShowMenu: any;
 }) {
     return (
-        <div className="inset-y-0 left-0 flex items-center sm:hidden">
+        <div className="inset-y-0 left-0 flex items-center min-[770px]:hidden">
             {/* <!-- Mobile menu button--> */}
             <button
                 type="button"
@@ -142,7 +142,7 @@ function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
     return showMenu ? (
         <>
             {/* <!-- Mobile menu, show/hide based on menu state. --> */}
-            <div className="sm:hidden" id="mobile-menu">
+            <div className="min-[770px]:hidden" id="mobile-menu">
                 <div className="space-y-1 px-2 pb-3 pt-2">
                     {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                     <ButtonLinkNavBar
@@ -158,7 +158,7 @@ function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
                         setCurrLink={setCurrLink}
                     />
                     <ButtonLinkNavBar
-                        text={t('navBar.settings')}
+                        text={t('settingsMsg')}
                         page="/settings"
                         currLink={currLink}
                         setCurrLink={setCurrLink}
@@ -203,6 +203,11 @@ function NavBar() {
                             setShowMenu={setShowMenu}
                         />
 						<LogoNavBar />
+                        <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
+                                NaanTube
+                            </span>
+                        </div>
 						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
 					</div>
 					<div className="inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6">

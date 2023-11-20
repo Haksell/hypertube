@@ -3,14 +3,16 @@ import LinkText from '../elems/LinkText'
 import TextPage from '../elems/TextPage'
 import TitleSmall from '../elems/TitleSmall'
 import TramePage from '../elems/TramePage'
+import { useTranslation } from 'next-i18next'
 
 function UserNotSignedIn() {
+	const { t } = useTranslation('common')
     return (
         <TramePage>
-            <TitleSmall text={'You cannot be here...'} />
+            <TitleSmall text={t('UserNotSignedIn.getOut')} />
             <TextPage>
-                <p>Please sign in or sign up to access this page !</p>
-                <LinkText linkText="Sign In" link="/signin" space="1" />
+                <p>{t('UserNotSignedIn.plsSign')}</p>
+                <LinkText linkText={t('signIn')} link="/signin" space="1" />
             </TextPage>
         </TramePage>
     )

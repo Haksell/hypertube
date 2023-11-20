@@ -127,7 +127,7 @@ function SignInPage() {
                             href="https://api.intra.42.fr/oauth/authorize?client_id=88ebd807f809ddd25f6b6aa15d8f0e5a08ea725b5bf5fc80143c9e225f6b5ecc&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin%2F42&response_type=code"
                             className="w-full text-center"
                         >
-                            Sign in with 42
+                            {t('signin.log42')}
                         </a>
                     </button>
                 </div>
@@ -141,7 +141,7 @@ function SignInPage() {
                             href="https://github.com/login/oauth/authorize?client_id=a8047e3e2d61515e6d2d&redirect_uri=http://localhost:3000/login%2Fgithub&scope=read:user"
                             className="w-full text-center"
                         >
-                            Sign in with Github
+                            {t('signin.logGit')}
                         </a>
                     </button>
                 </div>
@@ -155,12 +155,12 @@ function SignInPage() {
                             href="https://www.facebook.com/v18.0/dialog/oauth?client_id=2811827598960107&redirect_uri=http://localhost:3000/login%2Ffacebook&state=1234567890&scope=email"
                             className="w-full text-center"
                         >
-                            Sign in with Facebook
+                            {t('signin.logFb')}
                         </a>
                     </button>
                 </div>
 
-                <LinkText firstText={t('signin.NAM')} linkText={t('signUp')} link="/signup" />
+                <LinkText firstText={t('NAM')} linkText={t('signUp')} link="/signup" />
                 <LinkText firstText={t('signin.forgot')} linkText={t('signin.reset')} link="/forgot" space="1" />
             </div>
         </MainLayout>
