@@ -2,6 +2,8 @@ import MainLayout from '../../layouts/MainLayout'
 import { formatDuration } from '../../src/utilsTime'
 import React from 'react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
 
 const movie = {
     title: 'Night of the Living Dead',
@@ -74,12 +76,10 @@ const MoviePage = () => {
     )
 }
 
-export async function getStaticProps({ locale }) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ['common'])),
-        },
-    }
-}
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+      ...await serverSideTranslations(locale as string, ['common']),
+    },
+})
 
 export default MoviePage

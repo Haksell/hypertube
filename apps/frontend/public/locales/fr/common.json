@@ -53,6 +53,39 @@
         "oups": "Oups...",
         "linkDead": "Le lien ne marche pas ici"
     },
+    "login": {
+        "authFail": "L'authentification a échoué",
+        "accountTryAgain": "Votre compte est toujours là, vous devriez réessayer.",
+        "tryAgain": "Réessayer"
+    },
+    "index": {
+        "movies": "Films",
+        "tv": "Shows TV",
+        "availability": {
+           "name": "Disponibilité",
+           "all": "Tout",
+           "server": "Sur le serveur"
+        },
+        "searchMovies": "Rechercher des films par nom...",
+        "search": "Rechercher",
+        "genre": {
+        "name": "Genre",
+        "drama": "Drame",
+        "action": "Action"
+        },
+        "year": "Année de production",
+        "grade": "Note",
+        "lang": {
+        "name": "Langue",
+        "english": "Anglais",
+        "french": "Français"
+        },
+        "sort": {
+        "name": "Trier par",
+        "rating": "Classement",
+        "year": "Année"
+        }
+    },
     "404": {
         "lostPage": "Nous ne trouvons pas la page",
         "sorry": "Désolé, nous n'avons pas trouvé la page que vous cherchez."
@@ -107,5 +140,20 @@
     "UserNotSignedIn": {
         "getOut": "Vous ne pouvez pas être ici...",
         "plsSign": "Veuillez vous connecter ou vous inscrire pour accéder à cette page !"
-    }
+    },
+    "invalidInput": "Entrée invalide",
+    "userEmailExists": "Cet e-mail est déjà utilisé",
+    "userUsernameExists": "Ce nom d'utilisateur est déjà pris",
+    "userCreated": "Inscription réussie",
+    "invalidCredentials": "Identifiants invalides",
+    "wrongAuthMethodEMAIL": "Un compte existe déjà en utilisant l'authentification par e-mail",
+    "wrongAuthMethodGITHUB": "Un compte existe déjà en utilisant l'authentification GitHub",
+    "wrongAuthMethod[METHOD]": "Un compte existe déjà en utilisant l'authentification par méthode",
+    "invalidConfirmId": "Code de confirmation incorrect",
+    "alreadyValidated": "E-mail déjà validé",
+    "mailConfirmed": "E-mail confirmé",
+    "emailSent": "Si ce compte existe, un e-mail a été envoyé à votre boîte de réception",
+    "validConfirmId": "Code de confirmation correct",
+    "pwdReseted": "Mot de passe mis à jour avec succès",
+    "signOut": "Vous êtes déconnecté"
 }

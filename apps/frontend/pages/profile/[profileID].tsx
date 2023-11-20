@@ -7,6 +7,9 @@ import PageTitleOneText from '../../components/elems/PageTitleOneText';
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn';
 import { TUserProfile } from '../../src/shared/user';
 import axios from 'axios';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
 
 function ProfilePage() {
     const { user } = useUserContext();
@@ -18,6 +21,7 @@ function ProfilePage() {
 	const [blocked, setBlocked] = useState<boolean>(false);
 	const [showReported, setShowReported] = useState<boolean>(true);
 	const [visible, setVisible] = useState<string>('carousel-2.svg')
+	const { t } = useTranslation('common')
 	
 	useEffect(() => {
 		setId();
@@ -102,5 +106,11 @@ function ProfilePage() {
 	/>)
     ) : (<UserNotSignedIn />);
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+      ...await serverSideTranslations(locale as string, ['common']),
+    },
+})
 
 export default ProfilePage;
