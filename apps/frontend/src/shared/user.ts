@@ -7,3 +7,13 @@ export type TUserContext = {
     picture: string
     authMethod: string
 }
+
+export type TUserProfile = {
+	id: number;
+	username: string
+    firstName: string
+    lastName: string
+    picture: string
+	moviesLiked: []
+	moviesViewed: []
+}

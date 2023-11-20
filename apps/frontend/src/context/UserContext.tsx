@@ -1,7 +1,8 @@
 import { TUserContext } from '../shared/user'
 import axios from 'axios'
 import React, { useContext, useEffect, useState } from 'react'
-import { NotConnected } from '../shared/errors'
+import { ErMsg } from '../shared/errors'
+import { useTranslation } from 'next-i18next'
 
 interface Prop {
     user: TUserContext | null
@@ -20,6 +21,7 @@ export const UserContext = React.createContext<Prop>({
 })
 
 export const UserProvider = ({ children }: any) => {
+	const { t } = useTranslation('common')
     const [user, setUser] = useState<TUserContext | null>(null)
 
     useEffect(() => {
@@ -32,7 +34,7 @@ export const UserProvider = ({ children }: any) => {
             const response = await axios.get(`http://localhost:5001/users/me`, {
                 withCredentials: true,
             })
-			if (response.data !== NotConnected)
+			if (response.data !== ErMsg('NotConnected', t))
 				setUser(response.data)            
         } catch (error: any) {
 			setUser(null)

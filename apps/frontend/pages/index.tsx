@@ -4,6 +4,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 type Movie = {
     title: string
@@ -219,6 +220,14 @@ const MoviesPage = () => {
             </div>
         </div>
     )
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default MoviesPage

@@ -7,12 +7,13 @@ import TextPage from '../../components/elems/TextPage'
 import TitleSmall from '../../components/elems/TitleSmall'
 import TramePage from '../../components/elems/TramePage'
 import MainLayout from '../../layouts/MainLayout'
-import { InvalidId, SuccessMsg } from '../../src/shared/errors'
+import { ErMsg } from '../../src/shared/errors'
 // import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'next-i18next'
 
 function ResetPasswordPage() {
     const router = useRouter()
@@ -22,6 +23,7 @@ function ResetPasswordPage() {
     const [created, setCreated] = useState<boolean>(false)
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string>('')
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         console.log('id=' + idConfirm)
@@ -39,7 +41,7 @@ function ResetPasswordPage() {
             // console.log(response.data);
             return response.data
         } catch (error) {
-            if (error.response === InvalidId) router.push('/404')
+            if (error.response === ErMsg('InvalidId', t)) router.push('/404')
             setRetour(null)
         }
     }
@@ -56,7 +58,7 @@ function ResetPasswordPage() {
                 },
             )
             // console.log(response.data);
-            if (response.data.msg === SuccessMsg) {
+            if (response.data.msg === ErMsg('SuccessMsg', t)) {
                 setError('')
                 setStyleErrorPassword(false)
                 setCreated(true)
@@ -83,7 +85,7 @@ function ResetPasswordPage() {
         resetPasswordBackend()
     }
 
-    return retour && retour === SuccessMsg ? (
+    return retour && retour === ErMsg('SuccessMsg', t) ? (
         created ? (
             <PageTitleOneText
                 title="Password changed"

@@ -12,6 +12,7 @@ import { TUserContext } from "../src/shared/user";
 import { useUserContext } from "../src/context/UserContext";
 import MainLayout from "../layouts/MainLayout";
 import ShowImg from "../components/settings/ShowImg";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -36,7 +37,8 @@ function SettingsPage() {
 			setUserInfoForForm(response.data);
             return response.data
         } catch (error) {
-			setError(error.response.data)
+			if (error.response)
+				setError(error.response.data)
         }
 	}
 
@@ -134,6 +136,14 @@ function SettingsPage() {
             </div>
         </MainLayout>
 	);
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }
 
 export default SettingsPage;
