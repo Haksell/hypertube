@@ -69,7 +69,7 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
             <select
                 id={id}
                 onChange={(e) => handleChange(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="border  text-sm rounded-lg focus:ring-blue-500 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
             >
                 {options.map((option: any) => (
                     <option key={option.value} value={option.value}>
