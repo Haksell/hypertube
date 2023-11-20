@@ -83,14 +83,13 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
 
 const MoviesPage = () => {
     const [movies, setMovies] = useState<Movie[]>([])
-    const [offset, setOffset] = useState(0)
+    const [fetchCount, setFetchCount] = useState(0)
     const [search, setSearch] = useState('')
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
     const [language, setLanguage] = useState('')
     const [sortBy, setSortBy] = useState('')
-    const [isClicked, setIsClicked] = useState(false)
 
     const shouldFetchMovies = () => {
         return (
@@ -99,42 +98,39 @@ const MoviesPage = () => {
         )
     }
 
-    const fetchMovies = async (firstSearch: boolean = false) => {
+    const fetchMovies = async (offset: number = fetchCount) => {
         try {
-            const response = await axios.get(
-                'http://localhost:5001/movies?limit=' + limit + '&offset=' + offset,
-            )
-            if (firstSearch) {
-                setOffset(limit)
-                setMovies([...response.data])
-            } else {
-                setMovies((prevMovies) => [...prevMovies, ...response.data])
-                setOffset((prevOffset) => prevOffset + limit)
-            }
-            setTimeout(() => {
-                if (shouldFetchMovies()) fetchMovies()
-            }, 10)
+            const response = await axios.get('http://localhost:5001/movies', {
+                params: {
+                    offset,
+                    limit,
+                    search,
+                    genre,
+                    yearRange,
+                    minGrade,
+                    language,
+                    sortBy,
+                },
+            })
+            setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
+            setFetchCount(offset + limit)
         } catch (error) {
             console.error('Error fetching movies:', error)
         }
     }
 
     useEffect(() => {
-        fetchMovies()
-    }, [])
+        if (shouldFetchMovies()) fetchMovies()
+    }, [fetchCount])
+
+    const handleScroll = () => {
+        if (shouldFetchMovies()) fetchMovies()
+    }
 
     useEffect(() => {
-        const handleScroll = () => {
-            if (shouldFetchMovies()) fetchMovies()
-        }
-
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
-
-    const handleClick = () => {
-        fetchMovies(true) // Your existing function
-    }
+    }, [fetchCount])
 
     return (
         <div className="min-h-screen bg-black">
@@ -154,7 +150,7 @@ const MoviesPage = () => {
 
                 <button
                     className="hidden md:block my-button bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
-                    onClick={() => handleClick()}
+                    onClick={() => fetchMovies(0)}
                 >
                     Search
                 </button>
@@ -206,14 +202,14 @@ const MoviesPage = () => {
                     ]}
                 />
             </div>
-			<div className="flex flex-wrap justify-center items-center mt-5">
-            <button
-                className="md:hidden justify-center bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
-                onClick={() => handleClick()}
-            >
-                Search
-            </button>
-			</div>
+            <div className="flex flex-wrap justify-center items-center mt-5">
+                <button
+                    className="md:hidden justify-center bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
+                    onClick={() => fetchMovies(0)}
+                >
+                    Search
+                </button>
+            </div>
             <div className="text-white">
                 <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1 p-4">
                     {movies.map((movie, i) => (
