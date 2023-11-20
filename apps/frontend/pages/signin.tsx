@@ -124,7 +124,7 @@ function SignInPage() {
                         className="flex w-full justify-center rounded-md px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
                         <a
-                            href="https://api.intra.42.fr/oauth/authorize?client_id=88ebd807f809ddd25f6b6aa15d8f0e5a08ea725b5bf5fc80143c9e225f6b5ecc&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin42&response_type=code"
+                            href="https://api.intra.42.fr/oauth/authorize?client_id=88ebd807f809ddd25f6b6aa15d8f0e5a08ea725b5bf5fc80143c9e225f6b5ecc&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin%2F42&response_type=code"
                             className="w-full text-center"
                         >
                             {t('signin.log42')}
@@ -138,7 +138,7 @@ function SignInPage() {
                         className="flex w-full justify-center rounded-md px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
                         <a
-                            href="https://github.com/login/oauth/authorize?client_id=a8047e3e2d61515e6d2d&redirect_uri=http://localhost:3000/loginGithub&scope=read:user"
+                            href="https://github.com/login/oauth/authorize?client_id=a8047e3e2d61515e6d2d&redirect_uri=http://localhost:3000/login%2Fgithub&scope=read:user"
                             className="w-full text-center"
                         >
                             {t('signin.logGit')}
@@ -152,7 +152,7 @@ function SignInPage() {
                         className="flex w-full justify-center rounded-md px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
                         <a
-                            href="https://www.facebook.com/v18.0/dialog/oauth?client_id=2811827598960107&redirect_uri=http://localhost:3000/loginFacebook&state=1234567890&scope=email"
+                            href="https://www.facebook.com/v18.0/dialog/oauth?client_id=2811827598960107&redirect_uri=http://localhost:3000/login%2Ffacebook&state=1234567890&scope=email"
                             className="w-full text-center"
                         >
                             {t('signin.logFb')}

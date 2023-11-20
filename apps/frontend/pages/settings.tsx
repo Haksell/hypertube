@@ -39,7 +39,8 @@ function SettingsPage() {
 			setUserInfoForForm(response.data);
             return response.data
         } catch (error) {
-			setError(error.response.data)
+			if (error.response)
+				setError(error.response.data)
         }
 	}
 

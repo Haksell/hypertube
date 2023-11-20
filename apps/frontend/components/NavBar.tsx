@@ -30,7 +30,8 @@ const ButtonLinkNavBar: React.FC<{
 const LinkNavBar: React.FC<{
     currLink: string
     setCurrLink: React.Dispatch<React.SetStateAction<string>>
-}> = ({ currLink, setCurrLink }) => {
+	profileLink: string
+}> = ({ currLink, setCurrLink, profileLink }) => {
     const { t } = useTranslation('common');
 
     return (
@@ -38,7 +39,7 @@ const LinkNavBar: React.FC<{
             <div className="flex space-x-4">
                 <ButtonLinkNavBar
                     text={t('navBar.profile')}
-                    page="/profile"
+                    page={profileLink}
                     currLink={currLink}
                     setCurrLink={setCurrLink}
                 />
@@ -173,7 +174,15 @@ function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
 function NavBar() {
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [currLink, setCurrLink] = useState<string>('no')
+	const [profileLink, setProfileLink] = useState<string>('/profile')
     const router = useRouter()
+	const { user } = useUserContext()
+
+	useEffect(() => {
+		if (user) {
+			setProfileLink(`/profile/${user.id}`)
+		}
+	}, [user])
 
     useEffect(() => {
         if (router.pathname.match('/profile')) setCurrLink('/profile')
@@ -199,7 +208,7 @@ function NavBar() {
                                 NaanTube
                             </span>
                         </div>
-						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} />
+						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
 					</div>
 					<div className="inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6">
 						<DropdownMenu />

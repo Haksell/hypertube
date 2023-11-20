@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 // Take a prisma User and return a TUserContext
 export const formatUser = (user: any): TUserContext => {
     return {
-        id: user.user_id,
+        id: user.id,
         username: user.username,
         authMethod: user.authMethod,
 		email: user.email,
