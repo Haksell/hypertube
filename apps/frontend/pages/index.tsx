@@ -116,7 +116,7 @@ const MoviesPage = () => {
             }
             if (search) params['search'] = search
             if (genre) params['genre'] = genre
-            if (yearRange) params['yearRange'] = yearRange
+            if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
             if (language) params['language'] = language
             if (sortBy) params['sortBy'] = sortBy
