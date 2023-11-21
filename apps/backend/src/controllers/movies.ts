@@ -1,9 +1,9 @@
 import { CustomError, Movie } from '../types_backend/movies'
 import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
+import { getMovieId } from '../utils/info-movie'
 
 export async function getMovies(req: Request, res: Response) {
-	console.log('coming first')
     try {
         const params = convertRequestParams(req)
 		console.log(params)
@@ -23,10 +23,9 @@ export async function getMovies(req: Request, res: Response) {
 			
 		}
 		else {
-			//;
+			// TO DO WHEN downloading finished;
 		}
         
-		// sorting data
         res.status(201).send(movies)
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
@@ -34,4 +33,21 @@ export async function getMovies(req: Request, res: Response) {
     }
 }
 
+export async function getMovieInfo(req: Request, res: Response) {
+	try {
+		const movieId = getMovieId(req)
+
+		console.log('id='+movieId)
+
+		//get info from YTS
+		//get info from TheMovieDB
+		//get info from OpenSub
+		res.status(201).send('ok')
+	}
+	catch (error) {
+		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        else res.status(400).send('Error')
+	}
+
+}
 // http://localhost:5001/movies?genra=love,comic&grade=5&prod=1998,1999&sort=downloads&limit=10&offset=10

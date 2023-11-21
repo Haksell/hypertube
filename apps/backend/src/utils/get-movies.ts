@@ -159,7 +159,6 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 
 export function convertRequestParams(req: Request): TRequestGetMovie {
     const { genre, minGrade, sortBy, limit, offset, downloaded, search, type, year } = req.query
-	console.log('here we come')
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
 	const yearNB: number = extractInt(false, year, 'year')
@@ -200,7 +199,7 @@ function extractInt(mandatory: boolean, variable: any, name: string): number {
     return limitNB
 }
 
-function extractStr(mandatory: boolean, variable: any, name: string, def?: string): string {
+export function extractStr(mandatory: boolean, variable: any, name: string, def?: string): string {
     if (!mandatory && !variable) return def ? def : ''
     if (mandatory && !variable) throw new CustomError(`params ${name} is mandatory`)
     const str: string = Array.isArray(variable) ? variable[0] : variable
