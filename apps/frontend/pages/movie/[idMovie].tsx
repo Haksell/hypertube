@@ -1,8 +1,9 @@
-import MainLayout from '../../layouts/MainLayout'
 import { formatDuration } from '../../src/utilsTime'
+import NavBar from '../../components/NavBar'
 import React from 'react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import type { GetServerSideProps } from 'next'
+import RatingStars from '../../components/elems/RatingStars';
 import { useTranslation } from 'next-i18next'
 
 const movie = {
@@ -13,6 +14,7 @@ const movie = {
     year: 1968,
     length: 96,
     imdbRating: 7.8,
+    genres: ["Action", "Horror", "Thriller", "Test", "Test", "Test", "Test", "Test", "Test", "Test"],
     summary:
         'A ragtag group of survivors barricade themselves in an old farmhouse to remain safe from a horde of flesh-eating ghouls that are ravaging the Northeast portion of the United States.',
     producers: ['Russell Streiner', 'Karl Hardman'],
@@ -23,8 +25,8 @@ const movie = {
 
 const Info: React.FC<{ title: string; content: string }> = ({ title, content }) =>
     content ? (
-        <p className="mb-2">
-            <span className="font-semibold">{title}:</span> {content}
+        <p className="pb-2">
+            <span className="font-semibold text-xs sm:text-lg">{title}:</span> {content}
         </p>
     ) : null
 
@@ -32,27 +34,38 @@ const pluralize = (name: string, arr: string[]) => (arr.length >= 2 ? name + 's'
 
 const MoviePage = () => {
     return (
-        <MainLayout>
-            <div className="container mx-auto space-y-3">
-                <h1 className="text-4xl font-bold">{movie.title}</h1>
+        <div>
+            <NavBar />
+            <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                 <img
                     src={movie.header}
                     alt={movie.title}
-                    className="w-1/2 h-auto transition-all duration-300 ease-in-out"
+                    className="object-cover w-full h-full top-10 brightness-50"
                 />
+            </div>
+            <div className="h-[22vh]"/>
+            <div className="relative">
                 <img
                     src={movie.thumbnail}
                     alt={movie.title}
-                    className="w-1/2 h-auto transition-all duration-300 ease-in-out"
+                    className="absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible min-[1000px]:-top-20"
                 />
-                <div className="aspect-video bg-black">
-                    <iframe
-                        className="w-full h-full border-none"
-                        src={movie.videoPath}
-                        allowFullScreen
-                    />
+                <div className="pl-10 bg-neutral-800 w-full h-28 bg-opacity-80 min-[770px]:pl-[31vw]">
+                    <h1 className="py-2 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
+                        {movie.title}
+                    </h1>
+                    <RatingStars rating={movie.imdbRating / 2} />
+                    {movie.genres.slice(0, 4).map((element, index) => (
+                        <span key={index} className="mr-2 bg-blue-50 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                        {element}
+                        </span>
+                    ))}
                 </div>
-                <div className="text-gray-800">
+            </div>
+            <div className="bg-neutral-950">
+                <div className="text-slate-200 px-10 min-[770px]:pl-[31vw]">
+                    <p className="pt-8 text-xl tracking-wide">{movie.summary}</p>
+                    <hr className="h-px my-10 w-1/2 mx-auto bg-gray-200 border-0 dark:bg-gray-700"></hr>
                     <Info title="Year" content={movie.year.toString()} />
                     <Info title="Length" content={formatDuration(movie.length)} />
                     <Info title="IMDb Rating" content={movie.imdbRating.toString()} />
@@ -71,8 +84,15 @@ const MoviePage = () => {
                     />
                     <Info title="Main Cast" content={movie.mainCast.join(', ')} />
                 </div>
+                <div className="aspect-video bg-black mt-[10vw]">
+                    <iframe
+                        className="w-full h-full border-none"
+                        src={movie.videoPath}
+                        allowFullScreen
+                    />
+                </div>
             </div>
-        </MainLayout>
+        </div>
     )
 }
 

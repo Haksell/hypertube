@@ -194,34 +194,37 @@ function NavBar() {
     }, [currLink])
 
 	return (
-		<nav className="bg-zinc-800">
-			<div className="mx-auto max-w-7xl px-2 sm:pl-6 lg:pl-8">
-				<div className="relative flex h-16 items-center justify-between">
-					<div className="flex flex-1 sm:items-stretch sm:justify-start">
-                        <MobileMenuBoutton
-                            showMenu={showMenu}
-                            setShowMenu={setShowMenu}
-                        />
-						<LogoNavBar />
-                        <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
-                                NaanTube
-                            </span>
+        <div>
+            <nav className="fixed w-full bg-zinc-800 z-20 bg-opacity-80">
+                <div className="mx-auto max-w-7xl px-2 sm:pl-6 lg:pl-8">
+                    <div className="relative flex h-16 items-center justify-between">
+                        <div className="flex flex-1 sm:items-stretch sm:justify-start">
+                            <MobileMenuBoutton
+                                showMenu={showMenu}
+                                setShowMenu={setShowMenu}
+                            />
+                            <LogoNavBar />
+                            <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
+                                    NaanTube
+                                </span>
+                            </div>
+                            <LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
                         </div>
-						<LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
-					</div>
-					<div className="inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6">
-						<DropdownMenu />
-					</div>
-					<LanguageSwitcher/>
-				</div>
-			</div>
-            <MobileMenu 
-                showMenu={showMenu}
-                currLink={currLink}
-                setCurrLink={setCurrLink}
-		    />
-		</nav>
+                        <div className="inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6">
+                            <DropdownMenu />
+                        </div>
+                        <LanguageSwitcher/>
+                    </div>
+                </div>
+                <MobileMenu 
+                    showMenu={showMenu}
+                    currLink={currLink}
+                    setCurrLink={setCurrLink}
+                />
+            </nav>
+            <div className="h-20"/>
+        </div>
 	)
 }
 
