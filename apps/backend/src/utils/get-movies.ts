@@ -158,13 +158,15 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 
 
 export function convertRequestParams(req: Request): TRequestGetMovie {
-    const { genre, minGrade, prod, sortBy, limit, offset } = req.query
+    const { genre, minGrade, prod, sortBy, limit, offset, downloaded, search } = req.query
 	console.log('here we come')
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
     const gradeNB: number = extractInt(false, minGrade, 'minGrade')
     const prodNB: number = extractInt(false, prod, 'prod')
 	const sortStr: string = extractStr(true, sortBy, 'sortBy', 'seeds')
+	const downloadedStr: string = extractStr(false, sortBy, 'downloaded', 'no')
+	const searchStr: string = extractStr(false, search, 'search')
 	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
 	const genresStr: string = extractStr(false, genre, 'genre')
 	const genreTab: string[] = genresStr === '' ? [] : genresStr.split(',')
@@ -175,6 +177,8 @@ export function convertRequestParams(req: Request): TRequestGetMovie {
         sort: sortStr,
         limit: limitNB,
         offset: offsetNB,
+		downloaded: downloadedStr,
+		search: searchStr,
     }
     return params
 }

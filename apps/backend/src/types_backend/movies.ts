@@ -21,6 +21,8 @@ export type TRequestGetMovie = {
     sort: string
     limit: number
     offset: number
+	downloaded: string
+	search: string
 }
 
 export class CustomError extends Error {
