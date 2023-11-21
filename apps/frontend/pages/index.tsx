@@ -22,6 +22,39 @@ type Movie = {
     source: 'EZTV' | 'YTS'
 }
 
+export const genres = [
+    'Action',
+    'Adventure',
+    'Animation',
+    'Comedy',
+    'Crime',
+    'Documentary',
+    'Drama',
+    'Family',
+    'Fantasy',
+    'History',
+    'Horror',
+    'Music',
+    'Mystery',
+    'Romance',
+    'Science-Fiction',
+    'TV Movie',
+    'Thriller',
+    'War',
+    'Western',
+]
+
+export const movieParamSortBy = [
+    'title',
+    'year',
+    'rating',
+    'peers',
+    'seeds',
+    'download_count',
+    'like_count',
+    'date_added',
+]
+
 const limit = 7
 
 const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
