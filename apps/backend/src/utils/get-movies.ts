@@ -24,6 +24,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 		if (params.genre.length !== 0) parameters.genre = tabToString(params.genre)
 		if (params.grade !== -1) parameters.minimum_rating = params.grade
 		if (params.sort === 'seeds') parameters.order_by = 'asc'
+		if (params.year !== -1) parameters.query_term = params.year.toString()
 		if (params.search !== '') parameters.query_term = params.search
 
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
