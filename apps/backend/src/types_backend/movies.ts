@@ -20,10 +20,10 @@ export type TRequestGetMovie = {
     sort: string
     limit: number
     offset: number
+	year: number
 	downloaded: string
 	search: string
 	type: string
-	yearRange?: number[]
 }
 
 export class CustomError extends Error {

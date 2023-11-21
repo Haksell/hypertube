@@ -12,7 +12,7 @@ const movieSchema = Joi.object({
     genre: Joi.string(),
 	downloaded: Joi.string(),
     minGrade: Joi.number(),
-	yearRange: Joi.string(),
+	year: Joi.number(),
 	language: Joi.string(),
     sortBy: Joi.string(),
 	search: Joi.string(),
