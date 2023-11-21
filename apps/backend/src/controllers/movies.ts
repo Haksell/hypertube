@@ -7,28 +7,25 @@ export async function getMovies(req: Request, res: Response) {
     try {
         const params = convertRequestParams(req)
 		console.log(params)
+
+		let movies: Movie[] = []
+
 		// const repartition: number = Math.floor((params.limit / 4) * 3)
-        const moviesYTS: Movie[] = await getMoviesFromYTS(params.limit, params)
-        // const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit - repartition, params)
-
-
-		// let movies
-		// if (downloaded == false)
-		// 	if (source == 'tvShow') {
-		// 		movies = fetchFromEZTV(param)
-		// 	} else {
-
-		// 	}
-		// } else {
-		// 	fetchFromDB(type=source)
-		// }
-
-
-        // assemble both
-        let movies: Movie[] = []
-        if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
-        // if (moviesEZTV && moviesEZTV.length !== 0) movies = movies.concat(moviesEZTV)
-
+		if (params.downloaded === 'no') {
+			if (params.type === 'movie') {
+				const moviesYTS: Movie[] = await getMoviesFromYTS(params.limit, params)
+				if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
+			}
+			else if (params.type === 'series') {
+				const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit, params)
+				if (moviesEZTV && moviesEZTV.length !== 0) movies = movies.concat(moviesEZTV)
+			}
+			
+		}
+		else {
+			//;
+		}
+        
 		// sorting data
         res.status(201).send(movies)
     } catch (error) {

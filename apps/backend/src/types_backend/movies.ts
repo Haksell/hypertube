@@ -23,6 +23,7 @@ export type TRequestGetMovie = {
     offset: number
 	downloaded: string
 	search: string
+	type: string
 }
 
 export class CustomError extends Error {

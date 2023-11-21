@@ -47,6 +47,9 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     <div className="flex justify-between text-sm">
                         <span>{movie.year}</span>
                         <span>{formatDuration(movie.length)}</span>
+                    </div>
+					<div className="flex justify-between text-sm">
+                        <span>rating:{movie.imdbRating}</span>
 						<span>seeds:{movie.seeds}</span>
                     </div>
                 </div>

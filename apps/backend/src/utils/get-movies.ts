@@ -15,16 +15,16 @@ type TRequete = {
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
-		const page: number = Math.floor(params.offset / (limit > 0 ? limit : 1))
+		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) : 1
 		const parameters: TRequete = {
 			limit: limit,
 			page: page,
 			sort_by: params.sort,
 		}
-		if (limit === 125) parameters.query_term = '0'
 		if (params.genre.length !== 0) parameters.genre = tabToString(params.genre)
 		if (params.grade !== -1) parameters.minimum_rating = params.grade
 		if (params.sort === 'seeds') parameters.order_by = 'asc'
+		if (params.search !== '') parameters.query_term = params.search
 
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
 			{
@@ -162,15 +162,16 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 
 
 export function convertRequestParams(req: Request): TRequestGetMovie {
-    const { genre, minGrade, prod, sortBy, limit, offset, downloaded, search } = req.query
+    const { genre, minGrade, prod, sortBy, limit, offset, downloaded, search, type } = req.query
 	console.log('here we come')
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
     const gradeNB: number = extractInt(false, minGrade, 'minGrade')
     const prodNB: number = extractInt(false, prod, 'prod')
 	const sortStr: string = extractStr(true, sortBy, 'sortBy', 'seeds')
-	const downloadedStr: string = extractStr(false, sortBy, 'downloaded', 'no')
+	const downloadedStr: string = extractStr(false, downloaded, 'downloaded', 'no')
 	const searchStr: string = extractStr(false, search, 'search')
+	const typeStr: string = extractStr(false, type, 'type', 'movie')
 	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
 	const genresStr: string = extractStr(false, genre, 'genre')
 	const genreTab: string[] = genresStr === '' ? [] : genresStr.split(',')
@@ -183,6 +184,7 @@ export function convertRequestParams(req: Request): TRequestGetMovie {
         offset: offsetNB,
 		downloaded: downloadedStr,
 		search: searchStr,
+		type: typeStr
     }
     return params
 }
