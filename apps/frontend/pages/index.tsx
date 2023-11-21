@@ -176,11 +176,11 @@ const MoviesPage = () => {
                                 className="peer sr-only"
                             />
                             <div className="z-20 absolute font-bold h-8 w-[70px] left-[5px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all peer-checked:left-[72px] peer-checked:w-[83px] text-white flex justify-center items-center">
-                                {type === 'movie' ? 'Movies' : 'TV Shows'}
+                                {type === 'movie' ? t('index.movies') : t('index.tv')}
                             </div>
                             <div className="z-10 py-2 flex items-center gap-4 rounded-full px-3  border-slate-600 bg-slate-700 text-white">
-                                <span className="z-30">Movies</span>
-                                <span className="z-30">TV Shows</span>
+                                <span className="z-30">{t('index.movies')}</span>
+                                <span className="z-30">{t('index.tv')}</span>
                             </div>
                         </label>
                     </div>
