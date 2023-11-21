@@ -1,4 +1,4 @@
-import { getMovies } from '../controllers/movies'
+import { getMovieInfo, getMovies } from '../controllers/movies'
 import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
 import { createValidator } from 'express-joi-validation'
@@ -12,7 +12,7 @@ const movieSchema = Joi.object({
     genre: Joi.string(),
 	downloaded: Joi.string(),
     minGrade: Joi.number(),
-	yearRange: Joi.number(),
+	year: Joi.number(),
 	language: Joi.string(),
     sortBy: Joi.string(),
 	search: Joi.string(),
@@ -20,6 +20,12 @@ const movieSchema = Joi.object({
 	offset: Joi.number().required(),
 })
 
+const imdbIdSchema = Joi.object({
+	movieId: Joi.string()
+})
+
 router.get('/', validator.query(movieSchema), asyncHandler(getMovies))
+
+router.get('/:movieId', validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 
 export default router

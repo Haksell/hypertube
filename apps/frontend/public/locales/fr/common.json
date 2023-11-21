@@ -70,8 +70,24 @@
         "search": "Rechercher",
         "genre": {
         "name": "Genre",
-        "drama": "Drame",
-        "action": "Action"
+        "action": "Action",
+		"adventure": "Adventure",
+		"animation": "Animation",
+		"comedy": "Comedy",
+		"crime": "Crime",
+		"documentary": "Documentary",
+		"drama": "Drame",
+		"family": "Family",
+		"fantasy": "Fantasy",
+		"history": "History",
+		"horror": "Horror",
+		"music": "Music",
+		"mystery": "Mystery",
+		"romance": "Romance",
+		"science-fiction": "Science-Fiction",
+		"thriller": "Thriller",
+		"war": "War",
+		"western": "Western"
         },
         "year": "Année de production",
         "grade": "Note",
@@ -83,7 +99,13 @@
         "sort": {
         "name": "Trier par",
         "rating": "Classement",
-        "year": "Année"
+        "year": "Année",
+		"title": "Titre",
+		"peers": "Peers",
+		"seeds": "Seeds",
+		"download_count": "Nb telechargement",
+		"like_count": "Nombre favoris",
+		"date_added": "Date ajout"
         }
     },
     "404": {

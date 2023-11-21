@@ -70,8 +70,24 @@
         "search": "Search",
         "genre": {
             "name": "Genre",
-            "drama": "Drama",
-            "action": "Action"
+            "action": "Action",
+			"adventure": "Adventure",
+			"animation": "Animation",
+			"comedy": "Comedy",
+			"crime": "Crime",
+			"documentary": "Documentary",
+			"drama": "Drama",
+			"family": "Family",
+			"fantasy": "Fantasy",
+			"history": "History",
+			"horror": "Horror",
+			"music": "Music",
+			"mystery": "Mystery",
+			"romance": "Romance",
+			"science-fiction": "Science-Fiction",
+			"thriller": "Thriller",
+			"war": "War",
+			"western": "Western"
         },
         "year": "Production Year",
         "grade": "Grade",
@@ -83,7 +99,13 @@
         "sort": {
             "name": "Sort by",
             "rating": "Rating",
-            "year": "Year"
+            "year": "Year",
+			"title": "Title",
+			"peers": "Peers",
+			"seeds": "Seeds",
+			"download_count": "Download count",
+			"like_count": "Like count",
+			"date_added": "Date added"
         }
     },
     "404": {

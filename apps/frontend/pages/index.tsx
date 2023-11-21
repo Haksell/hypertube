@@ -13,6 +13,13 @@ type Movie = {
     year: number
     length: number
     imdbRating?: number
+	imdb_code: string
+	langage: string
+	genre: string[]
+	seeds: number
+	quality: string
+	url: string
+    source: 'EZTV' | 'YTS'
 }
 
 const limit = 7
@@ -40,6 +47,10 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     <div className="flex justify-between text-sm">
                         <span>{movie.year}</span>
                         <span>{formatDuration(movie.length)}</span>
+                    </div>
+					<div className="flex justify-between text-sm">
+                        <span>rating:{movie.imdbRating}</span>
+						<span>seeds:{movie.seeds}</span>
                     </div>
                 </div>
             </div>
@@ -105,7 +116,7 @@ const MoviesPage = () => {
             }
             if (search) params['search'] = search
             if (genre) params['genre'] = genre
-            if (yearRange) params['yearRange'] = yearRange
+            if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
             if (language) params['language'] = language
             if (sortBy) params['sortBy'] = sortBy
@@ -113,6 +124,14 @@ const MoviesPage = () => {
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
             })
+			// let newMovies: Movie[] = movies.slice(0, offset)
+			// newMovies = newMovies.concat(response.data)
+			// newMovies = newMovies.filter((newMovie, index) => {
+			// 	const isDuplicate = newMovies.findIndex(movie => movie.imdb_code === newMovie.imdb_code) !== index;
+			// 	return !isDuplicate;
+			//   });
+			// setMovies(newMovies)
+
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + limit)
         } catch (error) {
@@ -208,8 +227,24 @@ const MoviesPage = () => {
                         label={t('index.genre.name')}
                         handleChange={setGenre}
                         options={[
-                            { value: 'drama', label: t('index.genre.drama') },
-                            { value: 'action', label: t('index.genre.action') },
+                            { value: 'Action', label: t('index.genre.action') },
+                            { value: 'Adventure', label: t('index.genre.adventure') },
+							{ value: 'Animation', label: t('index.genre.animation') },
+							{ value: 'Comedy', label: t('index.genre.comedy') },
+							{ value: 'Crime', label: t('index.genre.crime') },
+							{ value: 'Documentary', label: t('index.genre.documentary') },
+							{ value: 'Drama', label: t('index.genre.drama') },
+							{ value: 'Family', label: t('index.genre.family') },
+							{ value: 'Fantasy', label: t('index.genre.fantasy') },
+							{ value: 'History', label: t('index.genre.history') },
+							{ value: 'Horror', label: t('index.genre.horror') },
+							{ value: 'Music', label: t('index.genre.music') },
+							{ value: 'Mystery', label: t('index.genre.mystery') },
+							{ value: 'Romance', label: t('index.genre.romance') },
+							{ value: 'Science-Fiction', label: t('index.genre.science-fiction') },
+							{ value: 'Thriller', label: t('index.genre.thriller') },
+							{ value: 'War', label: t('index.genre.war') },
+							{ value: 'Western', label: t('index.genre.western') },
                         ]}
                     />
                     <Filter
@@ -217,8 +252,11 @@ const MoviesPage = () => {
                         label={t('index.year')}
                         handleChange={setYearRange}
                         options={[
-                            { value: '2022,2023', label: '2022 - now' },
-                            { value: '2021,2022', label: '2021 - 2022' },
+							{ value: '2024', label: '2024' },
+                            { value: '2023', label: '2023' },
+							{ value: '2022', label: '2022' },
+							{ value: '2021', label: '2021' },
+							{ value: '2020', label: '2020' },
                         ]}
                     />
                     <Filter
@@ -230,7 +268,7 @@ const MoviesPage = () => {
                             { value: '8', label: '8+' },
                         ]}
                     />
-                    <Filter
+                    {/* <Filter
                         id="language"
                         label={t('index.lang.name')}
                         handleChange={setLanguage}
@@ -238,7 +276,7 @@ const MoviesPage = () => {
                             { value: 'english', label: t('index.lang.english') },
                             { value: 'french', label: t('index.lang.french') },
                         ]}
-                    />
+                    /> */}
                     <Filter
                         id="sort"
                         label={t('index.sort.name')}
@@ -246,6 +284,12 @@ const MoviesPage = () => {
                         options={[
                             { value: 'rating', label: t('index.sort.rating') },
                             { value: 'year', label: t('index.sort.year') },
+							{ value: 'title', label: t('index.sort.title') },
+							{ value: 'peers', label: t('index.sort.peers') },
+							{ value: 'seeds', label: t('index.sort.seeds') },
+							{ value: 'download_count', label: t('index.sort.download_count') },
+							{ value: 'like_count', label: t('index.sort.like_count') },
+							{ value: 'date_added', label: t('index.sort.date_added') },
                         ]}
                     />
                     <Filter

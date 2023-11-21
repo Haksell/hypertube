@@ -9,19 +9,24 @@ type TRequete = {
 	query_term?: string
 	genre?: string
 	minimum_rating? : number
+	order_by?: string
 }
 
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
+		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) : 1
 		const parameters: TRequete = {
 			limit: limit,
-			page: params.offset,
+			page: page,
 			sort_by: params.sort,
 		}
-		if (limit === 125) parameters.query_term = '0'
 		if (params.genre.length !== 0) parameters.genre = tabToString(params.genre)
 		if (params.grade !== -1) parameters.minimum_rating = params.grade
+		if (params.sort === 'seeds') parameters.order_by = 'asc'
+		if (params.year !== -1) parameters.query_term = params.year.toString()
+		if (params.search !== '') parameters.query_term = params.search
+
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
 			{
 				params: parameters
@@ -42,9 +47,9 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				imdb_code: elem.imdb_code,
 				langage: elem.language,
 				genre: elem.genres,
-				seeds: elem.torrents.seeds,
-				quality: elem.torrents.quality,
-				url: elem.torrents.url,
+				seeds: elem.torrents[0].seeds,
+				quality: elem.torrents[0].quality,
+				url: elem.torrents[0].url,
 				source: 'YTS',
             }
             movies.push(oneMovie)
@@ -152,29 +157,37 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 	}
 }
 
-// 	yearRange: Joi.number(),
-// 	language: Joi.string(),
-// 	search: Joi.string(),
-
-
 export function convertRequestParams(req: Request): TRequestGetMovie {
-    const { genre, minGrade, prod, sortBy, limit, offset } = req.query
-	console.log('here we come')
+    const { genre, minGrade, sortBy, limit, offset, downloaded, search, type, year } = req.query
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
+	const yearNB: number = extractInt(false, year, 'year')
     const gradeNB: number = extractInt(false, minGrade, 'minGrade')
-    const prodNB: number = extractInt(false, prod, 'prod')
 	const sortStr: string = extractStr(true, sortBy, 'sortBy', 'seeds')
+	const downloadedStr: string = extractStr(false, downloaded, 'downloaded', 'no')
+	const searchStr: string = extractStr(false, search, 'search')
+	const typeStr: string = extractStr(false, type, 'type', 'movie')
 	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
 	const genresStr: string = extractStr(false, genre, 'genre')
 	const genreTab: string[] = genresStr === '' ? [] : genresStr.split(',')
+
+	// const yearRangeStr: string = extractStr(false, yearRange, 'yearRange')
+	// const yearRangeTab: string[] = yearRangeStr === '' ? [] : yearRangeStr.split(',')
+	// if (yearRange && yearRangeTab.length !== 2) throw new CustomError(`params yearRangeTab is incorrect`)
+	// let yearRangeNb: number[] = []
+	// if (yearRange)
+	// 	yearRangeNb = [parseInt(yearRangeTab[0]), parseInt(yearRangeTab[1])]
+
     let params: TRequestGetMovie = {
         genre: genreTab,
         grade: gradeNB,
-        prod: prodNB,
         sort: sortStr,
+		year: yearNB,
         limit: limitNB,
         offset: offsetNB,
+		downloaded: downloadedStr,
+		search: searchStr,
+		type: typeStr,
     }
     return params
 }
@@ -186,7 +199,7 @@ function extractInt(mandatory: boolean, variable: any, name: string): number {
     return limitNB
 }
 
-function extractStr(mandatory: boolean, variable: any, name: string, def?: string): string {
+export function extractStr(mandatory: boolean, variable: any, name: string, def?: string): string {
     if (!mandatory && !variable) return def ? def : ''
     if (mandatory && !variable) throw new CustomError(`params ${name} is mandatory`)
     const str: string = Array.isArray(variable) ? variable[0] : variable
