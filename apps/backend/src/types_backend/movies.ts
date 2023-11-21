@@ -82,19 +82,19 @@ export type MovieDetails = {
 	budget?: number
 }
 
-type MovieImage = {
+export type MovieImage = {
 	background?: string
 	poster: string
 }
 
-type MovieCrew = {
+export type MovieCrew = {
 	department?: string
 	job?: string
 	name: string
 	image?: string
 }
 
-type MovieActor = {
+export type MovieActor = {
 	known_for_department?: string
 	name: string
 	character: string

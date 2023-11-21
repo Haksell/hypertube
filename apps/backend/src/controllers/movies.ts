@@ -1,7 +1,7 @@
-import { CustomError, Movie } from '../types_backend/movies'
+import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
-import { getMovieId } from '../utils/info-movie'
+import { getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 
 export async function getMovies(req: Request, res: Response) {
     try {
@@ -40,9 +40,13 @@ export async function getMovieInfo(req: Request, res: Response) {
 		console.log('id='+movieId)
 
 		//get info from YTS
+		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
+		console.log(movie)
 		//get info from TheMovieDB
+		
 		//get info from OpenSub
-		res.status(201).send('ok')
+
+		res.status(201).send(movie)
 	}
 	catch (error) {
 		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
