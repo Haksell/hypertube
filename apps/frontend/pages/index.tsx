@@ -257,7 +257,7 @@ const MoviesPage = () => {
                             { value: '8', label: '8+' },
                         ]}
                     />
-                    <Filter
+                    {/* <Filter
                         id="language"
                         label={t('index.lang.name')}
                         handleChange={setLanguage}
@@ -265,7 +265,7 @@ const MoviesPage = () => {
                             { value: 'english', label: t('index.lang.english') },
                             { value: 'french', label: t('index.lang.french') },
                         ]}
-                    />
+                    /> */}
                     <Filter
                         id="sort"
                         label={t('index.sort.name')}
