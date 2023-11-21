@@ -124,7 +124,16 @@ const MoviesPage = () => {
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
             })
-            setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
+			let newMovies: Movie[] = movies.slice(0, offset)
+			newMovies = newMovies.concat(response.data)
+			newMovies = newMovies.filter((newMovie, index) => {
+				const isDuplicate = newMovies.findIndex(movie => movie.imdb_code === newMovie.imdb_code) !== index;
+				return !isDuplicate;
+			  });
+			  
+			setMovies(newMovies)
+
+            // setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + limit)
         } catch (error) {
             console.error('Error fetching movies:', error)
