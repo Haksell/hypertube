@@ -7,8 +7,8 @@ export async function getMovies(req: Request, res: Response) {
     try {
         const params = convertRequestParams(req)
 		console.log(params)
-		const repartition: number = Math.floor((params.limit / 4) * 3)
-        const moviesYTS: Movie[] = await getMoviesFromYTS(repartition, params)
+		// const repartition: number = Math.floor((params.limit / 4) * 3)
+        const moviesYTS: Movie[] = await getMoviesFromYTS(params.limit, params)
         // const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit - repartition, params)
 
 

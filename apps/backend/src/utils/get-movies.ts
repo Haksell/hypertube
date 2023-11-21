@@ -9,19 +9,23 @@ type TRequete = {
 	query_term?: string
 	genre?: string
 	minimum_rating? : number
+	order_by?: string
 }
 
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
+		const page: number = Math.floor(params.offset / (limit > 0 ? limit : 1))
 		const parameters: TRequete = {
 			limit: limit,
-			page: params.offset,
+			page: page,
 			sort_by: params.sort,
 		}
 		if (limit === 125) parameters.query_term = '0'
 		if (params.genre.length !== 0) parameters.genre = tabToString(params.genre)
 		if (params.grade !== -1) parameters.minimum_rating = params.grade
+		if (params.sort === 'seeds') parameters.order_by = 'asc'
+
         const response = await axios.get(`https://yts.mx/api/v2/list_movies.json`, 
 			{
 				params: parameters
@@ -42,9 +46,9 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				imdb_code: elem.imdb_code,
 				langage: elem.language,
 				genre: elem.genres,
-				seeds: elem.torrents.seeds,
-				quality: elem.torrents.quality,
-				url: elem.torrents.url,
+				seeds: elem.torrents[0].seeds,
+				quality: elem.torrents[0].quality,
+				url: elem.torrents[0].url,
 				source: 'YTS',
             }
             movies.push(oneMovie)

@@ -13,6 +13,13 @@ type Movie = {
     year: number
     length: number
     imdbRating?: number
+	imdb_code: string
+	langage: string
+	genre: string[]
+	seeds: number
+	quality: string
+	url: string
+    source: 'EZTV' | 'YTS'
 }
 
 const limit = 7
@@ -40,6 +47,7 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     <div className="flex justify-between text-sm">
                         <span>{movie.year}</span>
                         <span>{formatDuration(movie.length)}</span>
+						<span>seeds:{movie.seeds}</span>
                     </div>
                 </div>
             </div>
