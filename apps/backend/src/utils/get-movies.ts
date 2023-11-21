@@ -162,12 +162,11 @@ async function getInfoMovie(movie_id: string): Promise<InfoMovie | null> {
 
 
 export function convertRequestParams(req: Request): TRequestGetMovie {
-    const { genre, minGrade, prod, sortBy, limit, offset, downloaded, search, type } = req.query
+    const { genre, minGrade, sortBy, limit, offset, downloaded, search, type, yearRange } = req.query
 	console.log('here we come')
     const limitNB: number = extractInt(true, limit, 'limit')
     const offsetNB: number = extractInt(true, offset, 'offset')
     const gradeNB: number = extractInt(false, minGrade, 'minGrade')
-    const prodNB: number = extractInt(false, prod, 'prod')
 	const sortStr: string = extractStr(true, sortBy, 'sortBy', 'seeds')
 	const downloadedStr: string = extractStr(false, downloaded, 'downloaded', 'no')
 	const searchStr: string = extractStr(false, search, 'search')
@@ -175,16 +174,24 @@ export function convertRequestParams(req: Request): TRequestGetMovie {
 	if (!movieParamSortBy.includes(sortStr)) throw new CustomError(`params sort is incorrect`)
 	const genresStr: string = extractStr(false, genre, 'genre')
 	const genreTab: string[] = genresStr === '' ? [] : genresStr.split(',')
+
+	const yearRangeStr: string = extractStr(false, yearRange, 'yearRange')
+	const yearRangeTab: string[] = yearRangeStr === '' ? [] : yearRangeStr.split(',')
+	if (yearRange && yearRangeTab.length !== 2) throw new CustomError(`params yearRangeTab is incorrect`)
+	let yearRangeNb: number[] = []
+	if (yearRange)
+		yearRangeNb = [parseInt(yearRangeTab[0]), parseInt(yearRangeTab[1])]
+
     let params: TRequestGetMovie = {
         genre: genreTab,
         grade: gradeNB,
-        prod: prodNB,
         sort: sortStr,
         limit: limitNB,
         offset: offsetNB,
 		downloaded: downloadedStr,
 		search: searchStr,
-		type: typeStr
+		type: typeStr,
+		yearRange: yearRangeNb
     }
     return params
 }

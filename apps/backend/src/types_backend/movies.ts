@@ -17,13 +17,13 @@ export type Movie = {
 export type TRequestGetMovie = {
     genre: string[]
     grade: number
-    prod: number
     sort: string
     limit: number
     offset: number
 	downloaded: string
 	search: string
 	type: string
+	yearRange?: number[]
 }
 
 export class CustomError extends Error {
