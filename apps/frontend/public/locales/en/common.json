@@ -99,7 +99,13 @@
         "sort": {
             "name": "Sort by",
             "rating": "Rating",
-            "year": "Year"
+            "year": "Year",
+			"title": "Title",
+			"peers": "Peers",
+			"seeds": "Seeds",
+			"download_count": "Download count",
+			"like_count": "Like count",
+			"date_added": "Date added"
         }
     },
     "404": {

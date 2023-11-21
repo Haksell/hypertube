@@ -99,7 +99,13 @@
         "sort": {
         "name": "Trier par",
         "rating": "Classement",
-        "year": "Année"
+        "year": "Année",
+		"title": "Titre",
+		"peers": "Peers",
+		"seeds": "Seeds",
+		"download_count": "Nb telechargement",
+		"like_count": "Nombre favoris",
+		"date_added": "Date ajout"
         }
     },
     "404": {

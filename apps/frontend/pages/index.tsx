@@ -22,17 +22,6 @@ type Movie = {
     source: 'EZTV' | 'YTS'
 }
 
-export const movieParamSortBy = [
-    'title',
-    'year',
-    'rating',
-    'peers',
-    'seeds',
-    'download_count',
-    'like_count',
-    'date_added',
-]
-
 const limit = 7
 
 const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
@@ -284,6 +273,12 @@ const MoviesPage = () => {
                         options={[
                             { value: 'rating', label: t('index.sort.rating') },
                             { value: 'year', label: t('index.sort.year') },
+							{ value: 'title', label: t('index.sort.title') },
+							{ value: 'peers', label: t('index.sort.peers') },
+							{ value: 'seeds', label: t('index.sort.seeds') },
+							{ value: 'download_count', label: t('index.sort.download_count') },
+							{ value: 'like_count', label: t('index.sort.like_count') },
+							{ value: 'date_added', label: t('index.sort.date_added') },
                         ]}
                     />
                     <Filter
