@@ -10,6 +10,7 @@ const validator = createValidator()
 
 const movieSchema = Joi.object({
     genre: Joi.string(),
+	downloaded: Joi.string(),
     minGrade: Joi.number(),
 	yearRange: Joi.number(),
 	language: Joi.string(),
