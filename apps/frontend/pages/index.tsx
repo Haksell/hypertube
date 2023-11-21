@@ -22,28 +22,6 @@ type Movie = {
     source: 'EZTV' | 'YTS'
 }
 
-export const genres = [
-    'Action',
-    'Adventure',
-    'Animation',
-    'Comedy',
-    'Crime',
-    'Documentary',
-    'Drama',
-    'Family',
-    'Fantasy',
-    'History',
-    'Horror',
-    'Music',
-    'Mystery',
-    'Romance',
-    'Science-Fiction',
-    'TV Movie',
-    'Thriller',
-    'War',
-    'Western',
-]
-
 export const movieParamSortBy = [
     'title',
     'year',
@@ -252,8 +230,24 @@ const MoviesPage = () => {
                         label={t('index.genre.name')}
                         handleChange={setGenre}
                         options={[
-                            { value: 'drama', label: t('index.genre.drama') },
-                            { value: 'action', label: t('index.genre.action') },
+                            { value: 'Action', label: t('index.genre.action') },
+                            { value: 'Adventure', label: t('index.genre.adventure') },
+							{ value: 'Animation', label: t('index.genre.animation') },
+							{ value: 'Comedy', label: t('index.genre.comedy') },
+							{ value: 'Crime', label: t('index.genre.crime') },
+							{ value: 'Documentary', label: t('index.genre.documentary') },
+							{ value: 'Drama', label: t('index.genre.drama') },
+							{ value: 'Family', label: t('index.genre.family') },
+							{ value: 'Fantasy', label: t('index.genre.fantasy') },
+							{ value: 'History', label: t('index.genre.history') },
+							{ value: 'Horror', label: t('index.genre.horror') },
+							{ value: 'Music', label: t('index.genre.music') },
+							{ value: 'Mystery', label: t('index.genre.mystery') },
+							{ value: 'Romance', label: t('index.genre.romance') },
+							{ value: 'Science-Fiction', label: t('index.genre.science-fiction') },
+							{ value: 'Thriller', label: t('index.genre.thriller') },
+							{ value: 'War', label: t('index.genre.war') },
+							{ value: 'Western', label: t('index.genre.western') },
                         ]}
                     />
                     <Filter
