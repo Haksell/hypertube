@@ -28,7 +28,7 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
     const [isHovered, setIsHovered] = useState(false)
 
     return (
-        <Link href={`/movie/${movie.title}`}>
+        <Link href={`/movie/${movie.imdb_code}`}>
             <div
                 className="relative group overflow-hidden cursor-pointer"
                 onMouseEnter={() => setIsHovered(true)}
