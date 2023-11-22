@@ -26,8 +26,10 @@ model User {
   createdAt DateTime @default(now())
   authMethod String @default("EMAIL")
   profile_picture String?
-  moviesLiked Movies[] @relation("MoviesLiked")
-  moviesViewed Movies[] @relation("MoviesViewed")
+  favoriteMovies FavoriteMovie[]
+  viewedMovies ViewedMovie[]
+//   moviesLiked Movies[] @relation("MoviesLiked")
+//   moviesViewed Movies[] @relation("MoviesViewed")
 }
 
 model Movies {
@@ -44,6 +46,26 @@ model Movies {
 	summary String?
 	language String
 	background_image String
-	likedBy User[] @relation("MoviesLiked")
-	viewedBy User[] @relation("MoviesViewed")
+	favoritedBy FavoriteMovie[]
+	viewedBy ViewedMovie[]
+	// likedBy User[] @relation("MoviesLiked")
+	// viewedBy User[] @relation("MoviesViewed")
+}
+
+model FavoriteMovie {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  movie     Movies    @relation(fields: [movieId], references: [id])
+  movieId   Int
+  createdAt DateTime @default(now())
+}
+
+model ViewedMovie {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  movie     Movies    @relation(fields: [movieId], references: [id])
+  movieId   Int
+  createdAt DateTime @default(now())
 }

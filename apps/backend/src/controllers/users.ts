@@ -16,8 +16,10 @@ export async function getMe(req: Request, res: Response) {
 				username: decoded.username,
 			}
 		})
-		if (!user)
+		if (!user) {
 			res.status(400).send(NotConnected)
+			return
+		}
 
 		res.status(200).send(formatUser(user))
 	}

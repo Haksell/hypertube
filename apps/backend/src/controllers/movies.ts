@@ -3,6 +3,11 @@ import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMov
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 import { createMovieDB } from '../utils/bdd-movie'
+import { PrismaClient } from '@prisma/client'
+import { TUserCookie } from '../types_backend/user-cookie'
+import { NotConnected } from '../shared/msg-error'
+
+const prisma = new PrismaClient()
 
 export async function getMovies(req: Request, res: Response) {
     try {
@@ -62,5 +67,49 @@ export async function getMovieInfo(req: Request, res: Response) {
 }
 
 export async function likeMovie(req: Request, res: Response) {
-	;
+	try {
+		//verifie si aime pas deja le film
+		const decoded: TUserCookie = req.user;
+		const user = await prisma.user.findUnique({
+			where: {
+				username: decoded.username,
+			},
+			include: {
+				favoriteMovies: { include: { movie: true } }
+			}
+		})
+		console.log(user)
+		if (!user) {
+			res.status(400).send(NotConnected)
+			return
+		}
+
+		//verifie film existe
+		const movieId = getMovieId(req)
+		const movie = await prisma.movies.findMany({
+			where: {
+				imdb_code: movieId
+			}
+		})
+		if (!movie || movie.length !== 1) {
+			res.status(400).send('Wrong imdb code')
+			return
+		}
+			
+		//creer la relation
+		const retour = await prisma.favoriteMovie.create({
+			data: {
+				user: { 
+					connect: { id: user.id }
+				},
+				movie: {
+					connect: { id: movie[0].id }
+				}
+			}
+		})
+	}
+	catch (error) {
+		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        else res.status(400).send('Movie cannot be liked')
+	}
 }

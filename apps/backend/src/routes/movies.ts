@@ -3,6 +3,7 @@ import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
 import { createValidator } from 'express-joi-validation'
 import Joi from 'joi'
+import verifyToken from '../middleware/auth.middleware'
 
 const router: Router = express.Router()
 
@@ -28,6 +29,6 @@ router.get('/', validator.query(movieSchema), asyncHandler(getMovies))
 
 router.get('/:movieId', validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 
-router.get('/like/:movieId', validator.params(imdbIdSchema), asyncHandler(likeMovie))
+router.get('/like/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(likeMovie))
 
 export default router
