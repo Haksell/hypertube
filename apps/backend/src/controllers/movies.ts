@@ -37,8 +37,6 @@ export async function getMovieInfo(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		console.log('id='+movieId)
-
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
 
@@ -46,6 +44,9 @@ export async function getMovieInfo(req: Request, res: Response) {
 		await addDetailsFromMovieDB(movie)
 		
 		//get info from OpenSub
+
+		// verif si film existe deja dans BDD. Si non, ajout dans BDD
+		
 		console.log(movie)
 		res.status(201).send(movie)
 	}
@@ -55,4 +56,3 @@ export async function getMovieInfo(req: Request, res: Response) {
 	}
 
 }
-// http://localhost:5001/movies?genra=love,comic&grade=5&prod=1998,1999&sort=downloads&limit=10&offset=10

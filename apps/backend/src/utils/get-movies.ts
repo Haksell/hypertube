@@ -60,7 +60,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
     }
 }
 
-function tabToString(tab: string[]): string {
+export function tabToString(tab: string[]): string {
 	let str: string = ''
 	let i = 0
 	for (const elem of tab) {

@@ -11,7 +11,7 @@ export type Movie = {
 	seeds: number
 	quality: string
 	url: string
-    source: 'EZTV' | 'YTS'
+    source: 'EZTV' | 'YTS' | 'SERVER'
 }
 
 export type TRequestGetMovie = {

@@ -31,7 +31,6 @@ model User {
 model Movies {
 	id Int @id @default(autoincrement())
 	createdAt DateTime @default(now())
-	movie_id Int
 	imdb_code String
 	title String
 	file String?
