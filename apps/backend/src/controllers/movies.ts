@@ -3,9 +3,8 @@ import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMov
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 import { createMovieDB } from '../utils/bdd-movie'
-import { PrismaClient } from '@prisma/client'
-import { TUserCookie } from '../types_backend/user-cookie'
-import { NotConnected } from '../shared/msg-error'
+import { PrismaClient, User } from '@prisma/client'
+import { addUserDetailsToMovie, getUserWithFavoritesAndViewed } from '../utils/user-movie'
 
 const prisma = new PrismaClient()
 
@@ -13,6 +12,8 @@ export async function getMovies(req: Request, res: Response) {
     try {
         const params = convertRequestParams(req)
 		console.log(params)
+
+		// const user: User = await getUserWithFavoritesAndViewed(req)
 
 		let movies: Movie[] = []
 
@@ -45,13 +46,16 @@ export async function getMovieInfo(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
+		// const user: User = await getUserWithFavoritesAndViewed(req)
+
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
 
 		//get info from TheMovieDB
 		await addDetailsFromMovieDB(movie)
-		
-		//get info from OpenSub
+
+		//add info from user (already viewed / already liked)
+		// await addUserDetailsToMovie(user, movie)
 
 		// verif si film existe deja dans BDD. Si non, ajout dans BDD
 		await createMovieDB(movie)
@@ -68,18 +72,8 @@ export async function getMovieInfo(req: Request, res: Response) {
 
 export async function likeMovie(req: Request, res: Response) {
 	try {
-		//verifie si aime pas deja le film
-		const decoded: TUserCookie = req.user;
-		const user = await prisma.user.findUnique({
-			where: {
-				username: decoded.username,
-			},
-			include: {
-				favoriteMovies: { include: { movie: true } }
-			}
-		})
-		// console.log(user)
-		if (!user) throw new CustomError(NotConnected)
+		//recupere user
+		const user = await getUserWithFavoritesAndViewed(req)
 
 		//verifie film existe
 		const movieId = getMovieId(req)
@@ -92,10 +86,9 @@ export async function likeMovie(req: Request, res: Response) {
 
 		//verif film deja liked
 		const alreadyLike: number = user.favoriteMovies.findIndex(elem => elem.movieId === movie[0].id)
-		console.log('already liked='+alreadyLike)
 
 		if (alreadyLike === -1) {
-			const retour = await prisma.favoriteMovie.create({
+			await prisma.favoriteMovie.create({
 				data: {
 					user: { 
 						connect: { id: user.id }
@@ -108,7 +101,7 @@ export async function likeMovie(req: Request, res: Response) {
 			res.status(200).send('Movie liked')
 		}
 		else {
-			const retour = await prisma.favoriteMovie.delete({
+			await prisma.favoriteMovie.delete({
 				where: {
 					id: user.favoriteMovies[alreadyLike].id
 				}
@@ -122,3 +115,5 @@ export async function likeMovie(req: Request, res: Response) {
 	console.log(error)
 	}
 }
+
+//get info from OpenSub
