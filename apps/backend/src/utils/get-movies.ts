@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 type TRequete = {
 	limit: number
@@ -11,6 +12,9 @@ type TRequete = {
 	minimum_rating? : number
 	order_by?: string
 }
+
+const prisma = new PrismaClient()
+
 
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
@@ -60,7 +64,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
     }
 }
 
-function tabToString(tab: string[]): string {
+export function tabToString(tab: string[]): string {
 	let str: string = ''
 	let i = 0
 	for (const elem of tab) {
@@ -119,6 +123,44 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
 		return movies		
 	}
 	catch (error) {
+		return []
+	}
+}
+
+//get movies that are stored in our BDD (and where we have a file downloaded)
+export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
+	try {
+		const movies: Movie[] = []
+		const moviesBDD = await prisma.movies.findMany({
+			where: {
+				file: {
+					not: null
+				}
+			}
+		})
+		if (!moviesBDD || moviesBDD.length === 0)
+			return movies
+
+		for (const elem of moviesBDD) {
+			const oneMovie: Movie = {
+				title: elem.title,
+				thumbnail: elem.background_image,
+				year: elem.year,
+				length: elem.runtime,
+				imdbRating: elem.rating,
+				imdb_code: elem.imdb_code,
+				langage: elem.language,
+				genre: elem.genres ? elem.genres?.split(',') : [],
+				seeds: 0,
+				quality: '',
+				url: 'SERVER',
+				source: 'SERVER',
+			}
+			movies.push(oneMovie)
+		}	
+		return movies
+	}
+	catch {
 		return []
 	}
 }

@@ -1,12 +1,19 @@
 import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
-import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
+import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
+import { createMovieDB } from '../utils/bdd-movie'
+import { PrismaClient, User } from '@prisma/client'
+import { addUserDetailsToMovie, getUserWithFavoritesAndViewed } from '../utils/user-movie'
+
+const prisma = new PrismaClient()
 
 export async function getMovies(req: Request, res: Response) {
     try {
         const params = convertRequestParams(req)
 		console.log(params)
+
+		// const user: User = await getUserWithFavoritesAndViewed(req)
 
 		let movies: Movie[] = []
 
@@ -24,6 +31,8 @@ export async function getMovies(req: Request, res: Response) {
 		}
 		else {
 			// TO DO WHEN downloading finished;
+			const moviesYTS: Movie[] = await extractAllMoviesDownloaded()
+			if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
 		}
         
         res.status(201).send(movies)
@@ -37,16 +46,21 @@ export async function getMovieInfo(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		console.log('id='+movieId)
+		// const user: User = await getUserWithFavoritesAndViewed(req)
 
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
 
 		//get info from TheMovieDB
 		await addDetailsFromMovieDB(movie)
-		
-		//get info from OpenSub
-		console.log(movie)
+
+		//add info from user (already viewed / already liked)
+		// await addUserDetailsToMovie(user, movie)
+
+		// verif si film existe deja dans BDD. Si non, ajout dans BDD
+		await createMovieDB(movie)
+
+		// console.log(movie)
 		res.status(201).send(movie)
 	}
 	catch (error) {
@@ -55,4 +69,51 @@ export async function getMovieInfo(req: Request, res: Response) {
 	}
 
 }
-// http://localhost:5001/movies?genra=love,comic&grade=5&prod=1998,1999&sort=downloads&limit=10&offset=10
+
+export async function likeMovie(req: Request, res: Response) {
+	try {
+		//recupere user
+		const user = await getUserWithFavoritesAndViewed(req)
+
+		//verifie film existe
+		const movieId = getMovieId(req)
+		const movie = await prisma.movies.findMany({
+			where: {
+				imdb_code: movieId
+			}
+		})
+		if (!movie || movie.length !== 1) throw new CustomError('Wrong imdb code')
+
+		//verif film deja liked
+		const alreadyLike: number = user.favoriteMovies.findIndex(elem => elem.movieId === movie[0].id)
+
+		if (alreadyLike === -1) {
+			await prisma.favoriteMovie.create({
+				data: {
+					user: { 
+						connect: { id: user.id }
+					},
+					movie: {
+						connect: { id: movie[0].id }
+					}
+				}
+			})
+			res.status(200).send('Movie liked')
+		}
+		else {
+			await prisma.favoriteMovie.delete({
+				where: {
+					id: user.favoriteMovies[alreadyLike].id
+				}
+			})
+			res.status(200).send('Movie unliked')
+		}
+	}
+	catch (error) {
+		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        else res.status(400).send('Movie cannot be liked')
+	console.log(error)
+	}
+}
+
+//get info from OpenSub
