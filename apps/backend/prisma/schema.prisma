@@ -26,7 +26,8 @@ model User {
   createdAt DateTime @default(now())
   authMethod String @default("EMAIL")
   profile_picture String?
-  movies_liked Movies[]
+  moviesLiked Movies[] @relation("MoviesLiked")
+  moviesViewed Movies[] @relation("MoviesViewed")
 }
 
 model Movies {
@@ -43,5 +44,6 @@ model Movies {
 	summary String?
 	language String
 	background_image String
-	liked_by User[]
+	likedBy User[] @relation("MoviesLiked")
+	viewedBy User[] @relation("MoviesViewed")
 }
