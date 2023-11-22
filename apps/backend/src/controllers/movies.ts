@@ -1,7 +1,7 @@
 import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
-import { getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
+import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 
 export async function getMovies(req: Request, res: Response) {
     try {
@@ -41,11 +41,12 @@ export async function getMovieInfo(req: Request, res: Response) {
 
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
-		console.log(movie)
+
 		//get info from TheMovieDB
+		await addDetailsFromMovieDB(movie)
 		
 		//get info from OpenSub
-
+		console.log(movie)
 		res.status(201).send(movie)
 	}
 	catch (error) {
