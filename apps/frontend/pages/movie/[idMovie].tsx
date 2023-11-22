@@ -42,12 +42,15 @@ function MoviePage() {
 		}
 	}
 
-    const searchInCrew = (job: string): MovieCrew[] => {
-        return movie?.crews.filter(crew => crew.job === job) || [];
+    const searchInCrew = (job: string[]): MovieCrew[] => {
+        if (!movie || !movie.crews) {
+            return [];
+        }
+        return movie.crews.filter(crew => job.includes(crew.job as string));
     };
-    const directors = searchInCrew('Director');
-    const writers = searchInCrew('Writer');
-    const producers = searchInCrew('Producer');
+    const directors = searchInCrew(['Director']);
+    const writers = searchInCrew(['Story', 'Writer']);
+    const producers = searchInCrew(['Producer']);
 
     return !movie ? (
         <p>PAS DE FILM</p> /* Faudra changer :D */
@@ -56,21 +59,27 @@ function MoviePage() {
             <NavBar />
             <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                 <img
-                    src={movie.image.background ? movie.image.background : '/defaultBackground.jpg'}
+                    src={movie.image.background || '/defaultBackground.jpg'}
                     alt={movie.title}
                     className="object-cover w-full h-full top-10 brightness-50"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.src = '/defaultBackground.jpg';
+                    }}
                 />
             </div>
             <div className="h-[22vh]"/>
             <div className="relative">
                 <img
-                    src={movie.image.poster}
+                    src={movie.image.poster || '/errorPicture.jpg'}
                     alt={movie.title}
                     className="absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible min-[1000px]:-top-20"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.src = '/errorPicture.jpg';
+                    }}
                 />
                 <div className="flex flex-row pl-10 bg-neutral-800 w-full h-28 bg-opacity-80 min-[770px]:pl-[31vw]">
-                    <div>
-                        <h1 className="py-2 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
+                    <div className="w-full">
+                        <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                             {movie.title}
                         </h1>
                         <RatingStars rating={movie.rating / 2} />
@@ -99,14 +108,79 @@ function MoviePage() {
                     </div>
                 </div>
             </div>
-            <div className="bg-neutral-950">
+            <div className="bg-neutral-900">
                 <div className="text-slate-200 px-10 min-[770px]:pl-[31vw]">
-                    <p className="pt-8 text-xl tracking-wide">{movie.description_full}</p>
-                    <hr className="h-px my-10 w-1/2 mx-auto bg-gray-200 border-0 dark:bg-gray-700"></hr>
-                    <Info title="Year" content={movie.year.toString()} />
-                    <Info title="Length" content={formatDuration(movie.runtime)} />
-                    <Info title="IMDb Rating" content={movie.rating.toString()} />
-                    <Info title="Summary" content={movie.summary} />
+                    <div className='py-3 w-auto flex flex-row items-center'>
+                        <svg className="w-6 h-6 text-orange-50" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9H21M7 3V5M17 3V5M6 12H8M11 12H13M16 12H18M6 15H8M11 15H13M16 15H18M6 18H8M11 18H13M16 18H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" strokeWidth="2"></path>
+                        </svg>
+                        <p className='ml-2 mr-4 text-slate-200'>{movie.year.toString()}</p>
+                        <svg className="w-6 h-6 text-blue-50" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 7V12L14.5 10.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"></path>
+                        </svg>
+                        <p className='ml-2 text-slate-200'>{formatDuration(movie.runtime)}</p>
+                    </div>
+                    <div className="flex flex-row items-center w-full">
+                        <span className="mr-4 text-3xl font-extrabold">Summary</span>
+                        <hr className="mt-2 w-full h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                    </div>
+                    <p className="pt-3 text-xl tracking-wide">{movie.summary}</p>
+                    <div className="pt-4 flex flex-row items-center w-full">
+                        <span className="mr-4 text-3xl font-extrabold">Casting</span>
+                        <hr className="mt-2 w-full h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                    </div>
+                    <div className='flex overflow-x-auto m-6 pt-18'>
+                        <div className='relative pl-5 flex flex-none mr-5 border-2 border-gray-700'>
+                            <p className='absolute px-1 left-0 text-3xl font-bold text-orange-50 bg-gray-700 rounded-br bg-opacity-80'>{pluralize('Director', directors)}</p>
+                            {directors.map((element, index) => (
+                                <div key={index} className='my-5 mr-5'>
+                                    <img
+                                        src={element.image || '/errorPicture.jpg'}
+                                        alt={element.name + index}
+                                        className='w-[10vw]'
+                                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                                            e.currentTarget.src = '/errorPicture.jpg';
+                                        }}
+                                    />
+                                    <p className='absolute bottom-0 right-2 rounded-t w-[90%] text-md bg-gray-700 bg-opacity-80 text-center'>{element.name}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className='relative pl-5 flex flex-none mr-5 border-2 border-gray-700'>
+                            <p className='absolute px-1 left-0 text-3xl font-bold text-orange-50 bg-gray-700 rounded-br bg-opacity-80'>{pluralize('Writer', writers)}</p>
+                            {writers.map((element, index) => (
+                                <div key={index} className='my-5 mr-5'>
+                                    <img
+                                        key={index}
+                                        src={element.image || '/errorPicture.jpg'}
+                                        alt={element.name + index}
+                                        className='w-[10vw]'
+                                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                                            e.currentTarget.src = '/errorPicture.jpg';
+                                        }}
+                                    />
+                                    <p className='absolute bottom-0 right-2 rounded-t w-[90%] text-md bg-gray-700 bg-opacity-80 text-center'>{element.name}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className='relative pl-5 flex flex-none mr-5 border-2 border-gray-700'>
+                            <p className='absolute px-1 left-0 text-3xl font-bold text-orange-50 bg-gray-700 rounded-br bg-opacity-80'>{pluralize('Producer', producers)}</p>
+                            {producers.map((element, index) => (
+                                <div key={index} className='my-5 mr-5'>
+                                    <img
+                                        key={index}
+                                        src={element.image || '/errorPicture.jpg'}
+                                        alt={element.name + index}
+                                        className='w-[10vw]'
+                                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                                            e.currentTarget.src = '/errorPicture.jpg';
+                                        }}
+                                    />
+                                    <p className='absolute bottom-0 right-2 rounded-t w-[10vw] text-md bg-gray-700 bg-opacity-80 text-center'>{element.name}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     <Info
                         title={pluralize('Director', directors)}
                         content={directors.map(director => director.name).join(', ')}
