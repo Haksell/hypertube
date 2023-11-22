@@ -78,11 +78,8 @@ export async function likeMovie(req: Request, res: Response) {
 				favoriteMovies: { include: { movie: true } }
 			}
 		})
-		console.log(user)
-		if (!user) {
-			res.status(400).send(NotConnected)
-			return
-		}
+		// console.log(user)
+		if (!user) throw new CustomError(NotConnected)
 
 		//verifie film existe
 		const movieId = getMovieId(req)
@@ -91,25 +88,37 @@ export async function likeMovie(req: Request, res: Response) {
 				imdb_code: movieId
 			}
 		})
-		if (!movie || movie.length !== 1) {
-			res.status(400).send('Wrong imdb code')
-			return
-		}
-			
-		//creer la relation
-		const retour = await prisma.favoriteMovie.create({
-			data: {
-				user: { 
-					connect: { id: user.id }
-				},
-				movie: {
-					connect: { id: movie[0].id }
+		if (!movie || movie.length !== 1) throw new CustomError('Wrong imdb code')
+
+		//verif film deja liked
+		const alreadyLike: number = user.favoriteMovies.findIndex(elem => elem.movieId === movie[0].id)
+		console.log('already liked='+alreadyLike)
+
+		if (alreadyLike === -1) {
+			const retour = await prisma.favoriteMovie.create({
+				data: {
+					user: { 
+						connect: { id: user.id }
+					},
+					movie: {
+						connect: { id: movie[0].id }
+					}
 				}
-			}
-		})
+			})
+			res.status(200).send('Movie liked')
+		}
+		else {
+			const retour = await prisma.favoriteMovie.delete({
+				where: {
+					id: user.favoriteMovies[alreadyLike].id
+				}
+			})
+			res.status(200).send('Movie unliked')
+		}
 	}
 	catch (error) {
 		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Movie cannot be liked')
+	console.log(error)
 	}
 }
