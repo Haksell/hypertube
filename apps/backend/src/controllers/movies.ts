@@ -1,5 +1,5 @@
 import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
-import { convertRequestParams, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
+import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 import { createMovieDB } from '../utils/bdd-movie'
@@ -25,6 +25,8 @@ export async function getMovies(req: Request, res: Response) {
 		}
 		else {
 			// TO DO WHEN downloading finished;
+			const moviesYTS: Movie[] = await extractAllMoviesDownloaded()
+			if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
 		}
         
         res.status(201).send(movies)

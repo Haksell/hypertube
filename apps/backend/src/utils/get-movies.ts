@@ -140,6 +140,24 @@ export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
 		})
 		if (!moviesBDD || moviesBDD.length === 0)
 			return movies
+
+		for (const elem of moviesBDD) {
+			const oneMovie: Movie = {
+				title: elem.title,
+				thumbnail: elem.background_image,
+				year: elem.year,
+				length: elem.runtime,
+				imdbRating: elem.rating,
+				imdb_code: elem.imdb_code,
+				langage: elem.language,
+				genre: elem.genres ? elem.genres?.split(',') : [],
+				seeds: 0,
+				quality: '',
+				url: 'SERVER',
+				source: 'SERVER',
+			}
+			movies.push(oneMovie)
+		}	
 		return movies
 	}
 	catch {
