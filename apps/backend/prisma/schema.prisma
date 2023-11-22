@@ -26,6 +26,7 @@ model User {
   createdAt DateTime @default(now())
   authMethod String @default("EMAIL")
   profile_picture String?
+  movies_liked Movies[]
 }
 
 model Movies {
@@ -42,4 +43,5 @@ model Movies {
 	summary String?
 	language String
 	background_image String
+	liked_by User[]
 }
