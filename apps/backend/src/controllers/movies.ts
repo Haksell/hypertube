@@ -60,3 +60,7 @@ export async function getMovieInfo(req: Request, res: Response) {
 	}
 
 }
+
+export async function likeMovie(req: Request, res: Response) {
+	;
+}

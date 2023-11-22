@@ -1,4 +1,4 @@
-import { getMovieInfo, getMovies } from '../controllers/movies'
+import { getMovieInfo, getMovies, likeMovie } from '../controllers/movies'
 import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
 import { createValidator } from 'express-joi-validation'
@@ -27,5 +27,7 @@ const imdbIdSchema = Joi.object({
 router.get('/', validator.query(movieSchema), asyncHandler(getMovies))
 
 router.get('/:movieId', validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
+
+router.get('/like/:movieId', validator.params(imdbIdSchema), asyncHandler(likeMovie))
 
 export default router
