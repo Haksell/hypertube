@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 type TRequete = {
 	limit: number
@@ -11,6 +12,9 @@ type TRequete = {
 	minimum_rating? : number
 	order_by?: string
 }
+
+const prisma = new PrismaClient()
+
 
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
@@ -119,6 +123,26 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
 		return movies		
 	}
 	catch (error) {
+		return []
+	}
+}
+
+//get movies that are stored in our BDD (and where we have a file downloaded)
+export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
+	try {
+		const movies: Movie[] = []
+		const moviesBDD = await prisma.movies.findMany({
+			where: {
+				file: {
+					not: null
+				}
+			}
+		})
+		if (!moviesBDD || moviesBDD.length === 0)
+			return movies
+		return movies
+	}
+	catch {
 		return []
 	}
 }
