@@ -1,10 +1,13 @@
 import { formatDuration } from '../../src/utilsTime'
 import NavBar from '../../components/NavBar'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import type { GetServerSideProps } from 'next'
 import RatingStars from '../../components/elems/RatingStars';
 import { useTranslation } from 'next-i18next'
+import axios from 'axios'
+import {MovieDetails} from '../../src/shared/movies'
+import { useRouter } from 'next/router'
 
 const movie = {
     title: 'Night of the Living Dead',
@@ -32,7 +35,29 @@ const Info: React.FC<{ title: string; content: string }> = ({ title, content }) 
 
 const pluralize = (name: string, arr: string[]) => (arr.length >= 2 ? name + 's' : name)
 
-const MoviePage = () => {
+function MoviePage() {
+	const [movieDetails, setMovieDetails] = useState<MovieDetails | null>(null)
+	const router = useRouter()
+    const { idMovie } = router.query
+
+	useEffect(() => {
+		if (!idMovie) return
+		if (idMovie !== '')
+			getMovie()
+	}, [idMovie])
+
+	async function getMovie() {
+		try {
+
+			const response = await axios.get(`http://localhost:5001/movies/${idMovie}`)
+			setMovieDetails(response.data)
+			console.log(response.data)
+		}
+		catch {
+			setMovieDetails(null)
+		}
+	}
+
     return (
         <div>
             <NavBar />
