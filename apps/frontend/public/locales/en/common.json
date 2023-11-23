@@ -60,7 +60,7 @@
     },
     "index": {
         "movies": "Movies",
-        "tv": "TV shows",
+        "tv": "Series",
         "availability": {
            "name": "Availability",
            "all": "All",
