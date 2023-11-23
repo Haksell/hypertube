@@ -55,6 +55,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				quality: elem.torrents[0].quality,
 				url: elem.torrents[0].url,
 				viewed: false,
+				liked: false,
 				source: 'YTS',
             }
             movies.push(oneMovie)
@@ -111,6 +112,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
 				quality: '',
 				url: elem.torrent_url,
 				viewed: false,
+				liked: false,
 				source: 'EZTV'
 			}
 			if (info) {
@@ -155,6 +157,7 @@ export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
 				genre: elem.genres ? elem.genres?.split(',') : [],
 				seeds: 0,
 				viewed: false,
+				liked: false,
 				quality: '',
 				url: 'SERVER',
 				source: 'SERVER',

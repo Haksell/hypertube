@@ -4,7 +4,7 @@ import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
 import { createMovieDB } from '../utils/bdd-movie'
 import { PrismaClient, User } from '@prisma/client'
-import { addUserDetailsToMovie, getUserWithFavoritesAndViewed } from '../utils/user-movie'
+import { addUserDetailsToMovie, addUserDetailsToMoviesList, getUserWithFavoritesAndViewed } from '../utils/user-movie'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +13,7 @@ export async function getMovies(req: Request, res: Response) {
         const params = convertRequestParams(req)
 		console.log(params)
 
-		// const user: User = await getUserWithFavoritesAndViewed(req)
+		const user: User = await getUserWithFavoritesAndViewed(req)
 
 		let movies: Movie[] = []
 
@@ -30,10 +30,11 @@ export async function getMovies(req: Request, res: Response) {
 			
 		}
 		else {
-			// TO DO WHEN downloading finished;
 			const moviesYTS: Movie[] = await extractAllMoviesDownloaded()
 			if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
 		}
+
+		await addUserDetailsToMoviesList(user, movies)
         
         res.status(201).send(movies)
     } catch (error) {

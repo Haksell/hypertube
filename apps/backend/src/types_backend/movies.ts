@@ -12,6 +12,7 @@ export type Movie = {
 	quality: string
 	url: string
 	viewed: boolean
+	liked: boolean
     source: 'EZTV' | 'YTS' | 'SERVER'
 }
 
