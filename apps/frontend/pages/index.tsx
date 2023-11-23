@@ -1,16 +1,13 @@
 import NavBar from '../components/NavBar'
+import UserNotSignedIn from '../components/auth/UserNotSignedIn'
+import { useUserContext } from '../src/context/UserContext'
 import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
-import { useUserContext } from '../src/context/UserContext'
-import { useRouter } from 'next/router'
-import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 
 type Movie = {
     title: string
@@ -59,9 +56,9 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                         <span>rating:{movie.imdbRating}</span>
                         <span>seeds:{movie.seeds}</span>
                     </div>
-					<div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-sm">
                         <span>liked:{movie.liked ? 'true' : 'false'}</span>
-						<span>viewed:{movie.viewed ? 'true' : 'false'}</span>
+                        <span>viewed:{movie.viewed ? 'true' : 'false'}</span>
                     </div>
                 </div>
             </div>
@@ -98,8 +95,7 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
 }
 
 const MoviesPage = () => {
-	const { user } = useUserContext()
-	const router = useRouter()
+    const { user } = useUserContext()
     const [movies, setMovies] = useState<Movie[]>([])
     const [fetchCount, setFetchCount] = useState(0)
     const [search, setSearch] = useState('')
@@ -112,15 +108,28 @@ const MoviesPage = () => {
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
-    let width = document?.getElementById('choice')?.offsetWidth || 0
-    let height = document?.getElementById('choice')?.offsetHeight || 0
-	let width2 = document?.getElementById('choice2')?.offsetWidth || 0
-    let height2 = document?.getElementById('choice2')?.offsetHeight || 0
 
-	// useEffect(() => {
-	// 	if (!user)
-	// 		router.push('/signin')
-	// }, [])
+	const choiceRef = useRef<HTMLDivElement>(null)
+	const choiceRef2 = useRef<HTMLDivElement>(null)
+
+    const [width, setWidth] = useState(0)
+    const [height, setHeight] = useState(0)
+	const [width2, setWidth2] = useState(0)
+    const [height2, setHeight2] = useState(0)
+
+    useEffect(() => {
+		const choice = choiceRef.current
+		const choice2 = choiceRef2.current
+		if (choice) {
+			setWidth(choice.offsetWidth)
+			setHeight(choice.offsetHeight)
+		}
+		if (choice2) {
+			setWidth2(choice2.offsetWidth)
+			setHeight2(choice2.offsetHeight)
+		}
+		
+    }, [choiceRef.current != null, choiceRef2.current != null])
 
     const shouldFetchMovies = () => {
         return (
@@ -143,10 +152,9 @@ const MoviesPage = () => {
             if (language) params['language'] = language
             if (sortBy) params['sortBy'] = sortBy
             else params['sortBy'] = 'seeds'
-            const response = await axios.get('http://localhost:5001/movies', 
-			{
+            const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
-				withCredentials: true
+                withCredentials: true,
             })
             // let newMovies: Movie[] = movies.slice(0, offset)
             // newMovies = newMovies.concat(response.data)
@@ -188,7 +196,9 @@ const MoviesPage = () => {
         }, 30)
     }
 
-    return !user ? <UserNotSignedIn /> : (
+    return !user ? (
+        <UserNotSignedIn />
+    ) : (
         <div className="min-h-screen bg-black">
             <NavBar />
             <div className="flex flex-col w-full justify-center items-center">
@@ -212,7 +222,7 @@ const MoviesPage = () => {
                             </div>
                         </div>
                         <div
-                            id="choice2"
+                            ref={choiceRef2}
                             className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
                         >
                             <span className="z-30">{t('index.movies')}</span>
@@ -241,7 +251,7 @@ const MoviesPage = () => {
                                 </div>
                             </div>
                             <div
-                                id="choice"
+                                ref={choiceRef}
                                 className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
                             >
                                 <span className="z-30">{t('index.movies')}</span>
