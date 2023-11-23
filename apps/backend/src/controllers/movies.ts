@@ -60,6 +60,8 @@ export async function getMovieInfo(req: Request, res: Response) {
 		// verif si film existe deja dans BDD. Si non, ajout dans BDD
 		await createMovieDB(movie)
 
+		//add movie to viewed By user
+
 		// console.log(movie)
 		res.status(201).send(movie)
 	}

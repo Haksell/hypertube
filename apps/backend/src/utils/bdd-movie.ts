@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { MovieDetails } from "../types_backend/movies";
+import { CustomError, MovieDetails } from "../types_backend/movies";
 import { tabToString } from "./get-movies";
 
 const prisma = new PrismaClient()
@@ -32,5 +32,38 @@ export async function createMovieDB(movie: MovieDetails) {
 	}
 	catch {
 		return false
+	}
+}
+
+export async function movieViewed(user: any, movieId: string) {
+	try {
+		//recuperer film
+		const movie = await prisma.movies.findMany({
+			where: {
+				imdb_code: movieId
+			}
+		})
+		if (!movie || movie.length !== 1) throw new CustomError('Error creating movie on database')
+
+		//verif film deja vu
+		const alreadyViewed: number = user.viewedMovies.findIndex((elem: any) => elem.movieId === movie[0].id)
+
+		if (alreadyViewed === -1) {
+			await prisma.viewedMovie.create({
+				data: {
+					user: { 
+						connect: { id: user.id }
+					},
+					movie: {
+						connect: { id: movie[0].id }
+					},
+					imdb_code: movie[0].imdb_code
+				}
+			})
+		}
+	}
+	catch (error) {
+		if (error instanceof CustomError) throw new CustomError(error.message)
+        else throw new CustomError('Unknown error..')
 	}
 }
