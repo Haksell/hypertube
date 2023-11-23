@@ -172,7 +172,7 @@ const MoviesPage = () => {
     }
 
     useEffect(() => {
-        if (shouldFetchMovies() && fetchCount != 0) fetchMovies()
+        if (shouldFetchMovies()) fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {
