@@ -133,14 +133,14 @@ const MoviesPage = () => {
 			// setMovies(newMovies)
 
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
-            setFetchCount(offset + limit)
+            setFetchCount(offset + response.data.length)
         } catch (error) {
             console.error('Error fetching movies:', error)
         }
     }
 
     useEffect(() => {
-        if (shouldFetchMovies()) fetchMovies()
+        if (shouldFetchMovies() && fetchCount != 0) fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {
