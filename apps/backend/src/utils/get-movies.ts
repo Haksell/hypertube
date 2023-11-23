@@ -19,7 +19,7 @@ const prisma = new PrismaClient()
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
-		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) : 1
+		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
 		const parameters: TRequete = {
 			limit: limit,
 			page: page,
