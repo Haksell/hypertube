@@ -22,6 +22,8 @@ type Movie = {
 	seeds: number
 	quality: string
 	url: string
+	viewed: boolean
+	liked: boolean
     source: 'EZTV' | 'YTS'
 }
 
@@ -54,6 +56,10 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
 					<div className="flex justify-between text-sm">
                         <span>rating:{movie.imdbRating}</span>
 						<span>seeds:{movie.seeds}</span>
+                    </div>
+					<div className="flex justify-between text-sm">
+                        <span>liked:{movie.liked ? 'true' : 'false'}</span>
+						<span>viewed:{movie.viewed ? 'true' : 'false'}</span>
                     </div>
                 </div>
             </div>
@@ -105,10 +111,10 @@ const MoviesPage = () => {
     let isFetchingFromScroll = false
 	const { t } = useTranslation('common')
 
-	useEffect(() => {
-		if (!user)
-			router.push('/signin')
-	}, [])
+	// useEffect(() => {
+	// 	if (!user)
+	// 		router.push('/signin')
+	// }, [])
 
     const shouldFetchMovies = () => {
         return (

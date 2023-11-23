@@ -23,7 +23,7 @@ export async function getUserWithFavoritesAndViewed(req: Request) {
 
 export async function addUserDetailsToMovie(user: any, movie: MovieDetails) {
 	//verif film deja liked
-	const alreadyLike: number = user.favoriteMovie.findIndex((elem: any) => elem.imdb_code === movie.imdb_code)
+	const alreadyLike: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movie.imdb_code)
 	console.log(user)
 	if (alreadyLike !== -1) movie.liked = true
 	else movie.liked = false
@@ -34,10 +34,10 @@ export async function addUserDetailsToMoviesList(user: any, movies: Movie[]) {
 	
 	let i = 0
 	for (i = 0; i < movies.length; i++) {
-		const alreadyLiked: number = user.favoriteMovie.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
+		const alreadyLiked: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
 		if (alreadyLiked !== -1) movies[i].liked = true
 		else movies[i].liked = false
-		const alreadyViewed: number = user.viewedMovie.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
+		const alreadyViewed: number = user.viewedMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
 		if (alreadyViewed !== -1) movies[i].viewed = true
 		else movies[i].viewed = false
 	}

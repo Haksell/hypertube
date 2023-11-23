@@ -2,7 +2,7 @@ import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
-import { createMovieDB } from '../utils/bdd-movie'
+import { createMovieDB, movieViewed } from '../utils/bdd-movie'
 import { PrismaClient, User } from '@prisma/client'
 import { addUserDetailsToMovie, addUserDetailsToMoviesList, getUserWithFavoritesAndViewed } from '../utils/user-movie'
 
@@ -40,6 +40,7 @@ export async function getMovies(req: Request, res: Response) {
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Error')
+		console.log(error)
     }
 }
 
@@ -62,7 +63,8 @@ export async function getMovieInfo(req: Request, res: Response) {
 		await createMovieDB(movie)
 
 		//add movie to viewed By user
-
+		movieViewed(user, movieId)
+		
 		// console.log(movie)
 		res.status(201).send(movie)
 	}
