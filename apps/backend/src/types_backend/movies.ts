@@ -80,6 +80,7 @@ export type MovieDetails = {
 	actors: MovieActor[]
 	crews: MovieCrew[]
 	budget?: number
+	liked: boolean
 }
 
 export type MovieImage = {

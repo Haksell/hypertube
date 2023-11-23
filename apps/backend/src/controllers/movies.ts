@@ -46,7 +46,7 @@ export async function getMovieInfo(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		// const user: User = await getUserWithFavoritesAndViewed(req)
+		const user: User = await getUserWithFavoritesAndViewed(req)
 
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
@@ -55,7 +55,7 @@ export async function getMovieInfo(req: Request, res: Response) {
 		await addDetailsFromMovieDB(movie)
 
 		//add info from user (already viewed / already liked)
-		// await addUserDetailsToMovie(user, movie)
+		await addUserDetailsToMovie(user, movie)
 
 		// verif si film existe deja dans BDD. Si non, ajout dans BDD
 		await createMovieDB(movie)
@@ -95,7 +95,8 @@ export async function likeMovie(req: Request, res: Response) {
 					},
 					movie: {
 						connect: { id: movie[0].id }
-					}
+					},
+					imdb_code: movie[0].imdb_code
 				}
 			})
 			res.status(200).send('Movie liked')
