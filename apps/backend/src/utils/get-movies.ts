@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 type TRequete = {
 	limit: number
@@ -19,7 +19,7 @@ const prisma = new PrismaClient()
 //`https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${params.offset}`
 export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
-		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) : 1
+		const page: number = params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
 		const parameters: TRequete = {
 			limit: limit,
 			page: page,
@@ -54,6 +54,8 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				seeds: elem.torrents[0].seeds,
 				quality: elem.torrents[0].quality,
 				url: elem.torrents[0].url,
+				viewed: false,
+				liked: false,
 				source: 'YTS',
             }
             movies.push(oneMovie)
@@ -109,6 +111,8 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
 				seeds: elem.seeds,
 				quality: '',
 				url: elem.torrent_url,
+				viewed: false,
+				liked: false,
 				source: 'EZTV'
 			}
 			if (info) {
@@ -152,6 +156,8 @@ export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
 				langage: elem.language,
 				genre: elem.genres ? elem.genres?.split(',') : [],
 				seeds: 0,
+				viewed: false,
+				liked: false,
 				quality: '',
 				url: 'SERVER',
 				source: 'SERVER',

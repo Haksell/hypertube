@@ -1,7 +1,7 @@
 import { NotConnected } from '../shared/msg-error'
-import { CustomError, MovieDetails } from '../types_backend/movies'
+import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { TUserCookie } from '../types_backend/user-cookie'
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { Request } from 'express'
 
 const prisma = new PrismaClient()
@@ -23,5 +23,22 @@ export async function getUserWithFavoritesAndViewed(req: Request) {
 
 export async function addUserDetailsToMovie(user: any, movie: MovieDetails) {
 	//verif film deja liked
-	// const alreadyLike: number = user.favoriteMovies.findIndex((elem: any) => elem. === movie.imdb_code)
+	const alreadyLike: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movie.imdb_code)
+	console.log(user)
+	if (alreadyLike !== -1) movie.liked = true
+	else movie.liked = false
+}
+
+export async function addUserDetailsToMoviesList(user: any, movies: Movie[]) {
+	if (!movies || movies.length === 0) return
+	
+	let i = 0
+	for (i = 0; i < movies.length; i++) {
+		const alreadyLiked: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
+		if (alreadyLiked !== -1) movies[i].liked = true
+		else movies[i].liked = false
+		const alreadyViewed: number = user.viewedMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
+		if (alreadyViewed !== -1) movies[i].viewed = true
+		else movies[i].viewed = false
+	}
 }

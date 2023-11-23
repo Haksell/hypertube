@@ -42,6 +42,7 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
 			image: images,
 			actors: [],
 			crews: [],
+			liked: false
 		}
 		return retour
 	}

@@ -25,9 +25,9 @@ const imdbIdSchema = Joi.object({
 	movieId: Joi.string()
 })
 
-router.get('/', validator.query(movieSchema), asyncHandler(getMovies))
+router.get('/', verifyToken, validator.query(movieSchema), asyncHandler(getMovies))
 
-router.get('/:movieId', validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
+router.get('/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 
 router.get('/like/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(likeMovie))
 

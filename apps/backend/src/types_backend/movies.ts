@@ -11,6 +11,8 @@ export type Movie = {
 	seeds: number
 	quality: string
 	url: string
+	viewed: boolean
+	liked: boolean
     source: 'EZTV' | 'YTS' | 'SERVER'
 }
 
@@ -80,6 +82,7 @@ export type MovieDetails = {
 	actors: MovieActor[]
 	crews: MovieCrew[]
 	budget?: number
+	liked: boolean
 }
 
 export type MovieImage = {
