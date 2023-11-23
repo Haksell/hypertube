@@ -100,11 +100,11 @@ export async function deleteComment(req: Request, res: Response) {
 }
 
 export async function createComment(req: Request, res: Response) {
-	const { comment, movieId } = req.body
+	const { comment, imdbCode } = req.body
 
-	const movie = await prisma.movies.findUnique({
+	const movie = await prisma.movies.findFirst({
 		where: {
-			id: parseInt(movieId)
+			imdb_code: imdbCode
 		}
 	})
 
@@ -122,4 +122,42 @@ export async function createComment(req: Request, res: Response) {
 	})
 
 	res.status(200).send('commentCreated')
+}
+
+export async function getMovieComments(req: Request, res: Response) {
+	const { movieId } = req.params
+
+	const movie = await prisma.movies.findFirst({
+		where: {
+			imdb_code: movieId
+		},
+		select: {
+			id: true,
+			comments: {
+				select: {
+					id: true,
+					text: true,
+					updatedAt: true,
+					user: {
+						select: {
+							profile_picture: true,
+							username: true
+						}
+					}
+				}
+			}
+		}
+	})
+
+	
+
+	if (!movie) {
+		res.status(400).send('invalidMovieId')
+		return
+	}
+
+	// Display movie in a pretty json format
+	console.log(JSON.stringify(movie, null, 2))
+
+	res.status(200).send(movie.comments)
 }

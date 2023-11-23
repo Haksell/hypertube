@@ -21,7 +21,7 @@ const updateCommentSchema = Joi.object({
 
 const createCommentSchema = Joi.object({
     comment: Joi.string().required(),
-	movieId: Joi.number().required(),
+	imdbCode: Joi.string().regex(/tt/, 'imdbCode').required(),
 })
 
 const commentIdSchema = Joi.object({
