@@ -227,6 +227,7 @@ const MoviesPage = () => {
                         label={t('index.genre.name')}
                         handleChange={setGenre}
                         options={[
+							{ value: '', label: '-'},
                             { value: 'Action', label: t('index.genre.action') },
                             { value: 'Adventure', label: t('index.genre.adventure') },
 							{ value: 'Animation', label: t('index.genre.animation') },
@@ -252,6 +253,7 @@ const MoviesPage = () => {
                         label={t('index.year')}
                         handleChange={setYearRange}
                         options={[
+							{ value: '', label: '-'},
 							{ value: '2024', label: '2024' },
                             { value: '2023', label: '2023' },
 							{ value: '2022', label: '2022' },
@@ -264,29 +266,21 @@ const MoviesPage = () => {
                         label={t('index.grade')}
                         handleChange={setMinGrade}
                         options={[
+							{ value: '', label: '-'},
                             { value: '9', label: '9+' },
                             { value: '8', label: '8+' },
                         ]}
                     />
-                    {/* <Filter
-                        id="language"
-                        label={t('index.lang.name')}
-                        handleChange={setLanguage}
-                        options={[
-                            { value: 'english', label: t('index.lang.english') },
-                            { value: 'french', label: t('index.lang.french') },
-                        ]}
-                    /> */}
                     <Filter
                         id="sort"
                         label={t('index.sort.name')}
                         handleChange={setSortBy}
                         options={[
+							{ value: 'seeds', label: t('index.sort.seeds') },
                             { value: 'rating', label: t('index.sort.rating') },
                             { value: 'year', label: t('index.sort.year') },
 							{ value: 'title', label: t('index.sort.title') },
 							{ value: 'peers', label: t('index.sort.peers') },
-							{ value: 'seeds', label: t('index.sort.seeds') },
 							{ value: 'download_count', label: t('index.sort.download_count') },
 							{ value: 'like_count', label: t('index.sort.like_count') },
 							{ value: 'date_added', label: t('index.sort.date_added') },
