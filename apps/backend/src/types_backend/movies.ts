@@ -11,6 +11,7 @@ export type Movie = {
 	seeds: number
 	quality: string
 	url: string
+	viewed: boolean
     source: 'EZTV' | 'YTS' | 'SERVER'
 }
 

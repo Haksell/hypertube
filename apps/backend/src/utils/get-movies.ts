@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { CustomError, Movie, TRequestGetMovie, movieParamSortBy } from '../types_backend/movies'
 import { Request } from 'express'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 type TRequete = {
 	limit: number
@@ -54,6 +54,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				seeds: elem.torrents[0].seeds,
 				quality: elem.torrents[0].quality,
 				url: elem.torrents[0].url,
+				viewed: false,
 				source: 'YTS',
             }
             movies.push(oneMovie)
@@ -109,6 +110,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
 				seeds: elem.seeds,
 				quality: '',
 				url: elem.torrent_url,
+				viewed: false,
 				source: 'EZTV'
 			}
 			if (info) {
@@ -152,6 +154,7 @@ export async function extractAllMoviesDownloaded(): Promise<Movie[]> {
 				langage: elem.language,
 				genre: elem.genres ? elem.genres?.split(',') : [],
 				seeds: 0,
+				viewed: false,
 				quality: '',
 				url: 'SERVER',
 				source: 'SERVER',
