@@ -1,6 +1,8 @@
 import NavBar from '../components/NavBar'
 import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
@@ -16,14 +18,14 @@ type Movie = {
     year: number
     length: number
     imdbRating?: number
-	imdb_code: string
-	langage: string
-	genre: string[]
-	seeds: number
-	quality: string
-	url: string
-	viewed: boolean
-	liked: boolean
+    imdb_code: string
+    langage: string
+    genre: string[]
+    seeds: number
+    quality: string
+    url: string
+    viewed: boolean
+    liked: boolean
     source: 'EZTV' | 'YTS'
 }
 
@@ -53,9 +55,9 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                         <span>{movie.year}</span>
                         <span>{formatDuration(movie.length)}</span>
                     </div>
-					<div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-sm">
                         <span>rating:{movie.imdbRating}</span>
-						<span>seeds:{movie.seeds}</span>
+                        <span>seeds:{movie.seeds}</span>
                     </div>
 					<div className="flex justify-between text-sm">
                         <span>liked:{movie.liked ? 'true' : 'false'}</span>
@@ -109,7 +111,11 @@ const MoviesPage = () => {
     const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
+    let width = document?.getElementById('choice')?.offsetWidth || 0
+    let height = document?.getElementById('choice')?.offsetHeight || 0
+	let width2 = document?.getElementById('choice2')?.offsetWidth || 0
+    let height2 = document?.getElementById('choice2')?.offsetHeight || 0
 
 	// useEffect(() => {
 	// 	if (!user)
@@ -142,23 +148,23 @@ const MoviesPage = () => {
                 params: params,
 				withCredentials: true
             })
-			// let newMovies: Movie[] = movies.slice(0, offset)
-			// newMovies = newMovies.concat(response.data)
-			// newMovies = newMovies.filter((newMovie, index) => {
-			// 	const isDuplicate = newMovies.findIndex(movie => movie.imdb_code === newMovie.imdb_code) !== index;
-			// 	return !isDuplicate;
-			//   });
-			// setMovies(newMovies)
+            // let newMovies: Movie[] = movies.slice(0, offset)
+            // newMovies = newMovies.concat(response.data)
+            // newMovies = newMovies.filter((newMovie, index) => {
+            // 	const isDuplicate = newMovies.findIndex(movie => movie.imdb_code === newMovie.imdb_code) !== index;
+            // 	return !isDuplicate;
+            //   });
+            // setMovies(newMovies)
 
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
-            setFetchCount(offset + limit)
+            setFetchCount(offset + response.data.length)
         } catch (error) {
             console.error('Error fetching movies:', error)
         }
     }
 
     useEffect(() => {
-        if (shouldFetchMovies()) fetchMovies()
+        if (shouldFetchMovies() && fetchCount != 0) fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {
@@ -187,35 +193,57 @@ const MoviesPage = () => {
             <NavBar />
             <div className="flex flex-col w-full justify-center items-center">
                 <div className="sm:hidden mr-4 mt-4">
-                    <label className="relative inline-flex cursor-pointer items-center">
+                    <label>
                         <input
                             type="checkbox"
                             onChange={handleSwitch}
                             checked={type === 'tvShow'}
                             className="peer sr-only"
                         />
-                        <div className="z-20 absolute font-bold h-8 w-[70px] left-[5px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all peer-checked:left-[72px] peer-checked:w-[83px] text-white flex justify-center items-center">
-                            {type === 'movie' ? t('index.movies') : t('index.tv')}
+                        <div
+                            className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
+                            style={{
+                                width: width2 + 'px',
+                                height: height2 + 'px',
+                            }}
+                        >
+                            <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
+                                {type === 'movie' ? t('index.movies') : t('index.tv')}
+                            </div>
                         </div>
-                        <div className="z-10 py-2 flex items-center gap-4 rounded-full px-3  border-slate-600 bg-slate-700 text-white">
+                        <div
+                            id="choice2"
+                            className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
+                        >
                             <span className="z-30">{t('index.movies')}</span>
                             <span className="z-30">{t('index.tv')}</span>
                         </div>
                     </label>
                 </div>
                 <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
-                    <div className="hidden sm:block mr-4">
-                        <label className="relative inline-flex cursor-pointer items-center">
+                    <div className="mx-4 hidden sm:block">
+                        <label>
                             <input
                                 type="checkbox"
                                 onChange={handleSwitch}
                                 checked={type === 'tvShow'}
                                 className="peer sr-only"
                             />
-                            <div className="z-20 absolute font-bold h-8 w-[70px] left-[5px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all peer-checked:left-[72px] peer-checked:w-[83px] text-white flex justify-center items-center">
-                                {type === 'movie' ? t('index.movies') : t('index.tv')}
+                            <div
+                                className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
+                                style={{
+                                    width: width + 'px',
+                                    height: height + 'px',
+                                }}
+                            >
+                                <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
+                                    {type === 'movie' ? t('index.movies') : t('index.tv')}
+                                </div>
                             </div>
-                            <div className="z-10 py-2 flex items-center gap-4 rounded-full px-3  border-slate-600 bg-slate-700 text-white">
+                            <div
+                                id="choice"
+                                className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
+                            >
                                 <span className="z-30">{t('index.movies')}</span>
                                 <span className="z-30">{t('index.tv')}</span>
                             </div>
@@ -245,24 +273,25 @@ const MoviesPage = () => {
                         label={t('index.genre.name')}
                         handleChange={setGenre}
                         options={[
+                            { value: '', label: '-' },
                             { value: 'Action', label: t('index.genre.action') },
                             { value: 'Adventure', label: t('index.genre.adventure') },
-							{ value: 'Animation', label: t('index.genre.animation') },
-							{ value: 'Comedy', label: t('index.genre.comedy') },
-							{ value: 'Crime', label: t('index.genre.crime') },
-							{ value: 'Documentary', label: t('index.genre.documentary') },
-							{ value: 'Drama', label: t('index.genre.drama') },
-							{ value: 'Family', label: t('index.genre.family') },
-							{ value: 'Fantasy', label: t('index.genre.fantasy') },
-							{ value: 'History', label: t('index.genre.history') },
-							{ value: 'Horror', label: t('index.genre.horror') },
-							{ value: 'Music', label: t('index.genre.music') },
-							{ value: 'Mystery', label: t('index.genre.mystery') },
-							{ value: 'Romance', label: t('index.genre.romance') },
-							{ value: 'Science-Fiction', label: t('index.genre.science-fiction') },
-							{ value: 'Thriller', label: t('index.genre.thriller') },
-							{ value: 'War', label: t('index.genre.war') },
-							{ value: 'Western', label: t('index.genre.western') },
+                            { value: 'Animation', label: t('index.genre.animation') },
+                            { value: 'Comedy', label: t('index.genre.comedy') },
+                            { value: 'Crime', label: t('index.genre.crime') },
+                            { value: 'Documentary', label: t('index.genre.documentary') },
+                            { value: 'Drama', label: t('index.genre.drama') },
+                            { value: 'Family', label: t('index.genre.family') },
+                            { value: 'Fantasy', label: t('index.genre.fantasy') },
+                            { value: 'History', label: t('index.genre.history') },
+                            { value: 'Horror', label: t('index.genre.horror') },
+                            { value: 'Music', label: t('index.genre.music') },
+                            { value: 'Mystery', label: t('index.genre.mystery') },
+                            { value: 'Romance', label: t('index.genre.romance') },
+                            { value: 'Science-Fiction', label: t('index.genre.science-fiction') },
+                            { value: 'Thriller', label: t('index.genre.thriller') },
+                            { value: 'War', label: t('index.genre.war') },
+                            { value: 'Western', label: t('index.genre.western') },
                         ]}
                     />
                     <Filter
@@ -270,11 +299,12 @@ const MoviesPage = () => {
                         label={t('index.year')}
                         handleChange={setYearRange}
                         options={[
-							{ value: '2024', label: '2024' },
+                            { value: '', label: '-' },
+                            { value: '2024', label: '2024' },
                             { value: '2023', label: '2023' },
-							{ value: '2022', label: '2022' },
-							{ value: '2021', label: '2021' },
-							{ value: '2020', label: '2020' },
+                            { value: '2022', label: '2022' },
+                            { value: '2021', label: '2021' },
+                            { value: '2020', label: '2020' },
                         ]}
                     />
                     <Filter
@@ -282,32 +312,24 @@ const MoviesPage = () => {
                         label={t('index.grade')}
                         handleChange={setMinGrade}
                         options={[
+                            { value: '', label: '-' },
                             { value: '9', label: '9+' },
                             { value: '8', label: '8+' },
                         ]}
                     />
-                    {/* <Filter
-                        id="language"
-                        label={t('index.lang.name')}
-                        handleChange={setLanguage}
-                        options={[
-                            { value: 'english', label: t('index.lang.english') },
-                            { value: 'french', label: t('index.lang.french') },
-                        ]}
-                    /> */}
                     <Filter
                         id="sort"
                         label={t('index.sort.name')}
                         handleChange={setSortBy}
                         options={[
+                            { value: 'seeds', label: t('index.sort.seeds') },
                             { value: 'rating', label: t('index.sort.rating') },
                             { value: 'year', label: t('index.sort.year') },
-							{ value: 'title', label: t('index.sort.title') },
-							{ value: 'peers', label: t('index.sort.peers') },
-							{ value: 'seeds', label: t('index.sort.seeds') },
-							{ value: 'download_count', label: t('index.sort.download_count') },
-							{ value: 'like_count', label: t('index.sort.like_count') },
-							{ value: 'date_added', label: t('index.sort.date_added') },
+                            { value: 'title', label: t('index.sort.title') },
+                            { value: 'peers', label: t('index.sort.peers') },
+                            { value: 'download_count', label: t('index.sort.download_count') },
+                            { value: 'like_count', label: t('index.sort.like_count') },
+                            { value: 'date_added', label: t('index.sort.date_added') },
                         ]}
                     />
                     <Filter

@@ -60,7 +60,7 @@
     },
     "index": {
         "movies": "Films",
-        "tv": "Shows TV",
+        "tv": "Series",
         "availability": {
            "name": "Disponibilité",
            "all": "Tout",
