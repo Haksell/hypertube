@@ -6,6 +6,11 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next'
+import { useUserContext } from '../src/context/UserContext'
+import { useRouter } from 'next/router'
+import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 
 type Movie = {
     title: string
@@ -19,6 +24,8 @@ type Movie = {
     seeds: number
     quality: string
     url: string
+    viewed: boolean
+    liked: boolean
     source: 'EZTV' | 'YTS'
 }
 
@@ -51,6 +58,10 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
                     <div className="flex justify-between text-sm">
                         <span>rating:{movie.imdbRating}</span>
                         <span>seeds:{movie.seeds}</span>
+                    </div>
+					<div className="flex justify-between text-sm">
+                        <span>liked:{movie.liked ? 'true' : 'false'}</span>
+						<span>viewed:{movie.viewed ? 'true' : 'false'}</span>
                     </div>
                 </div>
             </div>
@@ -87,6 +98,8 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
 }
 
 const MoviesPage = () => {
+	const { user } = useUserContext()
+	const router = useRouter()
     const [movies, setMovies] = useState<Movie[]>([])
     const [fetchCount, setFetchCount] = useState(0)
     const [search, setSearch] = useState('')
@@ -103,6 +116,11 @@ const MoviesPage = () => {
     let height = document?.getElementById('choice')?.offsetHeight || 0
 	let width2 = document?.getElementById('choice2')?.offsetWidth || 0
     let height2 = document?.getElementById('choice2')?.offsetHeight || 0
+
+	// useEffect(() => {
+	// 	if (!user)
+	// 		router.push('/signin')
+	// }, [])
 
     const shouldFetchMovies = () => {
         return (
@@ -125,8 +143,10 @@ const MoviesPage = () => {
             if (language) params['language'] = language
             if (sortBy) params['sortBy'] = sortBy
             else params['sortBy'] = 'seeds'
-            const response = await axios.get('http://localhost:5001/movies', {
+            const response = await axios.get('http://localhost:5001/movies', 
+			{
                 params: params,
+				withCredentials: true
             })
             // let newMovies: Movie[] = movies.slice(0, offset)
             // newMovies = newMovies.concat(response.data)
@@ -168,7 +188,7 @@ const MoviesPage = () => {
         }, 30)
     }
 
-    return (
+    return !user ? <UserNotSignedIn /> : (
         <div className="min-h-screen bg-black">
             <NavBar />
             <div className="flex flex-col w-full justify-center items-center">

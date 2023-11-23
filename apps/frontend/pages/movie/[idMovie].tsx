@@ -9,6 +9,7 @@ import { useTranslation } from 'next-i18next'
 import axios from 'axios'
 import {MovieDetails} from '../../src/shared/movies'
 import { useRouter } from 'next/router'
+import { useUserContext } from '../../src/context/UserContext'
 
 const Info: React.FC<{ title: string; content: string }> = ({ title, content }) =>
     content ? (
@@ -20,9 +21,17 @@ const Info: React.FC<{ title: string; content: string }> = ({ title, content }) 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
 function MoviePage() {
+	const { user } = useUserContext()
 	const [movie, setMovieDetails] = useState<MovieDetails | null>(null)
+	const [liked, setLiked] = useState<boolean>(false)
+	const [colorHeart, setColorHeart] = useState<string>('white')
 	const router = useRouter()
     const { idMovie } = router.query
+
+	useEffect(() => {
+		if (!user)
+			router.push('/signin')
+	}, [])
 
 	useEffect(() => {
 		if (!idMovie) return
@@ -33,13 +42,45 @@ function MoviePage() {
 	async function getMovie() {
 		try {
 
-			const response = await axios.get(`http://localhost:5001/movies/${idMovie}`)
+			const response = await axios.get(`http://localhost:5001/movies/${idMovie}`, {
+				withCredentials: true
+			})
 			setMovieDetails(response.data)
+			if (response.data.liked) {
+				setLiked(response.data.liked)
+				setColorHeart('orange')
+			}
+				
 			console.log(response.data)
 		}
 		catch {
 			setMovieDetails(null)
 		}
+	}
+
+	async function likeMovie() {
+		try {
+
+			const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+				withCredentials: true
+			})
+			if (response.data === 'Movie liked') {
+				setLiked(true)
+				setColorHeart('orange')
+			}
+			else {
+				setLiked(false)
+				setColorHeart('white')
+			}
+				
+		}
+		catch {
+			// setMovieDetails(null)
+		}
+	}
+
+	function handleLike() {
+		likeMovie()
 	}
 
     const searchInCrew = (job: string): MovieCrew[] => {
@@ -81,8 +122,8 @@ function MoviePage() {
                         ))}
                     </div>
                     <div className="flex flex-row-reverse w-full">
-                        <button className="mr-[10%]">
-                            <svg className="w-6 h-6 text-slate-200 hover:text-red-500 hover:duration-300 ease-in" fill="currentColor" viewBox="2 2 27 28">
+                        <button className="mr-[10%]" onClick={handleLike}>
+                            <svg className={`w-6 h-6 text-${colorHeart}-500 text-slate-200 hover:text-red-500 hover:duration-300 ease-in`} fill="currentColor" viewBox="2 2 27 28">
                                 <path d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"></path>
                             </svg>
                         </button>

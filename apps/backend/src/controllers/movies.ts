@@ -2,9 +2,9 @@ import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { convertRequestParams, extractAllMoviesDownloaded, getMoviesEZTV, getMoviesFromYTS } from '../utils/get-movies'
 import { Request, Response } from 'express'
 import { addDetailsFromMovieDB, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
-import { createMovieDB } from '../utils/bdd-movie'
+import { createMovieDB, movieViewed } from '../utils/bdd-movie'
 import { PrismaClient, User } from '@prisma/client'
-import { addUserDetailsToMovie, getUserWithFavoritesAndViewed } from '../utils/user-movie'
+import { addUserDetailsToMovie, addUserDetailsToMoviesList, getUserWithFavoritesAndViewed } from '../utils/user-movie'
 
 const prisma = new PrismaClient()
 
@@ -13,7 +13,7 @@ export async function getMovies(req: Request, res: Response) {
         const params = convertRequestParams(req)
 		console.log(params)
 
-		// const user: User = await getUserWithFavoritesAndViewed(req)
+		const user: User = await getUserWithFavoritesAndViewed(req)
 
 		let movies: Movie[] = []
 
@@ -30,15 +30,17 @@ export async function getMovies(req: Request, res: Response) {
 			
 		}
 		else {
-			// TO DO WHEN downloading finished;
 			const moviesYTS: Movie[] = await extractAllMoviesDownloaded()
 			if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
 		}
+
+		await addUserDetailsToMoviesList(user, movies)
         
         res.status(201).send(movies)
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Error')
+		console.log(error)
     }
 }
 
@@ -46,7 +48,7 @@ export async function getMovieInfo(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		// const user: User = await getUserWithFavoritesAndViewed(req)
+		const user: User = await getUserWithFavoritesAndViewed(req)
 
 		//get info from YTS
 		let movie: MovieDetails = await getInfoMovieTorrent(movieId)
@@ -55,11 +57,14 @@ export async function getMovieInfo(req: Request, res: Response) {
 		await addDetailsFromMovieDB(movie)
 
 		//add info from user (already viewed / already liked)
-		// await addUserDetailsToMovie(user, movie)
+		await addUserDetailsToMovie(user, movie)
 
 		// verif si film existe deja dans BDD. Si non, ajout dans BDD
 		await createMovieDB(movie)
 
+		//add movie to viewed By user
+		movieViewed(user, movieId)
+		
 		// console.log(movie)
 		res.status(201).send(movie)
 	}
@@ -95,7 +100,8 @@ export async function likeMovie(req: Request, res: Response) {
 					},
 					movie: {
 						connect: { id: movie[0].id }
-					}
+					},
+					imdb_code: movie[0].imdb_code
 				}
 			})
 			res.status(200).send('Movie liked')

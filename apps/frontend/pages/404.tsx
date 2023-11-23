@@ -2,6 +2,8 @@ import MainLayout from '../layouts/MainLayout'
 import Link from 'next/link'
 import React from 'react'
 import { useTranslation } from 'next-i18next'
+import { GetServerSideProps } from 'next/types'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 export default function Custom404() {
 	const { t } = useTranslation('common')
@@ -25,4 +27,12 @@ export default function Custom404() {
             </div>
         </MainLayout>
     )
+}
+
+export async function getStaticProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        },
+    }
 }

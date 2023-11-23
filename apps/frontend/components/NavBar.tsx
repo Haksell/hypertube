@@ -1,10 +1,10 @@
+import { useUserContext } from '../src/context/UserContext'
+import LanguageSwitcher from './NavBar/LanguageSwitcher'
 import Button from './elems/Button'
+import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { useUserContext } from '../src/context/UserContext'
-import LanguageSwitcher from './NavBar/LanguageSwitcher'
-import { useTranslation } from 'next-i18next'
 
 const ButtonLinkNavBar: React.FC<{
     text: string
@@ -30,43 +30,50 @@ const ButtonLinkNavBar: React.FC<{
 const LinkNavBar: React.FC<{
     currLink: string
     setCurrLink: React.Dispatch<React.SetStateAction<string>>
-	profileLink: string
+    profileLink: string
 }> = ({ currLink, setCurrLink, profileLink }) => {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('common')
+    const { user } = useUserContext()
 
     return (
         <div className="flex items-center pt-2 ml-6 hidden min-[770px]:block">
             <div className="flex space-x-4">
-                <ButtonLinkNavBar
-                    text={t('navBar.profile')}
-                    page={profileLink}
-                    currLink={currLink}
-                    setCurrLink={setCurrLink}
-                />
-                <ButtonLinkNavBar
-                    text={t('navBar.browsing')}
-                    page="/find"
-                    currLink={currLink}
-                    setCurrLink={setCurrLink}
-                />
-                <ButtonLinkNavBar
-                    text={t('settingsMsg')}
-                    page="/settings"
-                    currLink={currLink}
-                    setCurrLink={setCurrLink}
-                />
+                {user && (
+                    <>
+                        <ButtonLinkNavBar
+                            text={t('navBar.profile')}
+                            page={profileLink}
+                            currLink={currLink}
+                            setCurrLink={setCurrLink}
+                        />
+                        <ButtonLinkNavBar
+                            text={t('settingsMsg')}
+                            page="/settings"
+                            currLink={currLink}
+                            setCurrLink={setCurrLink}
+                        />
+                    </>
+                )}
             </div>
         </div>
-    );
-};
+    )
+}
 
-const LogoNavBar = () => (
-    <div className="flex flex-shrink-0 items-center sm:pl-5">
-        <Link href="/">
+const LogoNavBar = () => {
+	const { user } = useUserContext()
+	const [redir, setRedir] = useState<string>('/signin')
+
+	useEffect(() => {
+		if (user) setRedir('/')
+		else setRedir('/signin')
+	}, [user])
+
+    return (<div className="flex flex-shrink-0 items-center sm:pl-5">
+        <Link href={redir}>
             <img className="h-8 w-auto sm:h-12" src="/navbar_logo.png" alt="Matcha" />
         </Link>
-    </div>
-)
+    </div>);
+}
 
 const DropdownMenu = () => {
     const { user } = useUserContext()
@@ -90,13 +97,7 @@ const DropdownMenu = () => {
     )
 }
 
-function MobileMenuBoutton({
-    showMenu,
-    setShowMenu,
-}: {
-    showMenu: boolean;
-    setShowMenu: any;
-}) {
+function MobileMenuBoutton({ showMenu, setShowMenu }: { showMenu: boolean; setShowMenu: any }) {
     return (
         <div className="inset-y-0 left-0 flex items-center min-[770px]:hidden">
             {/* <!-- Mobile menu button--> */}
@@ -106,7 +107,7 @@ function MobileMenuBoutton({
                 aria-controls="mobile-menu"
                 aria-expanded="false"
                 onClick={() => {
-                    setShowMenu(!showMenu);
+                    setShowMenu(!showMenu)
                 }}
             >
                 <span className="absolute -inset-0.5"></span>
@@ -128,17 +129,17 @@ function MobileMenuBoutton({
                 </svg>
             </button>
         </div>
-    );
+    )
 }
 
 type PropMobileMenuNavBar = {
-	showMenu: boolean;
-	currLink: string;
-	setCurrLink: any;
+    showMenu: boolean
+    currLink: string
+    setCurrLink: any
 }
 
 function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation('common')
     return showMenu ? (
         <>
             {/* <!-- Mobile menu, show/hide based on menu state. --> */}
@@ -166,23 +167,21 @@ function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
                 </div>
             </div>
         </>
-    ) : null;
+    ) : null
 }
 
-
-
 function NavBar() {
-    const [showMenu, setShowMenu] = useState<boolean>(false);
+    const [showMenu, setShowMenu] = useState<boolean>(false)
     const [currLink, setCurrLink] = useState<string>('no')
-	const [profileLink, setProfileLink] = useState<string>('/profile')
+    const [profileLink, setProfileLink] = useState<string>('/profile')
     const router = useRouter()
-	const { user } = useUserContext()
+    const { user } = useUserContext()
 
-	useEffect(() => {
-		if (user) {
-			setProfileLink(`/profile/${user.id}`)
-		}
-	}, [user])
+    useEffect(() => {
+        if (user) {
+            setProfileLink(`/profile/${user.id}`)
+        }
+    }, [user])
 
     useEffect(() => {
         if (router.pathname.match('/profile')) setCurrLink('/profile')
@@ -193,39 +192,36 @@ function NavBar() {
         else setCurrLink('no')
     }, [currLink])
 
-	return (
+    return (
         <div>
             <nav className="fixed w-full bg-zinc-800 z-20 bg-opacity-80">
                 <div className="mx-auto max-w-7xl px-2 sm:pl-6 lg:pl-8">
                     <div className="relative flex h-16 items-center justify-between">
                         <div className="flex flex-1 sm:items-stretch sm:justify-start">
-                            <MobileMenuBoutton
-                                showMenu={showMenu}
-                                setShowMenu={setShowMenu}
-                            />
+                            <MobileMenuBoutton showMenu={showMenu} setShowMenu={setShowMenu} />
                             <LogoNavBar />
                             <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
                                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
                                     NaanTube
                                 </span>
                             </div>
-                            <LinkNavBar currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
+                            <LinkNavBar
+                                currLink={currLink}
+                                setCurrLink={setCurrLink}
+                                profileLink={profileLink}
+                            />
                         </div>
                         <div className="inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6">
                             <DropdownMenu />
                         </div>
-                        <LanguageSwitcher/>
+                        <LanguageSwitcher />
                     </div>
                 </div>
-                <MobileMenu 
-                    showMenu={showMenu}
-                    currLink={currLink}
-                    setCurrLink={setCurrLink}
-                />
+                <MobileMenu showMenu={showMenu} currLink={currLink} setCurrLink={setCurrLink} />
             </nav>
-            <div className="h-20"/>
+            <div className="h-20" />
         </div>
-	)
+    )
 }
 
 export default NavBar
