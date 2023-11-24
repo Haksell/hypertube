@@ -5,6 +5,7 @@ import "dotenv/config";
 import axios from "axios";
 import intializeDB from "./db/init.ts";
 import authRoutes from "./routes/auth.ts";
+import commentsRoutes from "./routes/comments.ts";
 import auth from "./middleware/auth.middleware.ts";
 import requestLoggerMiddleware from "./middleware/requestLogger.middleware.ts";
 import globalErrorMiddleware from "./middleware/globalError.middleware.ts";
@@ -37,6 +38,7 @@ app.get("/", (req, res) => res.send("API Root"));
 app.use('/users', usersRoutes)
 app.use('/movies', moviesRoutes)
 app.use("/auth", authRoutes);
+app.use("/comments", commentsRoutes);
 
 app.post("/test", auth, (req, res) => {
   res.status(200).send("Token Works - Yay!");
