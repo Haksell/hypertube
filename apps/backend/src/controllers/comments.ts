@@ -1,4 +1,4 @@
-import { CommentDTO } from '../shared/comment'
+import { CommentDTO, CommentPrisma, MovieCommentPrisma } from '../shared/comment'
 import { formatComment } from '../utils/format'
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export async function getComments(req: Request, res: Response) {
     // returns a list of latest comments which includes comment’s author username, date, content, and id
-    const comments = await prisma.comment.findMany({
+    const comments: CommentPrisma[] = await prisma.comment.findMany({
         take: 10,
         select: {
             id: true,
@@ -16,6 +16,7 @@ export async function getComments(req: Request, res: Response) {
             user: {
                 select: {
                     username: true,
+					profile_picture: true,
                 },
             },
         },
@@ -28,7 +29,7 @@ export async function getComments(req: Request, res: Response) {
 export async function getComment(req: Request, res: Response) {
     const { commentId } = req.params
 
-    const comment = await prisma.comment.findUnique({
+    const comment: CommentPrisma | null = await prisma.comment.findUnique({
         where: {
             id: parseInt(commentId),
         },
@@ -39,6 +40,7 @@ export async function getComment(req: Request, res: Response) {
             user: {
                 select: {
                     username: true,
+					profile_picture: true,
                 },
             },
         },
@@ -118,21 +120,33 @@ export async function createComment(req: Request, res: Response) {
         return
     }
 
-    await prisma.comment.create({
+    const dbComment: CommentPrisma = await prisma.comment.create({
         data: {
             text: comment,
             userId: req.user.user_id,
             movieId: movie.id,
         },
+        select: {
+            id: true,
+            text: true,
+            updatedAt: true,
+            user: {
+                select: {
+                    profile_picture: true,
+                    username: true,
+                },
+            },
+        },
     })
 
-    res.status(200).send('commentCreated')
+    const formattedComment: CommentDTO = formatComment(dbComment)
+    res.status(200).send(formattedComment)
 }
 
 export async function getMovieComments(req: Request, res: Response) {
     const { movieId } = req.params
 
-    const movie = await prisma.movies.findFirst({
+    const movie: MovieCommentPrisma | null = await prisma.movies.findFirst({
         where: {
             imdb_code: movieId,
         },
@@ -159,6 +173,8 @@ export async function getMovieComments(req: Request, res: Response) {
         return
     }
 
-	const formattedComments: CommentDTO[] = movie.comments.map(formatComment)
+    const formattedComments: CommentDTO[] = movie.comments.map(formatComment).sort((a, b) => {
+		return b.updatedAt.getTime() - a.updatedAt.getTime()
+	})
     res.status(200).send(formattedComments)
 }

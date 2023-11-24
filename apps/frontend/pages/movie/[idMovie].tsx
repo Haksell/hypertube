@@ -92,7 +92,7 @@ function MoviePage() {
                     withCredentials: true,
                 },
             )
-            return response.data
+            setComments((prevComments) => [response.data, ...prevComments])
         } catch (error) {
             console.log(error.response.data)
         }

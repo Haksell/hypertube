@@ -1,3 +1,4 @@
+import { CommentDTO, CommentPrisma } from '../shared/comment'
 import { TUserContext } from '../shared/user'
 import { PrismaClient } from '@prisma/client'
 
@@ -30,12 +31,12 @@ export const generateUniqueUsername = async (login: string): Promise<string> => 
 }
 
 // Take a prisma Comment and return a CommentDTO
-export const formatComment = (comment: any) => {
+export const formatComment = (comment: CommentPrisma): CommentDTO => {
 	return {
 		id: comment.id,
 		content: comment.text,
 		updatedAt: comment.updatedAt,
 		username: comment.user.username,
-		profilePicture: comment.user.profile_picture,
+		profilePicture: comment.user.profile_picture
 	}
 }
