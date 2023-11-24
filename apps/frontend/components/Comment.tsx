@@ -1,23 +1,30 @@
-import { CommentDTO } from '../src/shared/comment'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-interface CommentProps extends CommentDTO {
+interface CommentProps {
+    content: string
+    updatedAt: Date
+    username: string
+    profilePicture?: string
     additionalClasses?: string
+    handleDelete?: () => void
+    mine: boolean
 }
 
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
-    const { id, content, updatedAt, username, profilePicture, additionalClasses } = props
+    const { content, updatedAt, username, profilePicture, additionalClasses, handleDelete, mine } =
+        props
 
     const date = new Date(updatedAt)
+    const dateTime = date.getDate().toString()
     const longFormat = date.toLocaleString(initialLanguage, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
     })
     const abbreviatedFormat = date.toLocaleDateString(initialLanguage, {
         month: 'short',
@@ -43,17 +50,24 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                         {username}
                     </p>
                     <p className="text-sm text-gray-400">
-                        <time dateTime={updatedAt} title={longFormat}>
+                        <time dateTime={dateTime} title={longFormat}>
                             {abbreviatedFormat}
                         </time>
                     </p>
                 </div>
             </footer>
-            <p className='mb-4'>{content}</p>
-			<div className="flex gap-2">
-				<button className='font-medium text-blue-500 hover:underline'>Edit</button>
-				<button className='font-medium text-red-500 hover:underline'>Delete</button>
-			</div>
+            <p className="mb-4">{content}</p>
+            {mine && (
+                <div className="flex gap-2">
+                    <button className="font-medium text-blue-500 hover:underline">Edit</button>
+                    <button
+                        className="font-medium text-red-500 hover:underline"
+                        onClick={handleDelete}
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
         </article>
     )
 }

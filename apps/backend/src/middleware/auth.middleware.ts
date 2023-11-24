@@ -2,14 +2,6 @@ import 'dotenv/config'
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
-declare global {
-    namespace Express {
-        interface Request {
-            user?: any
-        }
-    }
-}
-
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token
 

@@ -1,4 +1,5 @@
 import { CommentDTO, CommentPrisma, MovieCommentPrisma } from '../shared/comment'
+import { RequestWithUser, requestWithRessource } from '../shared/request'
 import { formatComment } from '../utils/format'
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
@@ -15,6 +16,7 @@ export async function getComments(req: Request, res: Response) {
             updatedAt: true,
             user: {
                 select: {
+					id: true,
                     username: true,
 					profile_picture: true,
                 },
@@ -26,49 +28,13 @@ export async function getComments(req: Request, res: Response) {
     res.status(200).send(formattedComments)
 }
 
-export async function getComment(req: Request, res: Response) {
-    const { commentId } = req.params
-
-    const comment: CommentPrisma | null = await prisma.comment.findUnique({
-        where: {
-            id: parseInt(commentId),
-        },
-        select: {
-            id: true,
-            text: true,
-            updatedAt: true,
-            user: {
-                select: {
-                    username: true,
-					profile_picture: true,
-                },
-            },
-        },
-    })
-
-    if (!comment) {
-        res.status(400).send('invalidCommentId')
-        return
-    }
-
-    const formattedComment: CommentDTO = formatComment(comment)
+export async function getComment(req: requestWithRessource, res: Response) {
+    const formattedComment: CommentDTO = formatComment(req.comment!)
     res.status(200).send(formattedComment)
 }
 
-export async function updateComment(req: Request, res: Response) {
-    const { commentId } = req.params
-
-    const comment = await prisma.comment.findUnique({
-        where: {
-            id: parseInt(commentId),
-        },
-    })
-
-    if (!comment) {
-        res.status(400).send('invalidCommentId')
-        return
-    }
-
+export async function updateComment(req: requestWithRessource, res: Response) {
+	const { commentId } = req.params
     const { comment: newComment } = req.body
 
     await prisma.comment.update({
@@ -80,22 +46,13 @@ export async function updateComment(req: Request, res: Response) {
         },
     })
 
-    res.status(200).send('commentUpdated')
+	req.comment!.text = newComment
+	const formattedComment: CommentDTO = formatComment(req.comment!)
+    res.status(200).send(formattedComment)
 }
 
 export async function deleteComment(req: Request, res: Response) {
     const { commentId } = req.params
-
-    const comment = await prisma.comment.findUnique({
-        where: {
-            id: parseInt(commentId),
-        },
-    })
-
-    if (!comment) {
-        res.status(400).send('invalidCommentId')
-        return
-    }
 
     await prisma.comment.delete({
         where: {
@@ -106,7 +63,7 @@ export async function deleteComment(req: Request, res: Response) {
     res.status(200).send('commentDeleted')
 }
 
-export async function createComment(req: Request, res: Response) {
+export async function createComment(req: RequestWithUser, res: Response) {
     const { comment, imdbCode } = req.body
 
     const movie = await prisma.movies.findFirst({
@@ -123,7 +80,7 @@ export async function createComment(req: Request, res: Response) {
     const dbComment: CommentPrisma = await prisma.comment.create({
         data: {
             text: comment,
-            userId: req.user.user_id,
+            userId: req.user!.user_id,
             movieId: movie.id,
         },
         select: {
@@ -132,6 +89,7 @@ export async function createComment(req: Request, res: Response) {
             updatedAt: true,
             user: {
                 select: {
+					id: true,
                     profile_picture: true,
                     username: true,
                 },
@@ -159,6 +117,7 @@ export async function getMovieComments(req: Request, res: Response) {
                     updatedAt: true,
                     user: {
                         select: {
+							id: true,
                             profile_picture: true,
                             username: true,
                         },

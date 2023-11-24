@@ -98,6 +98,17 @@ function MoviePage() {
         }
     }
 
+    async function handleDeleteComment(id: number) {
+        try {
+            await axios.delete(`http://localhost:5001/comments/${id}`, {
+                withCredentials: true,
+            })
+            setComments((prevComments) => prevComments.filter((comment) => comment.id !== id))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     function handleLike() {
         likeMovie()
     }
@@ -223,7 +234,7 @@ function MoviePage() {
                     </div>
                 </div>
             </div>
-            <div className="bg-neutral-900">
+            <div className="bg-neutral-900 pb-16">
                 <div className="text-slate-200 px-10 min-[770px]:pl-[31vw]">
                     <div className="py-3 w-auto flex flex-row items-center">
                         <svg className="w-6 h-6 text-orange-50" viewBox="0 0 24 24" fill="none">
@@ -315,13 +326,14 @@ function MoviePage() {
                     </div>
                     {comments.map((com, index) => (
                         <Comment
-							id={com.id}
                             key={index}
                             content={com.content}
                             updatedAt={com.updatedAt}
                             username={com.username}
                             profilePicture={com.profilePicture}
                             additionalClasses={index !== 0 ? 'border-t' : ''}
+                            handleDelete={() => handleDeleteComment(com.id)}
+                            mine={com.userId == user.id}
                         />
                     ))}
                 </div>
