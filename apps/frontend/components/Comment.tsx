@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import ContentEditable from 'react-contenteditable'
+import sanitizeHtml from 'sanitize-html'
 
 interface CommentProps {
     content: string
@@ -7,15 +9,33 @@ interface CommentProps {
     username: string
     profilePicture?: string
     additionalClasses?: string
-    handleDelete?: () => void
+    handleDelete: () => void,
+	handleEdit: (content: string) => void,
     mine: boolean
 }
 
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
-    const { content, updatedAt, username, profilePicture, additionalClasses, handleDelete, mine } =
+    const { content, updatedAt, username, profilePicture, additionalClasses, handleDelete, handleEdit, mine } =
         props
+    const [editableContent, setEditableContent] = useState('')
+    const [isEditing, setIsEditing] = useState(false)
+
+    const onContentChange = React.useCallback((evt: any) => {
+        const sanitizeConf = {
+            allowedTags: ['b', 'i', 'a', 'p'],
+            allowedAttributes: { a: ['href'] },
+        }
+
+        setEditableContent(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf))
+    }, [])
+
+	useEffect(() => {
+		if (content) {
+		  setEditableContent(content);
+		}
+	  }, [content]);
 
     const date = new Date(updatedAt)
     const dateTime = date.getDate().toString()
@@ -31,6 +51,11 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         day: 'numeric',
         year: 'numeric',
     })
+
+    const handleConfirm = async () => {
+		handleEdit(editableContent)
+		setIsEditing(false)
+    }
 
     return (
         <article
@@ -56,15 +81,42 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                     </p>
                 </div>
             </footer>
-            <p className="mb-4">{content}</p>
-            {mine && (
+            <ContentEditable
+                className={"mb-4 " + (isEditing ? "border rounded border-gray-700" : "")}
+                onChange={onContentChange}
+                onBlur={onContentChange}
+                html={editableContent}
+                disabled={!isEditing}
+            />
+            {mine && !isEditing && (
                 <div className="flex gap-2">
-                    <button className="font-medium text-blue-500 hover:underline">Edit</button>
+                    <button
+                        className="font-medium text-blue-500 hover:underline"
+                        onClick={() => setIsEditing(true)}
+                    >
+                        Edit
+                    </button>
                     <button
                         className="font-medium text-red-500 hover:underline"
                         onClick={handleDelete}
                     >
                         Delete
+                    </button>
+                </div>
+            )}
+			{isEditing && (
+                <div className="flex gap-2">
+                    <button
+                        className="font-medium text-blue-500 hover:underline"
+                        onClick={handleConfirm}
+                    >
+                        Confirm
+                    </button>
+                    <button
+                        className="font-medium text-red-500 hover:underline"
+                        onClick={() => setIsEditing(false)}
+                    >
+                        Cancel
                     </button>
                 </div>
             )}

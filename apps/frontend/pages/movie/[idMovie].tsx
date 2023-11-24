@@ -109,6 +109,29 @@ function MoviePage() {
         }
     }
 
+	async function handleEditComment(id: number, content: string) {
+		try {
+			const response = await axios.patch(
+				`http://localhost:5001/comments/${id}`,
+				{
+					comment: content,
+				},
+				{
+					withCredentials: true,
+				},
+			)
+			setComments((prevComments) => prevComments.map((comment) => {
+				if (comment.id === id) {
+					comment.content = content
+				}
+				return comment
+			}))
+		}
+		catch (error) {
+			console.log(error)
+		}
+	}
+
     function handleLike() {
         likeMovie()
     }
@@ -333,6 +356,7 @@ function MoviePage() {
                             profilePicture={com.profilePicture}
                             additionalClasses={index !== 0 ? 'border-t' : ''}
                             handleDelete={() => handleDeleteComment(com.id)}
+							handleEdit={(content) => handleEditComment(com.id, content)}
                             mine={com.userId == user.id}
                         />
                     ))}
