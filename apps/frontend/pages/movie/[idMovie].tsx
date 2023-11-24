@@ -1,7 +1,9 @@
+import Comment from '../../components/Comment'
 import NavBar from '../../components/NavBar'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
 import { useUserContext } from '../../src/context/UserContext'
+import { CommentDTO } from '../../src/shared/comment'
 import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utilsTime'
@@ -21,129 +23,6 @@ const Info: React.FC<{ title: string; content: string }> = ({ title, content }) 
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
-interface CommentProps {
-    text: string
-    border: boolean
-    updatedAt: string
-    username: string
-    profile_picture: string
-}
-
-const Comment: React.FC<CommentProps> = ({
-    text,
-    border,
-    username,
-    updatedAt,
-    profile_picture,
-}) => {
-    const [showMenu, setShowMenu] = useState<boolean>(false)
-    const date = new Date(updatedAt)
-    const isoFormat = date.toISOString().split('T')[0]
-    const longFormat =
-        date.toLocaleString('en-us', { month: 'long' }) +
-        ' ' +
-        date.getDate() +
-        ', ' +
-        date.getFullYear()
-    const abbreviatedFormat = date.toLocaleDateString('en-us', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    })
-
-    const className =
-        'py-6 mb-2 text-base bg-neutral-900 border-gray-700 ' + (border ? 'border-t' : '')
-
-    console.log(profile_picture)
-    return (
-        <article className={className}>
-            <footer className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                    <p className="inline-flex items-center mr-3 font-semibold text-sm text-gray-900 dark:text-white">
-                        <img
-                            className="mr-2 w-6 h-6 rounded-full"
-                            src={
-                                profile_picture ||
-                                'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
-                            }
-                            alt="Michael Gough"
-                        />
-                        {username}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        <time dateTime={isoFormat} title={longFormat}>
-                            {abbreviatedFormat}
-                        </time>
-                    </p>
-                </div>
-                <div className="relative">
-                    <button
-                        id="dropdownComment1Button"
-                        data-dropdown-toggle="dropdownComment1"
-                        className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:text-gray-400 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                        type="button"
-                        onClick={() => setShowMenu(!showMenu)}
-                    >
-                        <svg
-                            className="w-4 h-4"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 16 3"
-                        >
-                            <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                        </svg>
-                        <span className="sr-only">Comment settings</span>
-                    </button>
-                    {showMenu && (
-                        <div
-                            className="bg-transparent z-10 fixed w-screen h-screen top-0 left-0"
-                            onClick={() => setShowMenu(false)}
-                        ></div>
-                    )}
-                    {showMenu && (
-                        <div
-                            id="dropdownComment1"
-                            className="absolute z-10 w-36 rounded divide-y right-[50px] top-0 shadow bg-gray-700 divide-gray-600"
-                        >
-                            <ul
-                                className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                aria-labelledby="dropdownMenuIconHorizontalButton"
-                            >
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >
-                                        Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >
-                                        Remove
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="#"
-                                        className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >
-                                        Report
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
-                </div>
-            </footer>
-            <p>{text}</p>
-        </article>
-    )
-}
-
 function MoviePage() {
     const { user } = useUserContext()
     const [movie, setMovieDetails] = useState<MovieDetails | null>(null)
@@ -152,7 +31,7 @@ function MoviePage() {
     const router = useRouter()
     const { idMovie } = router.query
     const [comment, setComment] = useState<string>('')
-    const [comments, setComments] = useState<CommentProps[]>([])
+    const [comments, setComments] = useState<CommentDTO[]>([])
 
     useEffect(() => {
         if (!idMovie) return
@@ -413,14 +292,14 @@ function MoviePage() {
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                     </div>
                     <div className="mb-6">
-                        <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <div className="py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700">
                             <label htmlFor="comment" className="sr-only">
                                 Your comment
                             </label>
                             <textarea
                                 id="comment"
                                 rows={6}
-                                className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                                className="px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
                                 placeholder="Write a comment..."
                                 onChange={(e) => setComment(e.target.value)}
                                 required
@@ -434,14 +313,15 @@ function MoviePage() {
                             Post comment
                         </button>
                     </div>
-                    {comments.map((element, index) => (
+                    {comments.map((com, index) => (
                         <Comment
+							id={com.id}
                             key={index}
-                            text={element.text}
-                            updatedAt={element.updatedAt}
-                            username={element.user.username}
-                            profile_picture={element.user.profile_picture}
-                            border={index !== 0}
+                            content={com.content}
+                            updatedAt={com.updatedAt}
+                            username={com.username}
+                            profilePicture={com.profilePicture}
+                            additionalClasses={index !== 0 ? 'border-t' : ''}
                         />
                     ))}
                 </div>

@@ -28,3 +28,14 @@ export const generateUniqueUsername = async (login: string): Promise<string> => 
 
     return username
 }
+
+// Take a prisma Comment and return a CommentDTO
+export const formatComment = (comment: any) => {
+	return {
+		id: comment.id,
+		content: comment.text,
+		updatedAt: comment.updatedAt,
+		username: comment.user.username,
+		profilePicture: comment.user.profile_picture,
+	}
+}
