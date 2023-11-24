@@ -12,7 +12,7 @@ import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const Info: React.FC<{ title: string; content: string }> = ({ title, content }) =>
     content ? (
@@ -143,21 +143,29 @@ function MoviePage() {
         return movie.crews.filter((crew) => job.includes(crew.job as string))
     }
 
-    const IconButton = ({ icon, color, hoverColor, onClick }) => (
-        <button className={`mr-10`} onClick={onClick}>
-            <svg
-                className={`w-6 h-6 text-slate-200 hover:text-${hoverColor} hover:duration-300 ease-in`}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-            >
-                {icon}
-            </svg>
-        </button>
-    )
+    const [isModalVisible, setModalVisible] = useState(false);
+    const modalRef = useRef();
 
-    const directors = searchInCrew(['Director'])
-    const writers = searchInCrew(['Story', 'Writer'])
-    const producers = searchInCrew(['Producer'])
+    const handleToggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+          if (event.key === 'Escape' && isModalVisible) {
+            handleToggleModal();
+          }
+        };
+    
+        document.addEventListener('keydown', handleKeyDown);
+    
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+        };
+      }, [isModalVisible, handleToggleModal]);
+    
+    const directors = searchInCrew(['Director']);
+    const writers = searchInCrew(['Story', 'Writer']);
+    const producers = searchInCrew(['Producer']);
 
     const ImageList = ({ title, items }) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
@@ -236,12 +244,8 @@ function MoviePage() {
                                 <path d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"></path>
                             </svg>
                         </button>
-                        <button className="mr-10">
-                            <svg
-                                className="w-6 h-6 text-slate-200 hover:text-blue-50 hover:duration-300 ease-in"
-                                fill="currentColor"
-                                viewBox="0 0 23 23"
-                            >
+                        <button className="mr-10" onClick={handleToggleModal}>
+                            <svg className="w-6 h-6 text-slate-200 hover:text-blue-50 hover:duration-300 ease-in" fill="currentColor" viewBox="0 0 23 23">
                                 <path d="M19 4v1h-2V3H7v2H5V3H3v18h2v-2h2v2h10v-2h2v2h2V3h-2v1zM5 7h2v2H5V7zm0 4h2v2H5v-2zm0 6v-2h2v2H5zm12 0v-2h2v2h-2zm2-4h-2v-2h2v2zm-2-4V7h2v2h-2z"></path>
                             </svg>
                         </button>
@@ -257,7 +261,7 @@ function MoviePage() {
                     </div>
                 </div>
             </div>
-            <div className="bg-neutral-900 pb-16">
+            <div className="bg-neutral-900 grow pb-16">
                 <div className="text-slate-200 px-10 min-[770px]:pl-[31vw]">
                     <div className="py-3 w-auto flex flex-row items-center">
                         <svg className="w-6 h-6 text-orange-50" viewBox="0 0 24 24" fill="none">
@@ -315,11 +319,11 @@ function MoviePage() {
                         <span className="mr-4 text-3xl font-extrabold">Casting</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                     </div>
-                    <div className="flex overflow-auto mt-2">
-                        <ImageList title={pluralize('Director', directors)} items={directors} />
-                        <ImageList title={pluralize('Writer', writers)} items={writers} />
-                        <ImageList title={pluralize('Producer', producers)} items={producers} />
-                        <ImageList title={pluralize('Actor', movie.actors)} items={movie.actors} />
+                    <div className='flex overflow-auto mt-2'>
+                        {directors.length > 0 && <ImageList title={pluralize('Director', directors)} items={directors} />}
+                        {writers.length > 0 && <ImageList title={pluralize('Writer', writers)} items={writers} />}
+                        {producers.length > 0 && <ImageList title={pluralize('Producer', producers)} items={producers} />}
+                        {movie.actors.length > 0 && <ImageList title={pluralize('Actor', movie.actors)} items={movie.actors} />}
                     </div>
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
                         <span className="mr-4 text-3xl font-extrabold">Discussion (20)</span>
@@ -361,15 +365,16 @@ function MoviePage() {
                         />
                     ))}
                 </div>
-                <div className="w-full bg-neutral-900"></div>
-                {/* <div className="flex justify-center align-center aspect-video bg-black mt-[10vw] w-full h-full">
-                    <iframe
-                        className="w-[80%] h-full border-4 border-yellow-50"
-                        src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
-                        title="YouTube video player"
-                        allowFullScreen
-                    />
-                </div> */}
+                {isModalVisible && (
+                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
+                            <iframe
+                                src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
+                                title="YouTube video player" 
+                                className="w-[48vw] h-[27vw]"
+                                allowFullScreen
+                            />
+                    </div>
+                )}
             </div>
         </div>
     )

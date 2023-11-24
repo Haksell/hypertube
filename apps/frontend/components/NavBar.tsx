@@ -219,7 +219,7 @@ function NavBar() {
                 </div>
                 <MobileMenu showMenu={showMenu} currLink={currLink} setCurrLink={setCurrLink} />
             </nav>
-            <div className="h-20" />
+            <div className="h-16" />
         </div>
     )
 }

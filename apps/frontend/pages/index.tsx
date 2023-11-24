@@ -134,7 +134,7 @@ const MoviesPage = () => {
     const shouldFetchMovies = () => {
         return (
             window.innerHeight + document.documentElement.scrollTop >=
-            document.documentElement.offsetHeight - 100
+            document.documentElement.offsetHeight - window.innerHeight / 2
         )
     }
 
