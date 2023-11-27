@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useUserContext } from '../../src/context/UserContext';
 import { useRouter } from 'next/router';
 import MainLayout from '../../layouts/MainLayout';
-import TitleSmall from '../../components/elems/TitleSmall';
 import PageTitleOneText from '../../components/elems/PageTitleOneText';
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn';
 import { TUserProfile } from '../../src/shared/user';
@@ -10,6 +9,8 @@ import axios from 'axios';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import NavBar from '../../components/NavBar'
 
 function ProfilePage() {
     const { user } = useUserContext();
@@ -18,11 +19,14 @@ function ProfilePage() {
 	const id: string = typeof profileID === 'string' ? profileID : ''
 	const [userProfile, setUserProfile] = useState<TUserProfile | null>(null);
 	const [idUser, setIdUser] = useState<number>(-1)
-	const [blocked, setBlocked] = useState<boolean>(false);
-	const [showReported, setShowReported] = useState<boolean>(true);
-	const [visible, setVisible] = useState<string>('carousel-2.svg')
 	const { t } = useTranslation('common')
-	
+	const [currLink, setCurrLink] = useState<string>('no')
+	const [mainPicture, setMainPicture] = useState<string>('');
+	const [liked, setLiked] = useState<boolean>(false)
+
+    let link: string = '/norminet.jpeg'
+    if (mainPicture) link = `http://localhost:5001/users/image/${mainPicture}`
+
 	useEffect(() => {
 		setId();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -43,6 +47,26 @@ function ProfilePage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [idUser])
 
+    useEffect(() => {
+        if (router.pathname.match('/settings')) setCurrLink('/settings')
+        else setCurrLink('no')
+    }, [currLink])
+
+	async function likeMovie(movieId) {
+		try {
+			const response = await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
+				withCredentials: true
+			})
+		}
+		catch {
+			// setMovieDetails(null)
+		}
+	}
+
+	function handleLike(movieId) {
+		likeMovie(movieId)
+	}
+
 	function setId() {
 		if (user && id) {
 			const newId = parseInt(id)
@@ -62,44 +86,113 @@ function ProfilePage() {
                 withCredentials: true,
             })
 			setUserProfile(response.data)
+			console.log(response.data.moviesLiked[0])
 		}
 		catch (error) {
 			setUserProfile(null)
 		}
 	}
 
-    return user ? (userProfile ? (
-		<MainLayout>
-			
-            <TitleSmall text="Profile" space='1' />
+	const ButtonLinkNavBar: React.FC<{
+		text: string
+		page: string
+		currLink: string
+		setCurrLink: React.Dispatch<React.SetStateAction<string>>
+	}> = ({ text, page, currLink, setCurrLink }) => (
+		<Link href={page}>
+			<p
+				className={`${
+					page.match(currLink)
+						? 'bg-zinc-900 text-white'
+						: 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
+				} rounded-md px-3 py-2 text-sm font-medium`}
+				aria-current="page"
+				onClick={() => setCurrLink(page)}
+			>
+				{text}
+			</p>
+		</Link>
+	)
 
-			<div className="grid grid-rows-3 grid-cols-4 gap-1 lg:grid-rows-3 lg:grid-cols-4 lg:gap-1 sm:grid-rows-3 sm:grid-cols-1 sm:gap-4">
-				<div className="row-start-1 row-end-4 col-span-3 lg:row-start-1 lg:row-end-4 lg:col-span-3 md:row-start-1 md:row-end-4">
-					{/* <ImageCarrousel pictures={userM.pictures} visible={visible} setVisible={setVisible} /> */}
-					{/* <img
-						src={link}
-						className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt={altImg}
-						onClick={onClickImg}
-					/> */}
+    const ImageList = ({ title, items }) => (
+        <div className='relative flex flex-none mr-5 mt-10'>
+            <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
+                <p className='text-xl font-bold text-orange-50 sm:text-2xl'>{title}</p>
+                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+            </div>
+            {items.map((element, index) => (
+				<div key={index} className={`relative group my-2 mr-2`}>
+					<Link href={`/movie/${element.imdb_code}`}>
+						<img
+							src={element.thumbnail || '/errorPicture.jpg'}
+							alt={element.title + index}
+							className='h-[195px] border-2 border-gray-700 rounded-lg min-[1500px]:h-[13vw]'
+							onError={(e) => {
+							e.currentTarget.src = '/errorPicture.jpg';
+							}}
+						/>
+					</Link>
+					<button className={`absolute top-0 right-0 mt-1 mr-1 bg-black rounded hidden group-hover:block bg-opacity-50 hover:bg-opacity-70`} onClick={() => handleLike(element.imdb_code)}>
+						<svg className='w-6 h-6 text-orange-50 hover:text-orange-50 hover:duration-300 ease-in' viewBox="0 0 24 24">
+							<g strokeWidth="0"></g>
+							<g strokeLinecap="round" strokeLinejoin="round"></g>
+							<g>
+								<path fill='currentColor' d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"></path>
+							</g>
+							</svg>
+					</button>
 				</div>
-				<div className="row-start-4 row-end-8 col-span-3 lg:row-start-1 lg:row-end-4 md:row-start-1 md:row-end-4">
-					{/* <UserOptionProfile 
-						userM={userM} 
-						liked={liked} 
-						setLiked={setLiked} 
-						showReported={showReported} 
-						setShowReported={setShowReported}
-						blocked={blocked}
-						setBlocked={setBlocked}
-					/> */}
+            ))}
+        </div>
+      );
+
+
+    return user ? (userProfile ? (
+		<div>
+            <NavBar />
+            <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
+                <img
+                    src={'/defaultBackground.jpg'}
+					alt='profileBackground'
+                    className="object-cover w-full h-full top-10 brightness-50"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.src = '/defaultBackground.jpg';
+                    }}
+                />
+            </div>
+			<div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 max-w-md bg-gray-800 rounded-lg">
+				<img
+					src={user.picture || './norminet.jpeg'}
+					alt="Profile Picture"
+					className="relative sm:absolute sm:-left-[16px] sm:-top-4 left-0 w-32 h-32 mb-3 rounded-full shadow-lg"
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.src = '/norminet.jpeg';
+                    }}
+				/>
+				<div className='sm:pl-[50px]'>
+					<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
+					<p className="text-sm font-normal text-gray-500 sm:text-base">{user.email}</p>
 				</div>
-				<div className="row-start-8 row-end-10 col-span-3 lg:row-start-6 lg:row-end-8 md:row-start-6 md:row-end-8">
-					{/* <UserInfo user={userM} /> */}
+				<Link href={'/settings'}>
+					<p
+						className='absolute right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
+						aria-current="page"
+						onClick={() => setCurrLink('/settings')}
+					>
+						{'Edit'}
+					</p>
+				</Link>
+			</div>	
+			<div className="relative h-full m-5 px-5 pt-2 bg-gray-800 rounded-lg">
+				<p className='mb-5 text-2xl font-bold text-white sm:text-3xl'>{user.username}</p>
+				<div className='flex overflow-auto'>
+					{userProfile.moviesLiked.length > 0 && <ImageList title="Liked Films" items={userProfile.moviesLiked} />}
+				</div>
+				<div className='flex overflow-auto'>
+					{userProfile.moviesViewed.length > 0 && <ImageList title="Viewed Films" items={userProfile.moviesViewed} />}
 				</div>
 			</div>
-			
-        </MainLayout>
+		</div>
 	) : (<PageTitleOneText
 		title="User not found"
 		textBody="It seems we couldn't found this user."
