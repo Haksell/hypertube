@@ -63,23 +63,6 @@ function MoviePage() {
         }
     }
 
-    async function likeMovie() {
-        try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
-                withCredentials: true,
-            })
-            if (response.data === 'Movie liked') {
-                setLiked(true)
-                setColorHeart('orange')
-            } else {
-                setLiked(false)
-                setColorHeart('white')
-            }
-        } catch {
-            // setMovieDetails(null)
-        }
-    }
-
     async function postComment() {
         try {
             const response = await axios.post(
@@ -126,15 +109,35 @@ function MoviePage() {
 				}
 				return comment
 			}))
-		}
+        }
 		catch (error) {
 			console.log(error)
 		}
+    }
+
+	async function likeMovie() {
+		try {
+
+			const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+				withCredentials: true
+			})
+			if (response.data === 'Movie liked') {
+				setLiked(true)
+				setColorHeart('orange-50')
+			}
+			else {
+				setLiked(false)
+				setColorHeart('white')
+			}
+		}
+		catch {
+			// setMovieDetails(null)
+		}
 	}
 
-    function handleLike() {
-        likeMovie()
-    }
+	function handleLike() {
+		likeMovie()
+	}
 
     const searchInCrew = (job: string[]): MovieCrew[] => {
         if (!movie || !movie.crews) {
@@ -170,8 +173,8 @@ function MoviePage() {
     const ImageList = ({ title, items }) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
-                <p className="text-2xl font-bold text-orange-50">{title}</p>
-                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
+                <p className='text-xl font-bold text-orange-50 sm:text-2xl'>{title}</p>
+                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
             </div>
             {items.map((element, index) => (
                 <div key={index} className="relative my-2 mr-2">
@@ -219,12 +222,12 @@ function MoviePage() {
                         e.currentTarget.src = '/errorPicture.jpg'
                     }}
                 />
-                <div className="flex flex-row pl-10 bg-neutral-800 w-full h-28 bg-opacity-80 min-[770px]:pl-[31vw]">
+                <div className="flex flex-col pl-10 bg-neutral-800 w-full h-40 bg-opacity-80 min-[770px]:pl-[31vw] min-[950px]:flex-row min-[950px]:h-28">
                     <div className="w-full">
                         <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                             {movie.title}
                         </h1>
-                        <RatingStars rating={movie.rating / 2} />
+                        <RatingStars rating={movie.rating / 2} line={true}/>
                         {movie.genres.slice(0, 4).map((element, index) => (
                             <span
                                 key={index}
@@ -234,14 +237,10 @@ function MoviePage() {
                             </span>
                         ))}
                     </div>
-                    <div className="flex flex-row-reverse w-full">
-                        <button className="mr-[10%]" onClick={handleLike}>
-                            <svg
-                                className={`w-6 h-6 text-${colorHeart}-500 text-slate-200 hover:text-red-500 hover:duration-300 ease-in`}
-                                fill="currentColor"
-                                viewBox="2 2 27 28"
-                            >
-                                <path d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"></path>
+                    <div className="flex flex-row w-full mt-4 ml-2 min-[950px]:justify-end">
+                        <button className="mr-10">
+                            <svg className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in" fill="currentColor" viewBox="0 0 13 16">
+                                <path d="M0 0V16l13-8Z"></path>
                             </svg>
                         </button>
                         <button className="mr-10" onClick={handleToggleModal}>
@@ -249,13 +248,9 @@ function MoviePage() {
                                 <path d="M19 4v1h-2V3H7v2H5V3H3v18h2v-2h2v2h10v-2h2v2h2V3h-2v1zM5 7h2v2H5V7zm0 4h2v2H5v-2zm0 6v-2h2v2H5zm12 0v-2h2v2h-2zm2-4h-2v-2h2v2zm-2-4V7h2v2h-2z"></path>
                             </svg>
                         </button>
-                        <button className="mr-10">
-                            <svg
-                                className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in"
-                                fill="currentColor"
-                                viewBox="0 0 13 16"
-                            >
-                                <path d="M0 0V16l13-8Z"></path>
+                        <button className="mr-[10%]" onClick={handleLike}>
+                            <svg className={`w-6 h-6 text-${colorHeart} hover:text-orange-50 hover:duration-300 ease-in`} viewBox="2 2 27 28">
+                                <path fill='currentColor' d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"></path>
                             </svg>
                         </button>
                     </div>
@@ -311,13 +306,13 @@ function MoviePage() {
                         </p>
                     </div>
                     <div className="flex flex-row items-center w-full">
-                        <span className="mr-4 text-3xl font-extrabold">Summary</span>
-                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
+                        <span className="mr-4 text-2xl font-extrabold sm:text-3xl">Summary</span>
+                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
                     </div>
-                    <p className="pt-3 text-xl tracking-wide">{movie.summary}</p>
+                    <p className="pt-3 text-lg tracking-wide sm:text-xl">{movie.summary}</p>
                     <div className="pt-4 flex flex-row items-center w-full">
-                        <span className="mr-4 text-3xl font-extrabold">Casting</span>
-                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
+                        <span className="mr-4 text-2xl font-extrabold sm:text-3xl">Casting</span>
+                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
                     </div>
                     <div className='flex overflow-auto mt-2'>
                         {directors.length > 0 && <ImageList title={pluralize('Director', directors)} items={directors} />}

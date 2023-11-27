@@ -1,70 +1,15 @@
 import NavBar from '../components/NavBar'
+import { MovieCard } from '../components/elems/MovieCard'
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import { useUserContext } from '../src/context/UserContext'
-import { formatDuration } from '../src/utilsTime'
 import axios from 'axios'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
-
-type Movie = {
-    title: string
-    thumbnail: string
-    year: number
-    length: number
-    imdbRating?: number
-    imdb_code: string
-    langage: string
-    genre: string[]
-    seeds: number
-    quality: string
-    url: string
-    viewed: boolean
-    liked: boolean
-    source: 'EZTV' | 'YTS'
-}
+import { MovieDTO } from '../src/shared/movies'
 
 const limit = 7
-
-const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => {
-    const [isHovered, setIsHovered] = useState(false)
-
-    return (
-        <Link href={`/movie/${movie.imdb_code}`}>
-            <div
-                className="relative group overflow-hidden cursor-pointer"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
-                <img
-                    src={movie.thumbnail}
-                    alt={movie.title}
-                    width={230}
-                    height={345}
-                    className={`w-full h-auto transition-all duration-300 ease-in-out ${
-                        isHovered ? 'opacity-50' : ''
-                    }`}
-                />
-                <div>
-                    <div className="flex justify-between text-sm">
-                        <span>{movie.year}</span>
-                        <span>{formatDuration(movie.length)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span>rating:{movie.imdbRating}</span>
-                        <span>seeds:{movie.seeds}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span>liked:{movie.liked ? 'true' : 'false'}</span>
-                        <span>viewed:{movie.viewed ? 'true' : 'false'}</span>
-                    </div>
-                </div>
-            </div>
-        </Link>
-    )
-}
 
 type FilterProps = {
     id: string
@@ -96,7 +41,7 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
 
 const MoviesPage = () => {
     const { user } = useUserContext()
-    const [movies, setMovies] = useState<Movie[]>([])
+    const [movies, setMovies] = useState<MovieDTO[]>([])
     const [fetchCount, setFetchCount] = useState(0)
     const [search, setSearch] = useState('')
     const [genre, setGenre] = useState('')
@@ -363,7 +308,7 @@ const MoviesPage = () => {
                 </div>
             </div>
             <div className="text-white">
-                <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-1 p-4">
+                <div className="grid grid-cols-1 min-[500px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1 p-4">
                     {movies.map((movie, i) => (
                         <MovieCard key={i} movie={movie} />
                     ))}

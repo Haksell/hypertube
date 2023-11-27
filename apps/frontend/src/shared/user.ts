@@ -1,3 +1,5 @@
+import { MovieDTO } from "./movies"
+
 export type TUserContext = {
     id: number
     username: string
@@ -16,4 +18,14 @@ export type TUserProfile = {
     picture: string
 	moviesLiked: []
 	moviesViewed: []
+}
+
+export interface ProfileDTO {
+    id: number;
+	username: string
+    firstName: string
+    lastName: string
+    picture: string
+	moviesLiked: MovieDTO[]
+	moviesViewed: MovieDTO[]
 }

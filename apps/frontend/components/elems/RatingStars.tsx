@@ -2,9 +2,10 @@ import React from 'react';
 
 interface RatingStarsProps {
   rating: number;
+  line: boolean;
 }
 
-const RatingStars: React.FC<RatingStarsProps> = ({ rating }) => {
+const RatingStars: React.FC<RatingStarsProps> = ({ rating, line }) => {
   const filledStars = Math.floor(rating);
   const hasHalfStar = rating - filledStars >= 0.5;
 
@@ -41,11 +42,13 @@ const RatingStars: React.FC<RatingStarsProps> = ({ rating }) => {
   };
 
   return (
-    <div className="flex items-center">
-      {renderStars()}
-      <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">{rating}</p>
-      <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">out of</p>
-      <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">5</p>
+    <div className={`flex flex-${line ? 'row' : 'col'} items-center`}>
+      <div className={`flex items-center mb-${line ? '1' : '0'}`}>{renderStars()}</div>
+      <div className={`flex items-center ms-${line ? '1' : '0'}`}>
+        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{rating}</p>
+        <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">out of</p>
+        <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">5</p>
+      </div>
     </div>
   );
 };
