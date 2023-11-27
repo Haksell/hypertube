@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { CommentDTO, CommentPrisma } from '../shared/comment'
-import { TUserContext } from '../shared/user'
-=======
 import { TUserContext, ProfileDTO, TUserProfile, ProfilePrisma } from '../shared/user'
->>>>>>> Ncoursol
 import { PrismaClient } from '@prisma/client'
 import { getInfoMovieTorrent } from './info-movie'
 import { MovieDTO } from '../shared/movies'
@@ -36,7 +32,6 @@ export const generateUniqueUsername = async (login: string): Promise<string> => 
     return username
 }
 
-<<<<<<< HEAD
 // Take a prisma Comment and return a CommentDTO
 export const formatComment = (comment: CommentPrisma): CommentDTO => {
     return {
@@ -48,7 +43,7 @@ export const formatComment = (comment: CommentPrisma): CommentDTO => {
         userId: comment.user.id,
     }
 }
-=======
+
 export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO> => {
     const viewedMovies = await Promise.all(profile.viewedMovies.map(mov => getInfoMovieTorrent(mov.imdb_code)))
     const favoriteMovies = await Promise.all(profile.favoriteMovies.map(mov => getInfoMovieTorrent(mov.imdb_code)))
@@ -92,4 +87,3 @@ export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO>
         moviesViewed: formattedViewedMovies
     }
 }
->>>>>>> Ncoursol
