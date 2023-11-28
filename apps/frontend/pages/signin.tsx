@@ -76,7 +76,7 @@ function SignInPage() {
                 router.push('/')
             }
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
             setStyleError(true)
             setError(error.response.data)
@@ -165,7 +165,7 @@ function SignInPage() {
     )
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

@@ -106,7 +106,7 @@ function SignUpPage() {
             setStyleError(false)
             setCreated(true)
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             // console.log(error)
             setStyleError(true)
             setError(error.response.data)
@@ -181,7 +181,7 @@ function SignUpPage() {
     )
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

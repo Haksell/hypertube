@@ -23,7 +23,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
             setPicture(null)
             setError('')
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             setError(error.response.data)
             //to handle ?
         }
@@ -53,7 +53,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
                 );
 				setPicture(response.data);
 				setError('')
-            } catch (error) {
+            } catch (error: any) {
 				setError(error.response.data)
 			}
         }

@@ -22,10 +22,7 @@ function ShowPictures({
             {pictures.map((elem) => (
                 <ShowImg
                     picture={elem}
-                    pictures={pictures}
-                    mainPicture={mainPicture}
-                    setPictures={setPictures}
-                    setMainPicture={setMainPicture}
+                    setPicture={setPictures}
 					setError={setError}
                     key={elem}
                 />

@@ -31,7 +31,7 @@ function ConfirmEmailPage() {
             })
             setRetour(response.data.msg)
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             if (error.response) {
                 if (error.response.data === ErMsg('InvalidId', t)) router.push('/404')
                 setRetour(error.response.data)

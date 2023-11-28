@@ -40,7 +40,7 @@ function SettingsPage() {
             })
 			setUserInfoForForm(response.data);
             return response.data
-        } catch (error) {
+        } catch (error: any) {
 			if (error.response)
 				setError(error.response.data)
         }
@@ -68,7 +68,7 @@ function SettingsPage() {
             );
             setError('');
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
 			if (error.response)
 				setError(error.response.data);
         }
@@ -148,7 +148,7 @@ function SettingsPage() {
 	);
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

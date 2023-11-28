@@ -21,7 +21,7 @@ export default function Store(): JSX.Element {
 					})
 					console.log(res.data)
 				}
-			} catch (error) {
+			} catch (error: any) {
 				console.log(error)
 			}
 		}
@@ -33,7 +33,7 @@ export default function Store(): JSX.Element {
 		try {
 			const res = await axios.get('http://localhost:5001/')
 			console.log(res.data)
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error)
 		}
 	}
@@ -47,7 +47,7 @@ export default function Store(): JSX.Element {
 				password: pwd,
 			})
 			console.log(res.data)
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error)
 		}
 	}
@@ -65,7 +65,7 @@ export default function Store(): JSX.Element {
 				lastName: 'Bouquet',
 			})
 			console.log(res.data)
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error)
 		}
 	}
@@ -75,7 +75,7 @@ export default function Store(): JSX.Element {
 			const token = (document.getElementById('token') as HTMLInputElement).value
 			const res = await axios.post('http://localhost:5001/test', { token: token })
 			console.log(res.data)
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error)
 		}
 	}

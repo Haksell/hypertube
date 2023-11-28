@@ -126,7 +126,7 @@ export async function likeMovie(req: Request, res: Response) {
 
 export async function viewMovie(req: Request, res: Response) {
 	// const path = require('path');
-	const videoName = 'movies/video1.mp4';
+	const videoName = './movies/video1.mp4';
 	console.log('we come here');
 
     // const dirname = path.resolve()
@@ -141,7 +141,11 @@ export async function viewMovie(req: Request, res: Response) {
     .videoCodec('libx264')
     .audioCodec('libmp3lame')
     .format('mpegts')
-    .pipe(res, { end: true });
+    .on('end', function () {
+		console.log('streaming video done')
+	})
+	.pipe(res, { end: true });
+	
 
 	// res.status(200).send('Movie')
 

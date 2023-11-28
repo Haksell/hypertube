@@ -21,7 +21,7 @@ const VideoPlayer = () => {
                 if (videoRef.current) {
                     videoRef.current.src = videoUrl
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Erreur lors de la récupération du flux vidéo', error)
             }
         }

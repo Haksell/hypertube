@@ -3,7 +3,7 @@ import { appWithTranslation } from 'next-i18next';
 import '../styles/global.css'
 import React from 'react'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: { Component: any, pageProps: any }) {
     return (
         <UserProvider>
             <Component {...pageProps} />

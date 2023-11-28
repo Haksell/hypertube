@@ -63,7 +63,7 @@ function ForgotPasswordPage() {
                 setCreated(true)
             }
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             if (error.response) {
                 setStyleError(true)
                 setError(error.response.data)
@@ -115,7 +115,7 @@ function ForgotPasswordPage() {
     )
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),
