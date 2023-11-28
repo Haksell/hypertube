@@ -56,8 +56,6 @@ function MoviePage() {
                 },
             )
             setComments(responseComments.data)
-
-            console.log(response.data)
         } catch {
             setMovieDetails(null)
         }

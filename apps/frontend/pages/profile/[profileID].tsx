@@ -114,10 +114,20 @@ function ProfilePage() {
 		</Link>
 	)
 
-    const ImageList = ({ title, items }) => (
+	const removeItem = (index: number, id: number) => {
+		if (userProfile) {
+			const newData = { ...userProfile };
+			newData.moviesLiked = [...userProfile.moviesLiked];
+			newData.moviesLiked.splice(index, 1);
+			setUserProfile(newData);
+			handleLike(id)
+		}
+	};
+	
+    const ImageList = ({ title, items, button }) => (
         <div className='relative flex flex-none mr-5 mt-10'>
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
-                <p className='text-xl font-bold text-orange-50 sm:text-2xl'>{title}</p>
+                <p className='text-xl font-bold text-orange-50 sm:text-2xl whitespace-nowrap'>{title}</p>
                 <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
             </div>
             {items.map((element, index) => (
@@ -132,15 +142,17 @@ function ProfilePage() {
 							}}
 						/>
 					</Link>
-					<button className={`absolute top-0 right-0 mt-1 mr-1 bg-black rounded hidden group-hover:block bg-opacity-50 hover:bg-opacity-70`} onClick={() => handleLike(element.imdb_code)}>
+					{button && (
+					<button className={`absolute top-0 right-0 mt-1 mr-1 bg-black rounded hidden group-hover:block bg-opacity-50 hover:bg-opacity-70`} onClick={() => removeItem(index, element.imdb_code)}>
 						<svg className='w-6 h-6 text-orange-50 hover:text-orange-50 hover:duration-300 ease-in' viewBox="0 0 24 24">
 							<g strokeWidth="0"></g>
 							<g strokeLinecap="round" strokeLinejoin="round"></g>
 							<g>
 								<path fill='currentColor' d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z"></path>
 							</g>
-							</svg>
+						</svg>
 					</button>
+					)}
 				</div>
             ))}
         </div>
@@ -160,7 +172,7 @@ function ProfilePage() {
                     }}
                 />
             </div>
-			<div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 max-w-md bg-gray-800 rounded-lg">
+			<div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
 				<img
 					src={user.picture || './norminet.jpeg'}
 					alt="Profile Picture"
@@ -169,7 +181,7 @@ function ProfilePage() {
                         e.currentTarget.src = '/norminet.jpeg';
                     }}
 				/>
-				<div className='sm:pl-[50px]'>
+				<div className=''>
 					<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
 					<p className="text-sm font-normal text-gray-500 sm:text-base">{user.email}</p>
 				</div>
@@ -186,11 +198,16 @@ function ProfilePage() {
 			<div className="relative h-full m-5 px-5 pt-2 bg-gray-800 rounded-lg">
 				<p className='mb-5 text-2xl font-bold text-white sm:text-3xl'>{user.username}</p>
 				<div className='flex overflow-auto'>
-					{userProfile.moviesLiked.length > 0 && <ImageList title="Liked Films" items={userProfile.moviesLiked} />}
+					{userProfile.moviesLiked.length > 0 && <ImageList title="Liked Films" items={userProfile.moviesLiked} button={true}/>}
 				</div>
 				<div className='flex overflow-auto'>
-					{userProfile.moviesViewed.length > 0 && <ImageList title="Viewed Films" items={userProfile.moviesViewed} />}
+					{userProfile.moviesViewed.length > 0 && <ImageList title="Viewed Films" items={userProfile.moviesViewed} button={false}/>}
 				</div>
+				{!userProfile.moviesLiked.length && !userProfile.moviesViewed.length && (
+					<div className='w-full text-center h-28'>
+						<p className='text-2xl font-bold text-white sm:text-3xl'>Here your future films history.</p>
+					</div>
+				)}
 			</div>
 		</div>
 	) : (<PageTitleOneText
