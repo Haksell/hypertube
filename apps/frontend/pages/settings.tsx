@@ -121,12 +121,13 @@ function SettingsPage() {
 							init={lastname}
 						/>
 					</MultiplesInputOneRow>
-
-					<ShowImg
-						picture={mainPicture}
-						setPicture={setMainPicture}
-						setError={setError}
-                	/>
+                    <div className="flex flex-col items-center">
+                        <ShowImg
+                            picture={mainPicture}
+                            setPicture={setMainPicture}
+                            setError={setError}
+                        />
+                    </div>
 
                     <Button
                         text={t('settings.amend')}

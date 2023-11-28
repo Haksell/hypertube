@@ -32,6 +32,7 @@ function MoviePage() {
     const { idMovie } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
+	const { t } = useTranslation('common')
 
     useEffect(() => {
         if (!idMovie) return
@@ -221,7 +222,7 @@ function MoviePage() {
                     }}
                 />
                 <div className="flex flex-col pl-10 bg-neutral-800 w-full h-40 bg-opacity-80 min-[770px]:pl-[31vw] min-[950px]:flex-row min-[950px]:h-28">
-                    <div className="w-full">
+                    <div className="w-full min-[950px]:w-[53vw]">
                         <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                             {movie.title}
                         </h1>
@@ -231,11 +232,11 @@ function MoviePage() {
                                 key={index}
                                 className="mr-2 bg-blue-50 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded"
                             >
-                                {element}
+                                {t(`index.genre.${element.toLowerCase()}`)}
                             </span>
                         ))}
                     </div>
-                    <div className="flex flex-row w-full mt-4 ml-2 min-[950px]:justify-end">
+                    <div className="flex flex-row w-full mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
                         <button className="mr-10">
                             <svg className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in" fill="currentColor" viewBox="0 0 13 16">
                                 <path d="M0 0V16l13-8Z"></path>
@@ -303,35 +304,43 @@ function MoviePage() {
                             {movie.budget?.toLocaleString().toString()}$
                         </p>
                     </div>
-                    <div className="flex flex-row items-center w-full">
-                        <span className="mr-4 text-2xl font-extrabold sm:text-3xl">Summary</span>
-                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
-                    </div>
-                    <p className="pt-3 text-lg tracking-wide sm:text-xl">{movie.summary}</p>
-                    <div className="pt-4 flex flex-row items-center w-full">
-                        <span className="mr-4 text-2xl font-extrabold sm:text-3xl">Casting</span>
-                        <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
-                    </div>
-                    <div className='flex overflow-auto mt-2'>
-                        {directors.length > 0 && <ImageList title={pluralize('Director', directors)} items={directors} />}
-                        {writers.length > 0 && <ImageList title={pluralize('Writer', writers)} items={writers} />}
-                        {producers.length > 0 && <ImageList title={pluralize('Producer', producers)} items={producers} />}
-                        {movie.actors.length > 0 && <ImageList title={pluralize('Actor', movie.actors)} items={movie.actors} />}
-                    </div>
+                    { movie.summary && (
+                        <div>
+                            <div className="flex flex-row items-center w-full">
+                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">{t('movie.summary')}</span>
+                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                            </div>
+                            <p className="pt-3 text-lg tracking-wide sm:text-xl">{movie.summary}</p>
+                        </div>
+                    )}
+                    { (directors.length || writers.length || producers.length || movie.actors.length) && (
+                        <div>
+                            <div className="pt-4 flex flex-row items-center w-full">
+                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">{t('movie.casting')}</span>
+                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                            </div>
+                            <div className='flex overflow-auto mt-2'>
+                                {directors.length > 0 && <ImageList title={pluralize(t('movie.director'), directors)} items={directors} />}
+                                {writers.length > 0 && <ImageList title={pluralize(t('movie.writer'), writers)} items={writers} />}
+                                {producers.length > 0 && <ImageList title={pluralize(t('movie.producer'), producers)} items={producers} />}
+                                {movie.actors.length > 0 && <ImageList title={pluralize(t('movie.actor'), movie.actors)} items={movie.actors} />}
+                            </div>
+                        </div>
+                    )}
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
-                        <span className="mr-4 text-3xl font-extrabold">Discussion (20)</span>
+                        <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')} ({comments.length})</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                     </div>
                     <div className="mb-6">
                         <div className="py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700">
                             <label htmlFor="comment" className="sr-only">
-                                Your comment
+                                {t('movie.yourComment')}
                             </label>
                             <textarea
                                 id="comment"
                                 rows={6}
                                 className="px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
-                                placeholder="Write a comment..."
+                                placeholder={t('movie.writeComment')}
                                 onChange={(e) => setComment(e.target.value)}
                                 required
                             ></textarea>
@@ -341,7 +350,7 @@ function MoviePage() {
                             onClick={() => postComment()}
                             className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
                         >
-                            Post comment
+                            {t('movie.postComment')}
                         </button>
                     </div>
                     {comments.map((com, index) => (

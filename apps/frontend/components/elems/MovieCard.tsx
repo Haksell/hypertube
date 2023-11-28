@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { formatDuration } from '../../src/utilsTime'
 import RatingStars from '../../components/elems/RatingStars';
 import Link from 'next/link'
-import axios from 'axios'
+import { useTranslation } from 'next-i18next'
 
 export function MovieCard({ movie }: { movie: MovieDTO }) {
 	const [colorHeart, setColorHeart] = useState<string>('white')
+	const { t } = useTranslation('common')
 
 	useEffect(() => {
         setColorHeart(movie.liked ? 'orange-50' : 'white')
@@ -24,10 +25,10 @@ export function MovieCard({ movie }: { movie: MovieDTO }) {
                     className={`w-full h-auto`}
                 />
                 <div className='absolute p-5 pt-8 w-full h-full top-0 left-0 text-center bg-black hidden group-hover:block bg-opacity-80 '>
-                    <div className='text-xl text-white font-extrabold mb-2 text-ellipsis'>{movie.title}</div>
+                    <div className='text-xl text-white font-extrabold mb-2 h-2/5 overflow-auto'>{movie.title}</div>
                     <RatingStars rating={movie.imdbRating ? movie.imdbRating / 2 : 0} line={false}/>
-                    <p className='ml-2 mr-4 text-slate-200 text-bold mt-2'>Release: {movie.year.toString()}</p>
-                    <p className='ml-2 mr-4 text-slate-200 text-bold mt-1'>Duration: {formatDuration(movie.length)}</p>
+                    <p className='ml-2 mr-4 text-slate-200 text-bold mt-2'>{t('index.release')}: {movie.year.toString()}</p>
+                    <p className='ml-2 mr-4 text-slate-200 text-bold mt-1'>{t('index.duration')}: {formatDuration(movie.length)}</p>
                 </div>
                 <svg className={`absolute top-0 left-0 p-1 ml-2 w-8 h-8 text-blue-50 opacity-${movie.viewed ? '100' : '0'} bg-black rounded-b bg-opacity-50 group-hover:bg-opacity-0`} viewBox="0 -4 24 24">
                     <g strokeWidth="0"></g>

@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import React, { useState, useRef, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
+import { useTranslation } from 'next-i18next'
 
 interface CommentProps {
     content: string
@@ -21,6 +22,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         props
     const [editableContent, setEditableContent] = useState('')
     const [isEditing, setIsEditing] = useState(false)
+	const { t } = useTranslation('common')
 
     const onContentChange = React.useCallback((evt: any) => {
         const sanitizeConf = {
@@ -94,13 +96,13 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                         className="font-medium text-blue-500 hover:underline"
                         onClick={() => setIsEditing(true)}
                     >
-                        Edit
+                        {t('movie.edit')}
                     </button>
                     <button
                         className="font-medium text-red-500 hover:underline"
                         onClick={handleDelete}
                     >
-                        Delete
+                        {t('movie.delete')}
                     </button>
                 </div>
             )}
@@ -110,13 +112,13 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                         className="font-medium text-blue-500 hover:underline"
                         onClick={handleConfirm}
                     >
-                        Confirm
+                        {t('movie.confirm')}
                     </button>
                     <button
                         className="font-medium text-red-500 hover:underline"
                         onClick={() => setIsEditing(false)}
                     >
-                        Cancel
+                        {t('movie.cancel')}
                     </button>
                 </div>
             )}

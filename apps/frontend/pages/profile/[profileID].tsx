@@ -187,21 +187,21 @@ function ProfilePage() {
 				</div>
 				<Link href={'/settings'}>
 					<p
-						className='absolute right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
+						className='absolute rounded-md right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
 						aria-current="page"
 						onClick={() => setCurrLink('/settings')}
 					>
-						{'Edit'}
+						{t('Edit')}
 					</p>
 				</Link>
 			</div>	
 			<div className="relative h-full m-5 px-5 pt-2 bg-gray-800 rounded-lg">
 				<p className='mb-5 text-2xl font-bold text-white sm:text-3xl'>{user.username}</p>
 				<div className='flex overflow-auto'>
-					{userProfile.moviesLiked.length > 0 && <ImageList title="Liked Films" items={userProfile.moviesLiked} button={true}/>}
+					{userProfile.moviesLiked.length > 0 && <ImageList title={t('profile.likedFilms')} items={userProfile.moviesLiked} button={true}/>}
 				</div>
 				<div className='flex overflow-auto'>
-					{userProfile.moviesViewed.length > 0 && <ImageList title="Viewed Films" items={userProfile.moviesViewed} button={false}/>}
+					{userProfile.moviesViewed.length > 0 && <ImageList title={t('profile.viewedFilms')} items={userProfile.moviesViewed} button={false}/>}
 				</div>
 				{!userProfile.moviesLiked.length && !userProfile.moviesViewed.length && (
 					<div className='w-full text-center h-28'>
