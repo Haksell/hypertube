@@ -46,7 +46,7 @@ function MoviePage() {
             setMovieDetails(response.data)
             if (response.data.liked) {
                 setLiked(response.data.liked)
-                setColorHeart('orange')
+                setColorHeart('orange-50')
             }
 
             const responseComments = await axios.get(
