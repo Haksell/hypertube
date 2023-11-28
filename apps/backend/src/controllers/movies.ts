@@ -125,27 +125,42 @@ export async function likeMovie(req: Request, res: Response) {
 //get info from OpenSub
 
 export async function viewMovie(req: Request, res: Response) {
-	// const path = require('path');
+	const path = require('path');
+	const fs = require('fs');
+
 	const videoName = './movies/video1.mp4';
-	console.log('we come here');
+	// console.log('we come here');
 
     // const dirname = path.resolve()
     // const fullfilepath = path.join(dirname, 'movies/' + videoName)
 
-	const ffmpeg = require('fluent-ffmpeg');
+	// const ffmpeg = require('fluent-ffmpeg');
 
 	console.log('we come at least here')
 
-	ffmpeg()
-    .input(videoName)
-    .videoCodec('libx264')
-    .audioCodec('libmp3lame')
-    .format('mpegts')
-    .on('end', function () {
-		console.log('streaming video done')
-	})
-	.pipe(res, { end: true });
-	
+	// const videoPath = path.join(__dirname, 'movies', `video1.mp4`);
+	const stat = fs.statSync(videoName);
+  
+	res.writeHead(200, {
+	  'Content-Type': 'video/mp4',
+	  'Content-Length': stat.size,
+	});
+  
+	const videoStream = fs.createReadStream(videoName);
+	videoStream.pipe(res);
+
+	console.log('after pipe')
+  
+
+	// ffmpeg()
+    // .input(videoName)
+	// .videoCodec('libx264')
+    // .audioCodec('libmp3lame')
+	// .format('mpegts')
+    // .on('end', function () {
+	// 	console.log('streaming video done')
+	// })
+	// .pipe(res, { end: true });
 
 	// res.status(200).send('Movie')
 
