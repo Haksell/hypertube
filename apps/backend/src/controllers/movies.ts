@@ -125,31 +125,23 @@ export async function likeMovie(req: Request, res: Response) {
 //get info from OpenSub
 
 export async function viewMovie(req: Request, res: Response) {
-	const path = require('path');
-	const fs = require('fs');
-
-	const videoName = './movies/video1.mp4';
-	// console.log('we come here');
-
-    // const dirname = path.resolve()
-    // const fullfilepath = path.join(dirname, 'movies/' + videoName)
 
 	// const ffmpeg = require('fluent-ffmpeg');
 
-	console.log('we come at least here')
+	const path = require('path');
+	const fs = require('fs');
 
-	// const videoPath = path.join(__dirname, 'movies', `video1.mp4`);
-	const stat = fs.statSync(videoName);
+	const videoPath = path.join('movies', `video.mp4`);
+	const stat = fs.statSync(videoPath);
   
 	res.writeHead(200, {
 	  'Content-Type': 'video/mp4',
 	  'Content-Length': stat.size,
 	});
   
-	const videoStream = fs.createReadStream(videoName);
+	const videoStream = fs.createReadStream(videoPath);
 	videoStream.pipe(res);
 
-	console.log('after pipe')
   
 
 	// ffmpeg()

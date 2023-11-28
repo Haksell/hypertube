@@ -4,6 +4,45 @@ import React, { useEffect, useRef } from 'react'
 const VideoPlayer = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null)
 
+	// useEffect(() => {
+	// 	const videoUrl = 'http://localhost:5001/movies/view/tt0443649';
+	// 	const mediaSource = new MediaSource();
+	
+	// 	videoRef.current!.src = URL.createObjectURL(mediaSource);
+	
+	// 	const onDataAvailable = async (event: Event) => {
+	// 	//   const sourceBuffer = mediaSource.addSourceBuffer('video/mp4');
+	// 	  const sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs=avc1.42E01E, mp4a.40.2');
+
+	
+	// 	//   const response = await fetch(videoUrl);
+	// 	  const response = await axios.get('http://localhost:5001/movies/view/tt0443649', {
+    //                 responseType: 'arraybuffer',
+	// 				withCredentials: true,
+    //             })
+
+	// 	//   const videoBuffer = await response.arrayBuffer();
+	// 	const videoBuffer = response.data
+	
+	// 	  sourceBuffer.addEventListener('updateend', () => {
+	// 		if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+	// 		  mediaSource.endOfStream();
+	// 		}
+	// 	  });
+	
+	// 	  sourceBuffer.appendBuffer(videoBuffer);
+	// 	};
+	
+	// 	mediaSource.addEventListener('sourceopen', onDataAvailable);
+	
+	// 	return () => {
+	// 	  if (mediaSource.readyState === 'open') {
+	// 		mediaSource.endOfStream();
+	// 	  }
+	// 	};
+	//   }, []);
+	
+
     useEffect(() => {
         const fetchData = async () => {
             try {
