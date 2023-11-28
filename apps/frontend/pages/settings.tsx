@@ -14,6 +14,8 @@ import MainLayout from "../layouts/MainLayout";
 import ShowImg from "../components/settings/ShowImg";
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import VideoPlayer from "../components/video/VideoPlayer";
+import ReactPlayer from 'react-player'
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -136,6 +138,12 @@ function SettingsPage() {
                 </form>
 
             </div>
+
+			<div className="pt-5">
+			<VideoPlayer/>
+			{/* <ReactPlayer url='http://localhost:5001/movies/view/tt0443649' /> */}
+			</div>
+			
         </MainLayout>
 	);
 }

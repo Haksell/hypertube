@@ -123,3 +123,32 @@ export async function likeMovie(req: Request, res: Response) {
 }
 
 //get info from OpenSub
+
+export async function viewMovie(req: Request, res: Response) {
+	// const path = require('path');
+	const videoName = 'movies/video1.mp4';
+	console.log('we come here');
+
+    // const dirname = path.resolve()
+    // const fullfilepath = path.join(dirname, 'movies/' + videoName)
+
+	const ffmpeg = require('fluent-ffmpeg');
+
+	console.log('we come at least here')
+
+	ffmpeg()
+    .input(videoName)
+    .videoCodec('libx264')
+    .audioCodec('libmp3lame')
+    .format('mpegts')
+    .pipe(res, { end: true });
+
+	// res.status(200).send('Movie')
+
+	
+	// const videoPath = path.join(__dirname, 'movies', videoName);
+  
+	// Envoyer la vidéo au client
+	// res.sendFile(fullfilepath);
+	// res.status(200).send('Movie viewed')
+}

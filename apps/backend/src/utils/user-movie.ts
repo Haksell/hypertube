@@ -24,7 +24,8 @@ export async function getUserWithFavoritesAndViewed(req: Request) {
 export async function addUserDetailsToMovie(user: any, movie: MovieDetails) {
 	//verif film deja liked
 	const alreadyLike: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movie.imdb_code)
-	console.log(user)
+	// console.log(user)
+	// console.log('adding movie ')
 	if (alreadyLike !== -1) movie.liked = true
 	else movie.liked = false
 }
