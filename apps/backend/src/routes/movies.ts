@@ -1,4 +1,4 @@
-import { getMovieInfo, getMovies, likeMovie, viewMovie } from '../controllers/movies'
+import { getMovieInfo, getMovies, getSubtitle, likeMovie, viewMovie } from '../controllers/movies'
 import { getMovieComments } from '../controllers/comments'
 import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
@@ -37,6 +37,9 @@ router.get('/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandle
 router.get('/like/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(likeMovie))
 
 router.get('/view/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(viewMovie))
+
+router.get('/subtitle/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getSubtitle))
+
 
 router.get('/:movieId/comments', verifyToken, validator.params(myImdbSchema), asyncHandler(getMovieComments))
 

@@ -163,3 +163,28 @@ export async function viewMovie(req: Request, res: Response) {
 	// res.sendFile(fullfilepath);
 	// res.status(200).send('Movie viewed')
 }
+
+export async function getSubtitle(req: Request, res: Response) {
+	const path = require('path');
+
+	const subPath = path.join('movies', `sub.srt`);
+
+	// ffmpeg()
+    // .input(videoName)
+	// .videoCodec('libx264')
+    // .audioCodec('libmp3lame')
+	// .format('mpegts')
+    // .on('end', function () {
+	// 	console.log('streaming video done')
+	// })
+	// .pipe(res, { end: true });
+
+	// res.status(200).send('Movie')
+
+	
+	// const videoPath = path.join(__dirname, 'movies', videoName);
+  
+	// Envoyer la vidéo au client
+	// res.sendFile(fullfilepath);
+	// res.status(200).send('Movie viewed')
+}
