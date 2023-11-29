@@ -167,24 +167,23 @@ export async function viewMovie(req: Request, res: Response) {
 export async function getSubtitle(req: Request, res: Response) {
 	const path = require('path');
 
+	const nameVttFile = 'newSub.vtt'
+
 	const subPath = path.join('movies', `sub.srt`);
+	const vttPath = path.join('movies', nameVttFile);
 
-	// ffmpeg()
-    // .input(videoName)
-	// .videoCodec('libx264')
-    // .audioCodec('libmp3lame')
-	// .format('mpegts')
-    // .on('end', function () {
-	// 	console.log('streaming video done')
-	// })
-	// .pipe(res, { end: true });
-
-	// res.status(200).send('Movie')
-
+	var srt2vtt = require('srt-to-vtt')
+	var fs = require('fs')
 	
-	// const videoPath = path.join(__dirname, 'movies', videoName);
-  
-	// Envoyer la vidéo au client
-	// res.sendFile(fullfilepath);
-	// res.status(200).send('Movie viewed')
+	fs.createReadStream(subPath)
+	.pipe(srt2vtt())
+	.pipe(fs.createWriteStream(vttPath))
+
+
+	res.status(200).sendFile(process.cwd() + `/movies/${nameVttFile}`, (err) => {
+		if (err) {
+		  console.error('Erreur lors de l\'envoi du fichier :', err);
+		  res.status(500).send('Erreur interne du serveur');
+		}
+	  });
 }

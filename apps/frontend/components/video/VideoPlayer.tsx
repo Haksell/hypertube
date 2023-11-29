@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 const VideoPlayer = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null)
 
+	/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
     // useEffect(() => {
     //     const fetchData = async () => {
     //         try {
@@ -36,9 +38,24 @@ const VideoPlayer = () => {
     //     }
     // }, [])
 
+	// return (
+    //     <div>
+    //         <video
+    //             ref={videoRef}
+    //             controls
+    //             autoPlay
+    //             crossOrigin="use-credentials"
+    //             width="600"
+    //             height="400"
+    //         />
+    //     </div>
+    // )
+	/////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+
+
     const link = 'http://localhost:5001/movies/view/tt0443649'
-
-
+	const linkSub = 'http://localhost:5001/movies/subtitle/tt0443649'
 
     useEffect(() => {
 		if (videoRef.current)
@@ -49,24 +66,12 @@ const VideoPlayer = () => {
         <div className="video-wrapper">
             <video ref={videoRef} className="video-area" controls crossOrigin='use-credentials' width="600" height="400">
 			  <source src={link} type="video/mp4"/>
-			  <track label="English" kind="subtitles" srcLang="en" src="chemin/vers/sous-titres.vtt" default />
+			  <track label="English" kind="subtitles" srcLang="en" src={linkSub} default />
 			  Your browser does not support the video tag.
 			</video>
         </div>
     )
 
-    return (
-        <div>
-            <video
-                ref={videoRef}
-                controls
-                autoPlay
-                crossOrigin="use-credentials"
-                width="600"
-                height="400"
-            />
-        </div>
-    )
 }
 
 export default VideoPlayer
