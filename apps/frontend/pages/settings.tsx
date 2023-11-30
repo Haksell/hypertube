@@ -16,6 +16,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import VideoPlayer from "../components/video/VideoPlayer";
 import ReactPlayer from 'react-player'
+import VideoPlayerMedia from "../components/video/VideoPlayerMedia";
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -140,8 +141,8 @@ function SettingsPage() {
             </div>
 
 			<div className="pt-5">
-			<VideoPlayer/>
-			{/* <ReactPlayer url='http://localhost:5001/movies/view/tt0443649' /> */}
+			<VideoPlayer videoID="tt0443649"/>
+			{/* <VideoPlayerMedia/> */}
 			</div>
 			
         </MainLayout>

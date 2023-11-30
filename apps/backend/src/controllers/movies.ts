@@ -1,3 +1,4 @@
+import { HttpStatusCode } from 'axios'
 import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { createMovieDB, movieViewed } from '../utils/bdd-movie'
 import {
@@ -14,6 +15,7 @@ import {
 } from '../utils/user-movie'
 import { PrismaClient, User } from '@prisma/client'
 import { Request, Response } from 'express'
+import { extractLangageSub } from '../utils/subtitles'
 
 const prisma = new PrismaClient()
 
@@ -127,23 +129,45 @@ export async function likeMovie(req: Request, res: Response) {
 }
 
 //get info from OpenSub
+// const ffmpeg = require('fluent-ffmpeg');
 
 export async function viewMovie(req: Request, res: Response) {
-    // const ffmpeg = require('fluent-ffmpeg');
-
     const path = require('path')
     const fs = require('fs')
 
     const videoPath = path.join('movies', `video.mp4`)
     const stat = fs.statSync(videoPath)
+	const fileSize = stat.size
 
-    res.writeHead(200, {
-        'Content-Type': 'video/mp4',
-        'Content-Length': stat.size,
-    })
+	const range = req.headers.range
+	
+	if (range) {
+		const parts = range.replace(/bytes=/, '').split('-')
+		const start = parseInt(parts[0], 10)
+		const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
-    const videoStream = fs.createReadStream(videoPath)
-    videoStream.pipe(res)
+		const chuncksize = end - start + 1;
+		const file = fs.createReadStream(videoPath, {start, end}) ;
+		const head = {
+			'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+			'Accept-Ranges': `bytes`,
+			'Content-Length': chuncksize,
+			'Content-Type': 'video/mp4'
+		};
+		res.writeHead(206, head); //partial response
+		file.pipe(res);
+	}
+	else {
+		const head = {
+			'Content-Length': fileSize,
+			'Content-Type': 'video/mp4'
+		};
+		res.writeHead(200, head);
+		const videoStream = fs.createReadStream(videoPath)
+    	videoStream.pipe(res)
+	}
+
+}
 
     // ffmpeg()
     // .input(videoName)
@@ -162,28 +186,38 @@ export async function viewMovie(req: Request, res: Response) {
     // Envoyer la vidéo au client
     // res.sendFile(fullfilepath);
     // res.status(200).send('Movie viewed')
-}
+
 
 export async function getSubtitle(req: Request, res: Response) {
-    const path = require('path')
+	const subFile = 'sub.vtt'
 
-    const nameVttFile = 'newSub.vtt'
+	const movieId = getMovieId(req)
+	const langage = extractLangageSub(req)
+	
 
-    const subPath = path.join('movies', `sub.srt`)
-    const vttPath = path.join('movies', nameVttFile)
+	const nameVttFile1: string = await convertSrtSubtitle(`sub_fr.vtt`)
+	const nameVttFile2: string = await convertSrtSubtitle(`sub_en.vtt`)
 
-    var srt2vtt = require('srt-to-vtt')
+    res.status(200).sendFile(process.cwd() + `/movies_sub/${subFile}`, (err) => {
+    	if (err) {
+    	  console.error('Erreur lors de l\'envoi du fichier :', err);
+    	  res.status(HttpStatusCode.NotFound).send('Subtitle not found');
+    	}
+      });
+}
+
+export async function convertSrtSubtitle(srtFile: string): Promise<string> {
+	var srt2vtt = require('srt-to-vtt')
+	const path = require('path')
     const fs = require('fs')
 
+	const vttFile: string = srtFile.replace('.srt', '.vtt')
+
+	const subPath: string = path.join('movies', srtFile)
+	const vttPath: string = path.join('movies_sub', vttFile)
 
     fs.createReadStream(subPath)
     .pipe(srt2vtt())
     .pipe(fs.createWriteStream(vttPath))
-
-    res.status(200).sendFile(process.cwd() + `/movies/${nameVttFile}`, (err) => {
-    	if (err) {
-    	  console.error('Erreur lors de l\'envoi du fichier :', err);
-    	  res.status(500).send('Erreur interne du serveur');
-    	}
-      });
+	return vttFile
 }

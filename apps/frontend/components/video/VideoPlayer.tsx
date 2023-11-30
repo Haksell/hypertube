@@ -1,77 +1,34 @@
-import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
-const VideoPlayer = () => {
+type Prop = {
+    videoID: string
+}
+function VideoPlayer({ videoID }: Prop) {
     const videoRef = useRef<HTMLVideoElement | null>(null)
 
-	/////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             // Requête GET pour récupérer le flux vidéo
-    // const response = await axios.get('http://localhost:5001/movies/view/tt0443649', {
-    //     responseType: 'arraybuffer',
-    // 	withCredentials: true,
-    // })
-
-    //             // Convertir le flux en un objet blob
-    //             const videoBlob = new Blob([response.data], { type: 'video/mp4' })
-
-    //             // Créer une URL blob et l'assigner à la source vidéo
-    //             const videoUrl = URL.createObjectURL(videoBlob)
-    //             if (videoRef.current) {
-    //                 videoRef.current.src = videoUrl
-    //             }
-    //         } catch (error: any) {
-    //             console.error('Erreur lors de la récupération du flux vidéo', error)
-    //         }
-    //     }
-
-    //     fetchData()
-
-    //     // Nettoyer l'URL blob lors du démontage du composant
-    //     return () => {
-    //         if (videoRef.current) {
-    //             URL.revokeObjectURL(videoRef.current.src)
-    //         }
-    //     }
-    // }, [])
-
-	// return (
-    //     <div>
-    //         <video
-    //             ref={videoRef}
-    //             controls
-    //             autoPlay
-    //             crossOrigin="use-credentials"
-    //             width="600"
-    //             height="400"
-    //         />
-    //     </div>
-    // )
-	/////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////
-
-
-    const link = 'http://localhost:5001/movies/view/tt0443649'
-	const linkSub = 'http://localhost:5001/movies/subtitle/tt0443649'
+    const link = `http://localhost:5001/movies/view/${videoID}`
 
     useEffect(() => {
-		if (videoRef.current)
-			videoRef.current.src = 'http://localhost:5001/movies/view/tt0443649'
+        if (videoRef.current) videoRef.current.src = link
     }, [])
 
     return (
         <div className="video-wrapper">
-            <video ref={videoRef} className="video-area" controls crossOrigin='use-credentials' width="600" height="400">
-			  <source src={link} type="video/mp4"/>
-			  <track label="English" kind="subtitles" srcLang="en" src={linkSub} default />
-			  Your browser does not support the video tag.
-			</video>
+            <video
+                ref={videoRef}
+                className="video-area"
+                controls
+                crossOrigin="use-credentials"
+                width="600"
+                height="400"
+            >
+                <source src={link} type="video/mp4" />
+                <track label="English" kind="subtitles" srcLang="en" src={`http://localhost:5001/movies/subtitle/${videoID}?lang=en`} default />
+				<track label="Francais" kind="subtitles" srcLang="fr" src={`http://localhost:5001/movies/subtitle/${videoID}?lang=fr`} default />
+                Your browser does not support the video tag.
+            </video>
         </div>
     )
-
 }
 
 export default VideoPlayer
