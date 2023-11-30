@@ -137,6 +137,41 @@ export async function viewMovie(req: Request, res: Response) {
 
 	try {
 		const movieId = getMovieId(req)
+
+		
+
+		const videoPath = path.join('movies', `video.mp4`)
+		const stat = fs.statSync(videoPath)
+		const fileSize = stat.size
+
+		const range = req.headers.range
+		
+		if (range) {
+			const parts = range.replace(/bytes=/, '').split('-')
+			const start = parseInt(parts[0], 10)
+			const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+			const chuncksize = end - start + 1;
+			const file = fs.createReadStream(videoPath, {start, end}) ;
+			const head = {
+				'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+				'Accept-Ranges': `bytes`,
+				'Content-Length': chuncksize,
+				'Content-Type': 'video/mp4'
+			};
+			res.writeHead(206, head); //partial response
+			file.pipe(res);
+		}
+		else {
+			const head = {
+				'Content-Length': fileSize,
+				'Content-Type': 'video/mp4'
+			};
+			res.writeHead(200, head);
+			const videoStream = fs.createReadStream(videoPath)
+			videoStream.pipe(res)
+		}
+
 	}
 	catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
@@ -144,38 +179,6 @@ export async function viewMovie(req: Request, res: Response) {
         console.log(error)
     }
 
-
-    const videoPath = path.join('movies', `video.mp4`)
-    const stat = fs.statSync(videoPath)
-	const fileSize = stat.size
-
-	const range = req.headers.range
-	
-	if (range) {
-		const parts = range.replace(/bytes=/, '').split('-')
-		const start = parseInt(parts[0], 10)
-		const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-
-		const chuncksize = end - start + 1;
-		const file = fs.createReadStream(videoPath, {start, end}) ;
-		const head = {
-			'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-			'Accept-Ranges': `bytes`,
-			'Content-Length': chuncksize,
-			'Content-Type': 'video/mp4'
-		};
-		res.writeHead(206, head); //partial response
-		file.pipe(res);
-	}
-	else {
-		const head = {
-			'Content-Length': fileSize,
-			'Content-Type': 'video/mp4'
-		};
-		res.writeHead(200, head);
-		const videoStream = fs.createReadStream(videoPath)
-    	videoStream.pipe(res)
-	}
 }
 
     // ffmpeg()
