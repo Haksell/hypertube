@@ -135,6 +135,16 @@ export async function viewMovie(req: Request, res: Response) {
     const path = require('path')
     const fs = require('fs')
 
+	try {
+		const movieId = getMovieId(req)
+	}
+	catch (error) {
+        if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        else res.status(404).send('Movie not found')
+        console.log(error)
+    }
+
+
     const videoPath = path.join('movies', `video.mp4`)
     const stat = fs.statSync(videoPath)
 	const fileSize = stat.size
@@ -166,7 +176,6 @@ export async function viewMovie(req: Request, res: Response) {
 		const videoStream = fs.createReadStream(videoPath)
     	videoStream.pipe(res)
 	}
-
 }
 
     // ffmpeg()
@@ -190,20 +199,36 @@ export async function viewMovie(req: Request, res: Response) {
 
 export async function getSubtitle(req: Request, res: Response) {
 	const subFile = 'sub.vtt'
+	const fs = require('fs');
+	const path = require('path');
 
-	const movieId = getMovieId(req)
-	const langage = extractLangageSub(req)
-	
+	try {
+		const movieId = getMovieId(req)
+		const langage = extractLangageSub(req)
+		// const nameVttFile1: string = await convertSrtSubtitle(`tt0443649_en.srt`)
+		// const nameVttFile2: string = await convertSrtSubtitle(`tt0443649_fr.srt`)
 
-	const nameVttFile1: string = await convertSrtSubtitle(`sub_fr.vtt`)
-	const nameVttFile2: string = await convertSrtSubtitle(`sub_en.vtt`)
+		const subFilename = movieId + '_' + langage + '.vtt'
+		const subPath: string = path.join('movies_sub', subFilename)
 
-    res.status(200).sendFile(process.cwd() + `/movies_sub/${subFile}`, (err) => {
-    	if (err) {
-    	  console.error('Erreur lors de l\'envoi du fichier :', err);
-    	  res.status(HttpStatusCode.NotFound).send('Subtitle not found');
-    	}
-      });
+		if (fs.existsSync(subPath)) {
+			res.status(200).sendFile(process.cwd() + `/movies_sub/${subFilename}`, (err) => {
+				if (err) {
+				console.error('Erreur lors de l\'envoi du fichier :', err);
+				res.status(HttpStatusCode.NotFound).send('Subtitle not found');
+				}
+			});
+		}
+		else {
+			res.status(404).send('Sub not found')
+		}
+		
+	}
+	catch (error) {
+        if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        else res.status(404).send('Sub not found')
+        console.log(error)
+    }
 }
 
 export async function convertSrtSubtitle(srtFile: string): Promise<string> {

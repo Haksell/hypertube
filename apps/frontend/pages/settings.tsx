@@ -141,8 +141,7 @@ function SettingsPage() {
             </div>
 
 			<div className="pt-5">
-			<VideoPlayer videoID="tt0443649"/>
-			{/* <VideoPlayerMedia/> */}
+				<VideoPlayer videoID="tt0443649"/>
 			</div>
 			
         </MainLayout>
