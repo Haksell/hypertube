@@ -85,7 +85,6 @@ function ProfilePage() {
                 withCredentials: true,
             })
 			setUserProfile(response.data)
-			console.log(response.data.moviesLiked[0])
 		}
 		catch (error: any) {
 			setUserProfile(null)
@@ -171,7 +170,7 @@ function ProfilePage() {
                     }}
                 />
             </div>
-			<div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
+			<div className="flex flex-col sm:h-24 items-center relative overflow-hidden m-5 py-5 justify-center sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
 				<img
 					src={user.picture || './norminet.jpeg'}
 					alt="Profile Picture"
@@ -180,10 +179,7 @@ function ProfilePage() {
                         e.currentTarget.src = '/norminet.jpeg';
                     }}
 				/>
-				<div className=''>
-					<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
-					<p className="text-sm font-normal text-gray-500 sm:text-base">{user.email}</p>
-				</div>
+				<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
 				<Link href={'/settings'}>
 					<p
 						className='absolute rounded-md right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
