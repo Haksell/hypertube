@@ -34,7 +34,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     }, [])
 
 	useEffect(() => {
-		if (content) {
+		if (content && content.length <= 300) {
 		  setEditableContent(content);
 		}
 	  }, [content]);

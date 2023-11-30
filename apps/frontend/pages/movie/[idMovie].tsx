@@ -1,7 +1,7 @@
 import Comment from '../../components/Comment'
-import NavBar from '../../components/NavBar'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
+import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
 import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
@@ -63,20 +63,22 @@ function MoviePage() {
     }
 
     async function postComment() {
-        try {
-            const response = await axios.post(
-                `http://localhost:5001/comments/`,
-                {
-                    comment: comment,
-                    imdbCode: idMovie,
-                },
-                {
-                    withCredentials: true,
-                },
-            )
-            setComments((prevComments) => [response.data, ...prevComments])
-        } catch (error) {
-            console.log(error.response.data)
+        if (comment.length <= 300) {
+            try {
+                const response = await axios.post(
+                    `http://localhost:5001/comments/`,
+                    {
+                        comment: comment,
+                        imdbCode: idMovie,
+                    },
+                    {
+                        withCredentials: true,
+                    },
+                )
+                setComments((prevComments) => [response.data, ...prevComments])
+            } catch (error) {
+                console.log(error.response.data)
+            }
         }
     }
 
@@ -200,7 +202,7 @@ function MoviePage() {
         <p>PAS DE FILM</p> /* Faudra changer :D */
     ) : (
         <div>
-            <NavBar />
+            <MainLayout className2=''/>
             <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                 <img
                     src={movie.image.background || '/defaultBackground.jpg'}
@@ -227,7 +229,7 @@ function MoviePage() {
                             {movie.title}
                         </h1>
                         <RatingStars rating={movie.rating / 2} line={true}/>
-                        {movie.genres.slice(0, 4).map((element, index) => (
+                        {movie.genres.slice(0, 6).map((element, index) => (
                             <span
                                 key={index}
                                 className="mr-2 bg-blue-50 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded"
@@ -339,11 +341,12 @@ function MoviePage() {
                             <textarea
                                 id="comment"
                                 rows={6}
-                                className="px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
+                                className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
                                 placeholder={t('movie.writeComment')}
                                 onChange={(e) => setComment(e.target.value)}
                                 required
-                            ></textarea>
+                            />
+                            <label className={`text-sm text-${comment.length <= 300 ? 'white' : 'red-500'}`}>{comment.length}/300</label>
                         </div>
                         <button
                             type="submit"

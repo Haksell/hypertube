@@ -1,4 +1,3 @@
-import NavBar from '../components/NavBar'
 import { MovieCard } from '../components/elems/MovieCard'
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import { useUserContext } from '../src/context/UserContext'
@@ -8,6 +7,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { MovieDTO } from '../src/shared/movies'
+import MainLayout from '../layouts/MainLayout'
 
 const limit = 7
 
@@ -145,7 +145,7 @@ const MoviesPage = () => {
         <UserNotSignedIn />
     ) : (
         <div className="min-h-screen bg-black">
-            <NavBar />
+			<MainLayout/>
             <div className="flex flex-col w-full justify-center items-center">
                 <div className="sm:hidden mr-4 mt-4">
                     <label>

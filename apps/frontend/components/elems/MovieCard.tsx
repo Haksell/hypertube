@@ -23,6 +23,9 @@ export function MovieCard({ movie }: { movie: MovieDTO }) {
                     width={230}
                     height={345}
                     className={`w-full h-auto`}
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        e.currentTarget.src = '/errorPicture.jpg'
+                    }}
                 />
                 <div className='absolute p-5 pt-8 w-full h-full top-0 left-0 text-center bg-black hidden group-hover:block bg-opacity-80 '>
                     <div className='text-xl text-white font-extrabold mb-2 h-2/5 overflow-auto'>{movie.title}</div>

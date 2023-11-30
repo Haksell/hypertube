@@ -10,7 +10,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import NavBar from '../../components/NavBar'
 
 function ProfilePage() {
     const { user } = useUserContext();
@@ -161,7 +160,7 @@ function ProfilePage() {
 
     return user ? (userProfile ? (
 		<div>
-            <NavBar />
+			<MainLayout className2=''/>
             <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                 <img
                     src={'/defaultBackground.jpg'}
