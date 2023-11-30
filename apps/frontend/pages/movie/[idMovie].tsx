@@ -363,6 +363,7 @@ function MoviePage() {
                             updatedAt={com.updatedAt}
                             username={com.username}
                             profilePicture={com.profilePicture}
+                            userId={com.userId}
                             additionalClasses={index !== 0 ? 'border-t' : ''}
                             handleDelete={() => handleDeleteComment(com.id)}
 							handleEdit={(content) => handleEditComment(com.id, content)}
