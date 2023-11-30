@@ -3,12 +3,14 @@ import React, { useState, useRef, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
 
 interface CommentProps {
     content: string
     updatedAt: Date
     username: string
     profilePicture?: string
+    userId: number
     additionalClasses?: string
     handleDelete: () => void,
 	handleEdit: (content: string) => void,
@@ -18,7 +20,7 @@ interface CommentProps {
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
-    const { content, updatedAt, username, profilePicture, additionalClasses, handleDelete, handleEdit, mine } =
+    const { content, updatedAt, username, profilePicture, userId, additionalClasses, handleDelete, handleEdit, mine } =
         props
     const [editableContent, setEditableContent] = useState('')
     const [isEditing, setIsEditing] = useState(false)
@@ -65,7 +67,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         >
             <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                    <p className="inline-flex items-center mr-3 font-semibold text-sm text-white">
+                    <Link href={`/profile/${userId}`} className="inline-flex items-center mr-3 font-semibold text-sm text-white">
                         <img
                             className="mr-2 w-6 h-6 rounded-full"
                             src={
@@ -75,7 +77,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                             alt="Michael Gough"
                         />
                         {username}
-                    </p>
+                    </Link>
                     <p className="text-sm text-gray-400">
                         <time dateTime={dateTime} title={longFormat}>
                             {abbreviatedFormat}
