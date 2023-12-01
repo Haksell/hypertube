@@ -5,7 +5,6 @@ import PageTitleOneText from '../../components/elems/PageTitleOneText'
 import ShowErrorMessage from '../../components/elems/ShowErrorMessage'
 import TextPage from '../../components/elems/TextPage'
 import TitleSmall from '../../components/elems/TitleSmall'
-import TramePage from '../../components/elems/TramePage'
 import MainLayout from '../../layouts/MainLayout'
 import { ErMsg } from '../../src/shared/errors'
 // import { useNavigate, useParams } from 'react-router-dom';

@@ -16,7 +16,7 @@
     },
     "settings": {
         "noSignUp": "Impossible de s'inscrire, ",
-        "amend": "Modifier votre profil"
+        "amend": "Améliorer votre profil"
     },
     "signin": {
         "signinTitle": "Connexion au compte",
@@ -38,9 +38,9 @@
         "rememberPwd": "Mot de passe retrouvé ?"
     },
     "confirm": {
-        "congrate": "Felicitation",
+        "congrate": "Félicitations",
         "linkLog": "Lien validé. Reconnectez-vous",
-        "error": "Erreur..",
+        "error": "Erreur...",
         "linkVal": "lien déjà validé."
     },
     "forgot2": {
@@ -51,61 +51,68 @@
         "newPwd": "Nouveau mot de passe",
         "changePwd": "Changement de mot de passe",
         "oups": "Oups...",
-        "linkDead": "Le lien ne marche pas ici"
+        "linkDead": "Le lien ne fonctionne pas ici"
     },
     "login": {
         "authFail": "L'authentification a échoué",
         "accountTryAgain": "Votre compte est toujours là, vous devriez réessayer.",
         "tryAgain": "Réessayer"
     },
+    "profile": {
+        "edit": "Éditer",
+        "likedFilms": "Films aimés",
+        "viewedFilms": "Films vus"
+    },
     "index": {
         "movies": "Films",
-        "tv": "Series",
+        "release": "Date de sortie",
+        "duration": "Durée",
+        "tv": "Séries",
         "availability": {
-           "name": "Disponibilité",
-           "all": "Tout",
-           "server": "Sur le serveur"
+            "name": "Disponibilité",
+            "all": "Tout",
+            "server": "Sur le serveur"
         },
         "searchMovies": "Rechercher des films par nom...",
         "search": "Rechercher",
         "genre": {
-        "name": "Genre",
-        "action": "Action",
-		"adventure": "Adventure",
-		"animation": "Animation",
-		"comedy": "Comedy",
-		"crime": "Crime",
-		"documentary": "Documentary",
-		"drama": "Drame",
-		"family": "Family",
-		"fantasy": "Fantasy",
-		"history": "History",
-		"horror": "Horror",
-		"music": "Music",
-		"mystery": "Mystery",
-		"romance": "Romance",
-		"science-fiction": "Science-Fiction",
-		"thriller": "Thriller",
-		"war": "War",
-		"western": "Western"
+            "name": "Genre",
+            "action": "Action",
+            "adventure": "Aventure",
+            "animation": "Animation",
+            "comedy": "Comédie",
+            "crime": "Crime",
+            "documentary": "Documentaire",
+            "drama": "Drame",
+            "family": "Famille",
+            "fantasy": "Fantaisie",
+            "history": "Histoire",
+            "horror": "Horreur",
+            "music": "Musique",
+            "mystery": "Mystère",
+            "romance": "Romance",
+            "sci-fi": "Science-Fiction",
+            "thriller": "Thriller",
+            "war": "Guerre",
+            "western": "Western"
         },
         "year": "Année de production",
         "grade": "Note",
         "lang": {
-        "name": "Langue",
-        "english": "Anglais",
-        "french": "Français"
+            "name": "Langue",
+            "english": "Anglais",
+            "french": "Français"
         },
         "sort": {
-        "name": "Trier par",
-        "rating": "Classement",
-        "year": "Année",
-		"title": "Titre",
-		"peers": "Peers",
-		"seeds": "Seeds",
-		"download_count": "Nb telechargement",
-		"like_count": "Nombre favoris",
-		"date_added": "Date ajout"
+            "name": "Trier par",
+            "rating": "Classement",
+            "year": "Année",
+            "title": "Titre",
+            "peers": "Peers",
+            "seeds": "Seeds",
+            "download_count": "Nb téléchargement",
+            "like_count": "Nombre de favoris",
+            "date_added": "Date d'ajout"
         }
     },
     "404": {
@@ -116,45 +123,56 @@
         "errorMsg": "erreur",
         "successMsg": "Succès",
         "NotConnected": "déconnecté",
-        "uknownUsername": "utilisateur inconnus",
+        "unknownUsername": "utilisateur inconnu",
         "invalidPassword": "mot de passe invalide",
-        "emailNotVerified": "l'email n'est pas vérifié",
+        "emailNotVerified": "l'e-mail n'est pas vérifié",
         "missingPwd": "Mot de passe manquant",
         "missingUsername": "Identifiant manquant",
-
         "invalidUsername": "format d'identifiant invalide",
         "usernameTaken": "identifiant déjà pris",
-        "emailTaken": "un compte possède déjà cet email",
-        "invalidEmail": "email invalide",
+        "emailTaken": "un compte possède déjà cette adresse e-mail",
+        "invalidEmail": "e-mail invalide",
         "invalidFirstName": "mauvais format de prénom",
         "invalidLastName": "mauvais format de nom",
-        "wrongEmailFormat": "mauvais format d'email",
-
-        "missingEmail": "Email manquant",
+        "wrongEmailFormat": "mauvais format d'e-mail",
+        "missingEmail": "e-mail manquant",
         "missingFirstName": "Prénom manquant",
         "missingLastName": "Nom manquant",
-
         "weakPwd": "mot de passe trop faible",
-
-        "invalidId": "Id invalide",
+        "invalidId": "ID invalide",
         "alreadyValid": "déjà validé",
-
         "invalidPhotoExtension": "Extension de photo invalide",
         "emptyPhoto": "photo vide",
         "photoTooBig": "l'image est trop volumineuse",
-        "photoNbLimit": "nombre d'image dépasse pour ce profil",
+        "photoNbLimit": "nombre d'images dépasse pour ce profil",
         "photoResolution": "résolution d'image incorrecte",
-
         "emptyPhotoId": "identifiant d'image vide",
         "invalidPhotoId": "identifiant d'image invalide"
     },
+    "movie": {
+        "rateOf": "sur",
+        "summary": "Résumé",
+        "casting": "Distribution",
+        "director": "Réalisateur",
+        "writer": "Scénariste",
+        "producer": "Producteur",
+        "actor": "Acteur",
+        "comments": "Commentaires",
+        "yourComment": "Votre commentaire",
+        "writeComment": "Écrire un commentaire...",
+        "postComment": "Publier le commentaire",
+        "edit": "Éditer",
+        "delete": "Supprimer",
+        "confirm": "Confirmer",
+        "cancel": "Annuler"
+    },
     "ConfirmMailRecoverySent": {
-        "check": "Regarder vos emails..",
+        "check": "Regarder vos e-mails...",
         "recoveryLink": "Un lien de récupération a été envoyé à votre boîte de réception."
     },
     "ConfirmUserCreation": {
-        "congrate": "Felicitation !",
-        "lastSteps": "Dernières étapes.. Vérifiez votre boîte de réception pour confirmer votre email!"
+        "congrate": "Félicitations !",
+        "lastSteps": "Dernières étapes... Vérifiez votre boîte de réception pour confirmer votre e-mail !"
     },
     "UserAlreadySignedIn": {
         "alreadySign": "Vous êtes déjà connecté"

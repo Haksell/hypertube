@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'next-i18next'
 
 interface RatingStarsProps {
   rating: number;
@@ -8,6 +9,7 @@ interface RatingStarsProps {
 const RatingStars: React.FC<RatingStarsProps> = ({ rating, line }) => {
   const filledStars = Math.floor(rating);
   const hasHalfStar = rating - filledStars >= 0.5;
+	const { t } = useTranslation('common')
 
   const renderStars = () => {
     const stars: JSX.Element[] = [];
@@ -46,7 +48,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({ rating, line }) => {
       <div className={`flex items-center mb-${line ? '1' : '0'}`}>{renderStars()}</div>
       <div className={`flex items-center ms-${line ? '1' : '0'}`}>
         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{rating}</p>
-        <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">out of</p>
+        <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">{t('movie.rateOf')}</p>
         <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">5</p>
       </div>
     </div>

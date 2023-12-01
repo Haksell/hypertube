@@ -39,9 +39,9 @@
     },
     "confirm": {
         "congrate": "Congratulations",
-        "linkLog": "Link validated. PLease log in",
+        "linkLog": "Link validated. Please log in",
         "error": "Error..",
-        "linkVal": "link already validated."
+        "linkVal": "link already validated"
     },
     "forgot2": {
         "pwdChange": "Password changed",
@@ -50,7 +50,7 @@
         "noPwdChange": "Impossible to change password because ",
         "newPwd": "New password",
         "changePwd": "Change password",
-        "oups": "Oups...",
+        "oups": "Oops...",
         "linkDead": "Links not working here"
     },
     "login": {
@@ -58,8 +58,15 @@
         "accountTryAgain": "Your account is still here. You probably just need to try again.",
         "tryAgain": "Try again"
     },
+    "profile": {
+        "edit": "Edit",
+        "likedFilms": "Liked Films",
+        "viewedFilms": "Viewed Films"
+    },
     "index": {
         "movies": "Movies",
+        "release": "Release",
+        "duration": "Duration",
         "tv": "Series",
         "availability": {
            "name": "Availability",
@@ -84,7 +91,7 @@
 			"music": "Music",
 			"mystery": "Mystery",
 			"romance": "Romance",
-			"science-fiction": "Science-Fiction",
+			"sci-fi": "Science-Fiction",
 			"thriller": "Thriller",
 			"war": "War",
 			"western": "Western"
@@ -121,7 +128,6 @@
         "emailNotVerified": "email is not verified",
         "missingPwd": "Missing password",
         "missingUsername": "Missing username",
-
         "invalidUsername": "invalid username format",
         "usernameTaken": "username not available",
         "emailTaken": "already an account with this email",
@@ -129,24 +135,36 @@
         "invalidFirstName": "wrong first name format",
         "invalidLastName": "wrong last name format",
         "wrongEmailFormat": "wrong email format",
-
         "missingEmail": "Missing email",
         "missingFirstName": "Missing first name",
         "missingLastName": "Missing last name",
-
         "weakPwd": "password too weak",
-
         "invalidId": "Invalid Id",
         "alreadyValid": "already validated",
-
         "invalidPhotoExtension": "Invalid photo extension",
         "emptyPhoto": "empty photo",
         "photoTooBig": "size too big for picture",
         "photoNbLimit": "too many pictures in profile",
         "photoResolution": "incorrect rsolution for picture",
-
         "emptyPhotoId": "empty filename",
         "invalidPhotoId": "invalid filename"
+    },
+    "movie": {
+        "rateOf": "out of",
+        "summary": "Summary",
+        "casting": "Casting",
+        "director": "Director",
+        "writer": "Writer",
+        "producer": "Producer",
+        "actor": "Actor",
+        "comments": "Comments",
+        "yourComment": "Your comment",
+        "writeComment": "Write a comment...",
+        "postComment": "Post comment",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
     },
     "ConfirmMailRecoverySent": {
         "check": "Check your emails..",
