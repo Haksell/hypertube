@@ -17,6 +17,7 @@ export const formatUser = (user: any): TUserContext => {
         lastName: user.lastName,
         picture: user.profile_picture,
         emailConfirmed: user.email_verified,
+		language: user.language
     }
 }
 

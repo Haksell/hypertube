@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CustomError, MovieDetails } from "../types_backend/movies";
+import { CustomError, Movie, MovieDetails } from "../types_backend/movies";
 import { tabToString } from "./get-movies";
 
 const prisma = new PrismaClient()
@@ -61,6 +61,22 @@ export async function movieViewed(user: any, movieId: string) {
 				}
 			})
 		}
+	}
+	catch (error) {
+		if (error instanceof CustomError) throw new CustomError(error.message)
+        else throw new CustomError('Unknown error..')
+	}
+}
+
+export async function getMovieByIMDB(movieId: string) {
+	try {
+		const movie = await prisma.movies.findMany({
+			where: {
+				imdb_code: movieId
+			}
+		})
+		if (!movie || movie.length !== 1) throw new CustomError('Movie not found on database')
+		return movie[0]
 	}
 	catch (error) {
 		if (error instanceof CustomError) throw new CustomError(error.message)

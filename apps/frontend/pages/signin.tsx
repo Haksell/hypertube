@@ -25,6 +25,10 @@ function SignInPage() {
     const { user, loginUser } = useUserContext();
 	const { t } = useTranslation('common')
 
+	useEffect(() => {
+		// if (user) router.push('/')
+	}, [user])
+
     useEffect(() => {
         if (styleError === false) return
         if (error === '' || error === ErMsg('EmailNotVerified', t)) {

@@ -8,6 +8,7 @@ export type TUserContext = {
     lastName: string
     picture: string
     authMethod: string
+	language: string
 }
 
 export type TUserProfile = {

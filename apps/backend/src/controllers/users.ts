@@ -139,7 +139,7 @@ export function getUserFromRequest(req: Request): TUserCookie {
 }
 
 export async function updateSettings(req: Request, res: Response) {
-    const { email, firstname, lastname } = req.body
+    const { email, firstname, lastname, language } = req.body
     try {
         const userReq: TUserCookie = req.user
         //verif user existe
@@ -175,6 +175,7 @@ export async function updateSettings(req: Request, res: Response) {
                 email: email,
                 firstName: firstname,
                 lastName: lastname,
+				language: language,
             },
         })
     } catch (error) {
