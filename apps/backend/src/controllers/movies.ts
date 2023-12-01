@@ -1,6 +1,6 @@
 import { HttpStatusCode } from 'axios'
 import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
-import { createMovieDB, movieViewed } from '../utils/bdd-movie'
+import { createMovieDB, getMovieByIMDB, movieViewed } from '../utils/bdd-movie'
 import {
     convertRequestParams,
     extractAllMoviesDownloaded,
@@ -138,7 +138,14 @@ export async function viewMovie(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		const videoPath = path.join('movies', `video.mp4`)
+		const movie = await getMovieByIMDB(movieId)
+
+		if (!movie.file) throw new Error('Movie not found')
+
+		const videoPath = path.join('movies', movie.file)
+
+		if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
+		
 		const stat = fs.statSync(videoPath)
 		const fileSize = stat.size
 
