@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useUserContext } from '../../src/context/UserContext';
+import axios from 'axios';
 
 const LanguageSelector: React.FC = () => {
   const router = useRouter();
@@ -9,8 +10,34 @@ const LanguageSelector: React.FC = () => {
 
   const { user } = useUserContext();
 
-  const changeLanguage = (newLocale: string) => {
+  async function amendLanguage(newLocale: string) {
+	try {
+		if (!(newLocale && (newLocale === 'en' || newLocale === 'fr')))
+		if (user) {
+			const response = await axios.post(
+				`http://localhost:5001/users/updatesettings`,
+				{
+					email: user.email,
+					lastname: user.lastName,
+					firstname: user.firstName,
+					language: newLocale
+				},
+				{
+					withCredentials: true,
+				},
+			);
+			console.log(response.data)
+		}
+	} catch {
+		;
+	}
+  }
+
+  async function changeLanguage(newLocale: string) {
     const { pathname, asPath, query } = router
+
+	await amendLanguage(newLocale);
+	
     router.push({ pathname, query }, asPath, { locale: newLocale })
   }
 

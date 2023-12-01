@@ -14,6 +14,7 @@ const updateSchema = Joi.object({
     email: Joi.string().email().required(),
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
+	language: Joi.string().required(),
 })
 
 const idShema = Joi.object({
