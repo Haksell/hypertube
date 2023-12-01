@@ -22,7 +22,7 @@ model User {
   email_confirm_id String?
   email_verified	Boolean @default(false)
   reset_pwd	String?
-  language String @default("english")
+  language String @default("en")
   createdAt DateTime @default(now())
   authMethod String @default("EMAIL")
   profile_picture String?

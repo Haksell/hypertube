@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
+import { useUserContext } from '../../src/context/UserContext';
 
 const LanguageSelector: React.FC = () => {
   const router = useRouter();
   const { i18n } = useTranslation();
+
+  const { user } = useUserContext()
 
   const changeLanguage = (newLocale: string) => {
     const { pathname, asPath, query } = router
