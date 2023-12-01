@@ -138,8 +138,6 @@ export async function viewMovie(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		
-
 		const videoPath = path.join('movies', `video.mp4`)
 		const stat = fs.statSync(videoPath)
 		const fileSize = stat.size
