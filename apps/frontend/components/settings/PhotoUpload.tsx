@@ -35,8 +35,9 @@ function PhotoUploader({ picture, setPicture, setError }: Prop) {
                 );
 				setPicture(response.data);
 				setError('')
-            } catch (error) {
-				setError(error.response.data)
+            } catch (error: any) {
+				if (error && error.response)
+					setError(error.response.data)
 			}
         }
     };

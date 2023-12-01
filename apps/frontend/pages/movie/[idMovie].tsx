@@ -76,7 +76,7 @@ function MoviePage() {
                     },
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error.response.data)
             }
         }
@@ -88,7 +88,7 @@ function MoviePage() {
                 withCredentials: true,
             })
             setComments((prevComments) => prevComments.filter((comment) => comment.id !== id))
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
         }
     }
@@ -111,7 +111,7 @@ function MoviePage() {
 				return comment
 			}))
         }
-		catch (error) {
+		catch (error: any) {
 			console.log(error)
 		}
     }
@@ -154,7 +154,7 @@ function MoviePage() {
         setModalVisible(!isModalVisible);
     };
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: any) => {
           if (event.key === 'Escape' && isModalVisible) {
             handleToggleModal();
           }
@@ -171,13 +171,13 @@ function MoviePage() {
     const writers = searchInCrew(['Story', 'Writer']);
     const producers = searchInCrew(['Producer']);
 
-    const ImageList = ({ title, items }) => (
+    const ImageList = ({ title, items }: {title: any, items: any}) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
                 <p className='text-xl font-bold text-orange-50 sm:text-2xl'>{title}</p>
                 <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
             </div>
-            {items.map((element, index) => (
+            {items.map((element: any, index: any) => (
                 <div key={index} className="relative my-2 mr-2">
                     <img
                         src={element.image || '/errorPicture.jpg'}

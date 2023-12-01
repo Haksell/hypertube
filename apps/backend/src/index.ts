@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import { json, urlencoded } from "body-parser";
 import "dotenv/config";
-import axios from "axios";
 import intializeDB from "./db/init.ts";
 import authRoutes from "./routes/auth.ts";
 import commentsRoutes from "./routes/comments.ts";
@@ -13,6 +12,7 @@ import usersRoutes from './routes/users.ts'
 import moviesRoutes from './routes/movies.ts'
 
 const cookieParser = require('cookie-parser')
+const path = require('path');
 
 const port = process.env.PORT || 5001
 
@@ -29,6 +29,9 @@ app.use(
         credentials: true,
     }),
 );
+
+// app.use('movies', express.static(path.join(__dirname, 'movies')));
+
 
 app.use(cookieParser());
 app.use(json());

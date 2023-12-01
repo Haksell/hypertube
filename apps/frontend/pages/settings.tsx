@@ -14,6 +14,9 @@ import MainLayout from "../layouts/MainLayout";
 import ShowImg from "../components/settings/ShowImg";
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import VideoPlayer from "../components/video/VideoPlayer";
+import ReactPlayer from 'react-player'
+import VideoPlayerMedia from "../components/video/VideoPlayerMedia";
 
 function SettingsPage() {
 	const [error, setError] = useState<string>('');
@@ -38,7 +41,7 @@ function SettingsPage() {
             })
 			setUserInfoForForm(response.data);
             return response.data
-        } catch (error) {
+        } catch (error: any) {
 			if (error.response)
 				setError(error.response.data)
         }
@@ -66,7 +69,7 @@ function SettingsPage() {
             );
             setError('');
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
 			if (error.response)
 				setError(error.response.data);
         }
@@ -137,11 +140,16 @@ function SettingsPage() {
                 </form>
 
             </div>
+
+			<div className="pt-5">
+				<VideoPlayer videoID="tt0443649"/>
+			</div>
+			
         </MainLayout>
 	);
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

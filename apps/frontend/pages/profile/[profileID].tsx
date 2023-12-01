@@ -51,7 +51,7 @@ function ProfilePage() {
         else setCurrLink('no')
     }, [currLink])
 
-	async function likeMovie(movieId) {
+	async function likeMovie(movieId: any) {
 		try {
 			const response = await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
 				withCredentials: true
@@ -62,7 +62,7 @@ function ProfilePage() {
 		}
 	}
 
-	function handleLike(movieId) {
+	function handleLike(movieId: any) {
 		likeMovie(movieId)
 	}
 
@@ -87,7 +87,7 @@ function ProfilePage() {
 			setUserProfile(response.data)
 			console.log(response.data.moviesLiked[0])
 		}
-		catch (error) {
+		catch (error: any) {
 			setUserProfile(null)
 		}
 	}
@@ -129,7 +129,7 @@ function ProfilePage() {
                 <p className='text-xl font-bold text-orange-50 sm:text-2xl whitespace-nowrap'>{title}</p>
                 <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
             </div>
-            {items.map((element, index) => (
+            {items.map((element: any, index: any) => (
 				<div key={index} className={`relative group my-2 mr-2`}>
 					<Link href={`/movie/${element.imdb_code}`}>
 						<img

@@ -6,7 +6,7 @@ type PropButtonLinkBar = {
     page: string
     selected: boolean
     block: boolean
-    currLink?: string
+    currLink?: string | null
     setCurrLink?: any
 }
 function ButtonLinkNavBar({
@@ -22,7 +22,7 @@ function ButtonLinkNavBar({
     }`
     const [style, setStyle] = useState<string>(styleInit)
     useEffect(() => {
-        if (page.match(currLink)) {
+        if (currLink && page.match(currLink)) {
             setStyle(
                 `bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium ${
                     block && 'block'

@@ -85,7 +85,7 @@ const MoviesPage = () => {
 
     const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
         try {
-            const params = {
+            const params: any = {
                 offset: offset,
                 limit: limit,
                 downloaded,
@@ -318,7 +318,7 @@ const MoviesPage = () => {
     )
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: {locale: any}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

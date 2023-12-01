@@ -41,7 +41,7 @@ function ResetPasswordPage() {
             if (response && response.data.msg) setRetour(response.data.msg)
             // console.log(response.data);
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             if (error.response === ErMsg('InvalidId', t)) router.push('/404')
             setRetour(null)
         }
@@ -69,7 +69,7 @@ function ResetPasswordPage() {
                 setCreated(false)
             }
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             setStyleErrorPassword(true)
 			if (error.response)
             	setError(error.response.data)

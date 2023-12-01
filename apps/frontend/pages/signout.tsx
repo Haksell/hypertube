@@ -23,7 +23,7 @@ function SignOutPage() {
                 },
             )
             return response.data
-        } catch (error) {
+        } catch (error: any) {
             logoutUser();
         }
     }
