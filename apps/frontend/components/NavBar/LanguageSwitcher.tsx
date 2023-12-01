@@ -7,7 +7,7 @@ const LanguageSelector: React.FC = () => {
   const router = useRouter();
   const { i18n } = useTranslation();
 
-  const { user } = useUserContext()
+  const { user } = useUserContext();
 
   const changeLanguage = (newLocale: string) => {
     const { pathname, asPath, query } = router
@@ -15,8 +15,12 @@ const LanguageSelector: React.FC = () => {
   }
 
   useEffect(() => {
-    const initialLanguage = router.locale || router.defaultLocale || 'en';
+	const userLanguage = user ? user.language : null
+    const initialLanguage = userLanguage || router.locale || router.defaultLocale || 'en';
     i18n.changeLanguage(initialLanguage);
+
+	// const { pathname, asPath, query } = router
+    // router.push({ pathname, query }, asPath, { locale: initialLanguage })
   }, []);
 
 
