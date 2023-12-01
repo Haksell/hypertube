@@ -1,61 +1,60 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import ShowErrorMessage from "../components/elems/ShowErrorMessage";
-import UserNotSignedIn from "../components/auth/UserNotSignedIn";
-import MultiplesInputOneRow from "../components/elems/MultiplesInputOneRow";
-import SelectInput from "../components/elems/SelectInput";
-import axios from "axios";
-import TitleSmall from "../components/elems/TitleSmall";
-import { ErrorField } from "../components/elems/ErrorFields";
-import Button from "../components/elems/Button";
-import { TUserContext } from "../src/shared/user";
-import { useUserContext } from "../src/context/UserContext";
-import MainLayout from "../layouts/MainLayout";
-import ShowImg from "../components/settings/ShowImg";
+import UserNotSignedIn from '../components/auth/UserNotSignedIn'
+import Button from '../components/elems/Button'
+import { ErrorField } from '../components/elems/ErrorFields'
+import MultiplesInputOneRow from '../components/elems/MultiplesInputOneRow'
+import SelectInput from '../components/elems/SelectInput'
+import ShowErrorMessage from '../components/elems/ShowErrorMessage'
+import TitleSmall from '../components/elems/TitleSmall'
+import ShowImg from '../components/settings/ShowImg'
+import VideoPlayer from '../components/video/VideoPlayer'
+import VideoPlayerMedia from '../components/video/VideoPlayerMedia'
+import MainLayout from '../layouts/MainLayout'
+import { useUserContext } from '../src/context/UserContext'
+import { TUserContext } from '../src/shared/user'
+import axios from 'axios'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import VideoPlayer from "../components/video/VideoPlayer";
+import React from 'react'
+import { useEffect, useState } from 'react'
 import ReactPlayer from 'react-player'
-import VideoPlayerMedia from "../components/video/VideoPlayerMedia";
 
 function SettingsPage() {
-	const [error, setError] = useState<string>('');
-	const { user } = useUserContext();
-	const { t } = useTranslation('common')
-	
-	//fields
-    const [email, setEmail] = useState<string>('');
-    const [firstname, setFirstname] = useState<string>('');
-    const [lastname, setLastname] = useState<string>('');
-	const [mainPicture, setMainPicture] = useState<string>('');
+    const [error, setError] = useState<string>('')
+    const { user } = useUserContext()
+    const { t } = useTranslation('common')
 
-	useEffect(() => {
-		getUserInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+    //fields
+    const [email, setEmail] = useState<string>('')
+    const [firstname, setFirstname] = useState<string>('')
+    const [lastname, setLastname] = useState<string>('')
+    const [mainPicture, setMainPicture] = useState<string>('')
 
-	async function getUserInfo() {
-		try {
+    useEffect(() => {
+        getUserInfo()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    async function getUserInfo() {
+        try {
             const response = await axios.get(`http://localhost:5001/users/me`, {
                 withCredentials: true,
             })
-			setUserInfoForForm(response.data);
+            setUserInfoForForm(response.data)
             return response.data
         } catch (error: any) {
-			if (error.response)
-				setError(error.response.data)
+            if (error.response) setError(error.response.data)
         }
-	}
+    }
 
-	function setUserInfoForForm(userInfo: TUserContext) {
-		setEmail(userInfo.email);
-		setFirstname(userInfo.firstName);
-		setLastname(userInfo.lastName);
-		setMainPicture(userInfo.picture);
-	}
+    function setUserInfoForForm(userInfo: TUserContext) {
+        setEmail(userInfo.email)
+        setFirstname(userInfo.firstName)
+        setLastname(userInfo.lastName)
+        setMainPicture(userInfo.picture)
+    }
 
-	async function saveUserInfo() {
-		try {
+    async function saveUserInfo() {
+        try {
             const response = await axios.post(
                 `http://localhost:5001/users/updatesettings`,
                 {
@@ -66,32 +65,30 @@ function SettingsPage() {
                 {
                     withCredentials: true,
                 },
-            );
-            setError('');
-            return response.data;
+            )
+            setError('')
+            return response.data
         } catch (error: any) {
-			if (error.response)
-				setError(error.response.data);
+            if (error.response) setError(error.response.data)
         }
-	}
+    }
 
     function handleOnChangeEmail(e: React.ChangeEvent<HTMLInputElement>) {
-        setEmail(e.target.value);
+        setEmail(e.target.value)
     }
     function handleOnChangeFirstname(e: React.ChangeEvent<HTMLInputElement>) {
-        setFirstname(e.target.value);
+        setFirstname(e.target.value)
     }
     function handleOnChangeLastname(e: React.ChangeEvent<HTMLInputElement>) {
-        setLastname(e.target.value);
+        setLastname(e.target.value)
     }
 
-
-	function handleSaveSettings(event: any) {
-        event.preventDefault();
-        saveUserInfo();
+    function handleSaveSettings(event: any) {
+        event.preventDefault()
+        saveUserInfo()
     }
 
-	return !user ? (
+    return !user ? (
         <UserNotSignedIn />
     ) : (
         <MainLayout>
@@ -99,31 +96,28 @@ function SettingsPage() {
 
             <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-2" action="#" onSubmit={handleSaveSettings}>
-                    <ShowErrorMessage
-                        error={error}
-                        message={t('settings.noSignUp')}
-                    />
+                    <ShowErrorMessage error={error} message={t('settings.noSignUp')} />
                     <ErrorField
                         name="email1"
-						type='email'
+                        type="email"
                         title={t('email')}
                         onBlur={handleOnChangeEmail}
-						init={email}
+                        init={email}
                     />
-					<MultiplesInputOneRow nbInRow="2">
-						<ErrorField
-							name="firstname"
-							title={t('firstname')}
-							onBlur={handleOnChangeFirstname}
-							init={firstname}
-						/>
-						<ErrorField
-							name="lastname"
-							title={t('lastname')}
-							onBlur={handleOnChangeLastname}
-							init={lastname}
-						/>
-					</MultiplesInputOneRow>
+                    <MultiplesInputOneRow nbInRow="2">
+                        <ErrorField
+                            name="firstname"
+                            title={t('firstname')}
+                            onBlur={handleOnChangeFirstname}
+                            init={firstname}
+                        />
+                        <ErrorField
+                            name="lastname"
+                            title={t('lastname')}
+                            onBlur={handleOnChangeLastname}
+                            init={lastname}
+                        />
+                    </MultiplesInputOneRow>
                     <div className="flex flex-col items-center">
                         <ShowImg
                             picture={mainPicture}
@@ -138,18 +132,12 @@ function SettingsPage() {
                         stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     />
                 </form>
-
             </div>
-
-			<div className="pt-5">
-				<VideoPlayer videoID="tt0443649"/>
-			</div>
-			
         </MainLayout>
-	);
+    )
 }
 
-export async function getStaticProps({ locale }: {locale: any}) {
+export async function getStaticProps({ locale }: { locale: any }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),
@@ -157,4 +145,4 @@ export async function getStaticProps({ locale }: {locale: any}) {
     }
 }
 
-export default SettingsPage;
+export default SettingsPage
