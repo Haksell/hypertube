@@ -13,7 +13,7 @@ import { FaSearch } from 'react-icons/fa'
 const limit = 7
 const DEFAULT_SORT_BY = 'like_count'
 
-type FilterProps = {
+interface FilterProps {
     id: string
     label: string
     handleChange: (value: string) => void
@@ -125,7 +125,7 @@ const MoviesPage = () => {
     }
 
     useEffect(() => {
-        if (shouldFetchMovies()) fetchMovies()
+        if (shouldFetchMovies()) void fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {

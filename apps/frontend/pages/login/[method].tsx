@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import axios from 'axios'
@@ -5,7 +6,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
 import type { GetServerSideProps } from 'next'
-import { useTranslation } from 'next-i18next'
 
 export default function Login42(): JSX.Element {
     const { loginUser } = useUserContext()
@@ -22,12 +22,12 @@ export default function Login42(): JSX.Element {
             if (errorParam) setError(true)
             if (code) {
                 const res = await axios.post(
-                    'http://localhost:5001/auth/' + method,
+                    'http://localhost:5001/auth/' + String(method),
                     { code: code },
                     { withCredentials: true },
                 )
                 loginUser(res.data)
-                router.push('/')
+                void router.push('/')
             }
         } catch (err) {
             // console.error(err)
@@ -37,7 +37,7 @@ export default function Login42(): JSX.Element {
 
     useEffect(() => {
         if (['42', 'github', 'facebook'].includes(method as string)) {
-            oauth()
+            void oauth()
         }
     }, [method])
 
@@ -91,8 +91,13 @@ export default function Login42(): JSX.Element {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-    props: {
-      ...await serverSideTranslations(locale as string, ['common']),
-    },
-})
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+    if (!locale) {
+      return {
+        props: { ...await serverSideTranslations('en', ['common']) },
+      };
+    }
+    return {
+        props: { ...await serverSideTranslations(locale, ['common']) },
+    };
+  };

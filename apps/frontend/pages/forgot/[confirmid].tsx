@@ -87,46 +87,54 @@ function ResetPasswordPage() {
         void resetPasswordBackend()
     }
 
-    return retour && retour === ErMsg('SuccessMsg', t) ? (
-        created ? (
-            <PageTitleOneText
-                title={t('forgot2.pwdChange')}
-                textBody={t('forgot2.newLog')}
-            />
-        ) : (
-            <MainLayout>
-                <TitleSmall text={t('forgot2.selectNewPwd')} />
-                <TextPage>
-                    <form className="space-y-6" action="#" onSubmit={handleSignIn}>
-                        <ShowErrorMessage
-                            error={error}
-                            message={t('forgot2.noPwdChange')}
-                        />
-                        <ErrorField
-                            name="password"
-                            title={t('forgot2.newPwd')}
-                            onBlur={handleOnChangePassword}
-                            styleError={styleErrorPassword}
-                            setStyleError={setStyleErrorPassword}
-							init={password}
-                        />
-
-                        <div>
-                            <Button
-                                text={t('forgot2.changePwd')}
-                                type="submit"
-                                stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    let content
+    
+    if (retour && retour === ErMsg('SuccessMsg', t)) {
+        if (created) { 
+            content = (
+                <PageTitleOneText
+                    title={t('forgot2.pwdChange')}
+                    textBody={t('forgot2.newLog')}
+                />
+            )
+        } else {
+            content = (
+                <MainLayout>
+                    <TitleSmall text={t('forgot2.selectNewPwd')} />
+                    <TextPage>
+                        <form className="space-y-6" action="#" onSubmit={handleSignIn}>
+                            <ShowErrorMessage
+                                error={error}
+                                message={t('forgot2.noPwdChange')}
                             />
-                        </div>
-                    </form>
+                            <ErrorField
+                                name="password"
+                                title={t('forgot2.newPwd')}
+                                onBlur={handleOnChangePassword}
+                                styleError={styleErrorPassword}
+                                setStyleError={setStyleErrorPassword}
+                                init={password}
+                            />
 
-                    <LinkText linkText={t('getBack')} link="/" />
-                </TextPage>
-            </MainLayout>
-        )
-    ) : (
-        <PageTitleOneText title={t('forgot2.oups')} textBody={t('forgot2.linkDead')} />
-    )
+                            <div>
+                                <Button
+                                    text={t('forgot2.changePwd')}
+                                    type="submit"
+                                    stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                />
+                            </div>
+                        </form>
+
+                        <LinkText linkText={t('getBack')} link="/" />
+                    </TextPage>
+                </MainLayout>
+            ) 
+        }
+    } else {
+        content = <PageTitleOneText title={t('forgot2.oups')} textBody={t('forgot2.linkDead')} />
+    }
+
+    return content
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
