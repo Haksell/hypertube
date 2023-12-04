@@ -1,11 +1,8 @@
-import { compute18Y } from '../components/auth/ComputeAge'
 import ConfirmUserCreation from '../components/auth/ConfirmUserCreation'
 import UserAlreadySignedIn from '../components/auth/UserAlreadySignedIn'
 import Button from '../components/elems/Button'
-import { DateInputField } from '../components/elems/DateInputField'
 import { ErrorField } from '../components/elems/ErrorFields'
 import LinkText from '../components/elems/LinkText'
-import SelectInput from '../components/elems/SelectInput'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import MainLayout from '../layouts/MainLayout'
@@ -32,7 +29,6 @@ function SignUpPage() {
     const [styleError, setStyleError] = useState<boolean>(false)
     const { user } = useUserContext();
     const [created, setCreated] = useState<boolean>(false)
-    const [maxAge, setMaxAge] = useState<string>('')
     const { t } = useTranslation('common')
 
     useEffect(() => {
@@ -181,7 +177,7 @@ function SignUpPage() {
     )
 }
 
-export async function getStaticProps({ locale }: {locale: any}) {
+export async function getStaticProps({ locale }: {locale: string}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

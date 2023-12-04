@@ -2,12 +2,9 @@ import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import Button from '../components/elems/Button'
 import { ErrorField } from '../components/elems/ErrorFields'
 import MultiplesInputOneRow from '../components/elems/MultiplesInputOneRow'
-import SelectInput from '../components/elems/SelectInput'
 import ShowErrorMessage from '../components/elems/ShowErrorMessage'
 import TitleSmall from '../components/elems/TitleSmall'
 import ShowImg from '../components/settings/ShowImg'
-import VideoPlayer from '../components/video/VideoPlayer'
-import VideoPlayerMedia from '../components/video/VideoPlayerMedia'
 import MainLayout from '../layouts/MainLayout'
 import { useUserContext } from '../src/context/UserContext'
 import { TUserContext } from '../src/shared/user'
@@ -16,7 +13,6 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import ReactPlayer from 'react-player'
 
 function SettingsPage() {
     const [error, setError] = useState<string>('')
@@ -41,8 +37,8 @@ function SettingsPage() {
             })
             setUserInfoForForm(response.data)
             return response.data
-        } catch (error: any) {
-            if (error.response) setError(error.response.data)
+        } catch (errorMsg: any) {
+            if (errorMsg.response) setError(errorMsg.response.data)
         }
     }
 
@@ -69,8 +65,8 @@ function SettingsPage() {
             )
             setError('')
             return response.data
-        } catch (error: any) {
-            if (error.response) setError(error.response.data)
+        } catch (errorMsg: any) {
+            if (errorMsg.response) setError(errorMsg.response.data)
         }
     }
 
@@ -138,7 +134,7 @@ function SettingsPage() {
     )
 }
 
-export async function getStaticProps({ locale }: { locale: any }) {
+export async function getStaticProps({ locale }: { locale: string }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

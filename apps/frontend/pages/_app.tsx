@@ -6,7 +6,7 @@ import { NextPage } from 'next';
 
 interface MyAppProps {
 	Component: NextPage;
-	pageProps: Record<string, any>;
+	pageProps: Record<string, string>;
   }
 
   

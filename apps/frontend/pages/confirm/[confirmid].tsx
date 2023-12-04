@@ -12,21 +12,21 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ConfirmEmailPage() {
     const router = useRouter()
-    const { idConfirm } = router.query
+    const { confirmid } = router.query
     const [retour, setRetour] = useState<string | null>(null)
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (idConfirm) {
-            validateLink()
+        if (confirmid) {
+            void validateLink()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idConfirm])
+    }, [confirmid])
 
     async function validateLink() {
-        if (!idConfirm) return
+        if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/confirm/${idConfirm}`, {
+            const response = await axios.get(`http://localhost:5001/auth/confirm/${confirmid}`, {
                 withCredentials: true,
             })
             setRetour(response.data.msg)

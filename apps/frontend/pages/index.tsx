@@ -47,9 +47,9 @@ const MoviesPage = () => {
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
-    const [language, setLanguage] = useState('')
+    const [language] = useState('')
     const [sortBy, setSortBy] = useState('')
-    const [type, setType] = useState('movie')
+    const [type] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
@@ -74,7 +74,7 @@ const MoviesPage = () => {
 			setHeight2(choice2.offsetHeight)
 		}
 		
-    }, [choiceRef.current != null, choiceRef2.current != null])
+    }, [choiceRef.current !== null, choiceRef2.current !== null])
 
     const shouldFetchMovies = () => {
         return (
@@ -83,20 +83,20 @@ const MoviesPage = () => {
         )
     }
 
-    const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
+    const fetchMovies = async (offset: number = fetchCount) => {
         try {
             const params: any = {
                 offset: offset,
                 limit: limit,
                 downloaded,
             }
-            if (search) params['search'] = search
-            if (genre) params['genre'] = genre
-            if (yearRange) params['year'] = yearRange
-            if (minGrade) params['minGrade'] = minGrade
-            if (language) params['language'] = language
-            if (sortBy) params['sortBy'] = sortBy
-            else params['sortBy'] = 'seeds'
+            if (search) params.search = search
+            if (genre) params.genre = genre
+            if (yearRange) params.year = yearRange
+            if (minGrade) params.minGrade = minGrade
+            if (language) params.language = language
+            if (sortBy) params.sortBy = sortBy
+            else params.sortBy = 'seeds'
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
                 withCredentials: true,
@@ -135,9 +135,7 @@ const MoviesPage = () => {
 
     const handleSwitch = () => {
         setTimeout(() => {
-            const newType = type === 'movie' ? 'tvShow' : 'movie'
-            setType(newType)
-            fetchMovies(0, newType)
+            fetchMovies(0)
         }, 30)
     }
 
@@ -318,7 +316,7 @@ const MoviesPage = () => {
     )
 }
 
-export async function getStaticProps({ locale }: {locale: any}) {
+export async function getStaticProps({ locale }: {locale: string}) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

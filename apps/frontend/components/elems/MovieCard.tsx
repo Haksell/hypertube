@@ -1,4 +1,3 @@
-
 import { MovieDTO } from '../../src/shared/movies'
 import React, { useEffect, useState } from 'react'
 import { formatDuration } from '../../src/utilsTime'
