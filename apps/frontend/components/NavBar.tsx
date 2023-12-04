@@ -202,7 +202,7 @@ function NavBar() {
 
     return (
         <div>
-            <nav className="fixed w-full bg-zinc-800 z-20 bg-opacity-80">
+            <nav className="fixed w-full bg-zinc-800 z-20">
                 <div className="mx-auto max-w-7xl px-2 sm:pl-6 lg:pl-8">
                     <div className="relative flex h-16 items-center justify-between">
                         <div className="flex flex-1 sm:items-stretch sm:justify-start">
