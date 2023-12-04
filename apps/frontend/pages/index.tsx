@@ -227,6 +227,7 @@ const MoviesPage = () => {
                             { value: 'Action', label: t('index.genre.action') },
                             { value: 'Adventure', label: t('index.genre.adventure') },
                             { value: 'Animation', label: t('index.genre.animation') },
+                            { value: 'Biography', label: t('index.genre.biography') },
                             { value: 'Comedy', label: t('index.genre.comedy') },
                             { value: 'Crime', label: t('index.genre.crime') },
                             { value: 'Documentary', label: t('index.genre.documentary') },

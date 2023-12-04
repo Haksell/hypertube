@@ -1,4 +1,4 @@
-import Comment from '../../components/Comment'
+import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
 import MainLayout from '../../layouts/MainLayout'
@@ -14,8 +14,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState } from 'react'
 
-const COMMENT_MAX_LENGTH = 300
-
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
 function MoviePage() {
@@ -30,9 +28,11 @@ function MoviePage() {
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (!idMovie) return
-        if (idMovie !== '') getMovie()
+        if (idMovie) getMovie()
     }, [idMovie])
+
+    const canPostComment = (): boolean =>
+        1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
 
     async function getMovie() {
         try {
@@ -58,7 +58,7 @@ function MoviePage() {
     }
 
     async function postComment() {
-        if (0 < comment.length && comment.length <= COMMENT_MAX_LENGTH) {
+        if (canPostComment()) {
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
@@ -142,6 +142,7 @@ function MoviePage() {
     const handleToggleModal = () => {
         setModalVisible(!isModalVisible)
     }
+
     useEffect(() => {
         const handleKeyDown = (event: any) => {
             if (event.key === 'Escape' && isModalVisible) {
@@ -360,9 +361,7 @@ function MoviePage() {
                         </div>
                     )}
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
-                        <span className="mr-4 text-3xl font-extrabold">
-                            {t('movie.comments')} ({comments.length})
-                        </span>
+                        <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')}</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                     </div>
                     <div className="mb-6">
@@ -373,16 +372,14 @@ function MoviePage() {
                             <textarea
                                 id="comment"
                                 rows={6}
-                                className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
+                                className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800 resize-none"
                                 placeholder={t('movie.writeComment')}
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 required
                             />
                             <label
-                                className={`text-sm text-${
-                                    comment.length <= COMMENT_MAX_LENGTH ? 'white' : 'red-500'
-                                }`}
+                                className={`text-sm text-${canPostComment() ? 'white' : 'red-500'}`}
                             >
                                 {comment.length}/{COMMENT_MAX_LENGTH}
                             </label>
@@ -391,11 +388,11 @@ function MoviePage() {
                             type="submit"
                             onClick={() => postComment()}
                             className={`inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 ${
-                                comment.length === 0 || comment.length > COMMENT_MAX_LENGTH
-                                    ? 'bg-gray-500 hover:bg-gray-500 cursor-not-allowed'
-                                    : 'bg-blue-700 hover:bg-primary-800 text-white'
+                                canPostComment()
+                                    ? 'bg-blue-700 hover:bg-primary-800 text-white'
+                                    : 'bg-gray-500 hover:bg-gray-500 cursor-not-allowed'
                             }`}
-                            disabled={comment.length === 0 || comment.length > COMMENT_MAX_LENGTH}
+                            disabled={!canPostComment()}
                         >
                             {t('movie.postComment')}
                         </button>
