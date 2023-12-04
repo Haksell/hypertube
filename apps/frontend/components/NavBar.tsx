@@ -186,9 +186,7 @@ function NavBar() {
     const { user } = useUserContext()
 
     useEffect(() => {
-        if (user) {
-            setProfileLink(`/profile/${user.id}`)
-        }
+        if (user) setProfileLink(`/profile/${user.id}`)
     }, [user])
 
     useEffect(() => {

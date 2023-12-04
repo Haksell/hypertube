@@ -227,7 +227,7 @@ function MoviePage() {
                             </span>
                         ))}
                     </div>
-                    <div className="flex flex-row w-full mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
+                    <div className="flex flex-row grow mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
                         <button className="mr-10">
                             <svg
                                 className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in"
