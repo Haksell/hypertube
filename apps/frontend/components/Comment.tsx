@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
 import { useTranslation } from 'next-i18next'

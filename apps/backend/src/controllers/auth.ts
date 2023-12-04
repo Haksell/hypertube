@@ -210,7 +210,7 @@ export async function ConfirmEmail(req: Request, res: Response) {
             email_confirm_id: confirmID,
         },
     })
-    if (users.length == 0) {
+    if (users.length === 0) {
         res.status(400).json('invalidConfirmId')
         return
     }

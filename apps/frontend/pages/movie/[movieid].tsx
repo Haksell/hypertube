@@ -4,7 +4,7 @@ import RatingStars from '../../components/elems/RatingStars'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
-import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
+import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utilsTime'
 import axios from 'axios'
@@ -12,14 +12,7 @@ import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import React, { useEffect, useRef, useState } from 'react'
-
-const Info: React.FC<{ title: string; content: string }> = ({ title, content }) =>
-    content ? (
-        <p className="pb-2">
-            <span className="font-semibold text-xs sm:text-lg">{title}:</span> {content}
-        </p>
-    ) : null
+import React, { useEffect, useState } from 'react'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -29,29 +22,30 @@ function MoviePage() {
     const [liked, setLiked] = useState<boolean>(false)
     const [colorHeart, setColorHeart] = useState<string>('white')
     const router = useRouter()
-    const { idMovie } = router.query
+    const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
 	const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (!idMovie) return
-        if (idMovie !== '') getMovie()
-    }, [idMovie])
+        if (!movieid) return
+        if (movieid !== '') getMovie()
+    }, [movieid])
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/${movieid}`, {
                 withCredentials: true,
             })
             setMovieDetails(response.data)
             if (response.data.liked) {
+                liked;
                 setLiked(response.data.liked)
                 setColorHeart('orange-50')
             }
 
             const responseComments = await axios.get(
-                `http://localhost:5001/movies/${idMovie}/comments`,
+                `http://localhost:5001/movies/${movieid}/comments`,
                 {
                     withCredentials: true,
                 },
@@ -69,7 +63,7 @@ function MoviePage() {
                     `http://localhost:5001/comments/`,
                     {
                         comment: comment,
-                        imdbCode: idMovie,
+                        imdbCode: movieid,
                     },
                     {
                         withCredentials: true,
@@ -95,7 +89,7 @@ function MoviePage() {
 
 	async function handleEditComment(id: number, content: string) {
 		try {
-			const response = await axios.patch(
+			await axios.patch(
 				`http://localhost:5001/comments/${id}`,
 				{
 					comment: content,
@@ -119,7 +113,7 @@ function MoviePage() {
 	async function likeMovie() {
 		try {
 
-			const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+			const response = await axios.get(`http://localhost:5001/movies/like/${movieid}`, {
 				withCredentials: true
 			})
 			if (response.data === 'Movie liked') {
@@ -148,7 +142,6 @@ function MoviePage() {
     }
 
     const [isModalVisible, setModalVisible] = useState(false);
-    const modalRef = useRef();
 
     const handleToggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -367,7 +360,7 @@ function MoviePage() {
                             additionalClasses={index !== 0 ? 'border-t' : ''}
                             handleDelete={() => handleDeleteComment(com.id)}
 							handleEdit={(content) => handleEditComment(com.id, content)}
-                            mine={com.userId == user.id}
+                            mine={com.userId === user.id}
                         />
                     ))}
                 </div>

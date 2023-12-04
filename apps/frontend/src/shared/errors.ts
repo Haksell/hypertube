@@ -1,5 +1,3 @@
-import { useTranslation } from 'next-i18next'
-
 type ErrorArray = {
     key: string;
     value: string;

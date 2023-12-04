@@ -18,7 +18,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ResetPasswordPage() {
     const router = useRouter()
-    const { idConfirm } = router.query
+    const { confirmid } = router.query
     const [retour, setRetour] = useState<string | null>(null)
     const [styleErrorPassword, setStyleErrorPassword] = useState<boolean>(false)
     const [created, setCreated] = useState<boolean>(false)
@@ -27,15 +27,15 @@ function ResetPasswordPage() {
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        console.log('id=' + idConfirm)
+        console.log('id=' + confirmid)
         validateLink()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idConfirm])
+    }, [confirmid])
 
     async function validateLink() {
-        if (!idConfirm) return
+        if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/forgot/${idConfirm}`, {
+            const response = await axios.get(`http://localhost:5001/auth/forgot/${confirmid}`, {
                 withCredentials: true,
             })
             if (response && response.data.msg) setRetour(response.data.msg)
@@ -50,7 +50,7 @@ function ResetPasswordPage() {
     async function resetPasswordBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/forgot/${idConfirm}`,
+                `http://localhost:5001/auth/forgot/${confirmid}`,
                 {
                     password: password,
                 },

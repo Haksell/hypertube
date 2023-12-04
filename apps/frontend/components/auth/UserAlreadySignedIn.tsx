@@ -7,7 +7,7 @@ type Prop = {
     type?: string
 }
 
-function UserAlreadySignedIn({ type }: Prop) {
+function UserAlreadySignedIn() {
 	const { t } = useTranslation('common')
     return (
         <MainLayout>
