@@ -14,12 +14,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState } from 'react'
 
-const Info: React.FC<{ title: string; content: string }> = ({ title, content }) =>
-    content ? (
-        <p className="pb-2">
-            <span className="font-semibold text-xs sm:text-lg">{title}:</span> {content}
-        </p>
-    ) : null
+const COMMENT_MAX_LENGTH = 300
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -32,7 +27,7 @@ function MoviePage() {
     const { idMovie } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
 
     useEffect(() => {
         if (!idMovie) return
@@ -63,22 +58,18 @@ function MoviePage() {
     }
 
     async function postComment() {
-        if (comment.length <= 300) {
+        if (0 < comment.length && comment.length <= COMMENT_MAX_LENGTH) {
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
-                    {
-                        comment: comment,
-                        imdbCode: idMovie,
-                    },
-                    {
-                        withCredentials: true,
-                    },
+                    { comment, imdbCode: idMovie },
+                    { withCredentials: true },
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
             } catch (error: any) {
                 console.log(error.response.data)
             }
+            setComment('')
         }
     }
 
@@ -93,52 +84,50 @@ function MoviePage() {
         }
     }
 
-	async function handleEditComment(id: number, content: string) {
-		try {
-			const response = await axios.patch(
-				`http://localhost:5001/comments/${id}`,
-				{
-					comment: content,
-				},
-				{
-					withCredentials: true,
-				},
-			)
-			setComments((prevComments) => prevComments.map((comment) => {
-				if (comment.id === id) {
-					comment.content = content
-				}
-				return comment
-			}))
+    async function handleEditComment(id: number, content: string) {
+        try {
+            const response = await axios.patch(
+                `http://localhost:5001/comments/${id}`,
+                {
+                    comment: content,
+                },
+                {
+                    withCredentials: true,
+                },
+            )
+            setComments((prevComments) =>
+                prevComments.map((comment) => {
+                    if (comment.id === id) {
+                        comment.content = content
+                    }
+                    return comment
+                }),
+            )
+        } catch (error: any) {
+            console.log(error)
         }
-		catch (error: any) {
-			console.log(error)
-		}
     }
 
-	async function likeMovie() {
-		try {
+    async function likeMovie() {
+        try {
+            const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+                withCredentials: true,
+            })
+            if (response.data === 'Movie liked') {
+                setLiked(true)
+                setColorHeart('orange-50')
+            } else {
+                setLiked(false)
+                setColorHeart('white')
+            }
+        } catch {
+            // setMovieDetails(null)
+        }
+    }
 
-			const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
-				withCredentials: true
-			})
-			if (response.data === 'Movie liked') {
-				setLiked(true)
-				setColorHeart('orange-50')
-			}
-			else {
-				setLiked(false)
-				setColorHeart('white')
-			}
-		}
-		catch {
-			// setMovieDetails(null)
-		}
-	}
-
-	function handleLike() {
-		likeMovie()
-	}
+    function handleLike() {
+        likeMovie()
+    }
 
     const searchInCrew = (job: string[]): MovieCrew[] => {
         if (!movie || !movie.crews) {
@@ -147,35 +136,35 @@ function MoviePage() {
         return movie.crews.filter((crew) => job.includes(crew.job as string))
     }
 
-    const [isModalVisible, setModalVisible] = useState(false);
-    const modalRef = useRef();
+    const [isModalVisible, setModalVisible] = useState(false)
+    const modalRef = useRef()
 
     const handleToggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
+        setModalVisible(!isModalVisible)
+    }
     useEffect(() => {
         const handleKeyDown = (event: any) => {
-          if (event.key === 'Escape' && isModalVisible) {
-            handleToggleModal();
-          }
-        };
-    
-        document.addEventListener('keydown', handleKeyDown);
-    
-        return () => {
-          document.removeEventListener('keydown', handleKeyDown);
-        };
-      }, [isModalVisible, handleToggleModal]);
-    
-    const directors = searchInCrew(['Director']);
-    const writers = searchInCrew(['Story', 'Writer']);
-    const producers = searchInCrew(['Producer']);
+            if (event.key === 'Escape' && isModalVisible) {
+                handleToggleModal()
+            }
+        }
 
-    const ImageList = ({ title, items }: {title: any, items: any}) => (
+        document.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [isModalVisible, handleToggleModal])
+
+    const directors = searchInCrew(['Director'])
+    const writers = searchInCrew(['Story', 'Writer'])
+    const producers = searchInCrew(['Producer'])
+
+    const ImageList = ({ title, items }: { title: any; items: any }) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
-                <p className='text-xl font-bold text-orange-50 sm:text-2xl'>{title}</p>
-                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                <p className="text-xl font-bold text-orange-50 sm:text-2xl">{title}</p>
+                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
             </div>
             {items.map((element: any, index: any) => (
                 <div key={index} className="relative my-2 mr-2">
@@ -202,7 +191,7 @@ function MoviePage() {
         <p>PAS DE FILM</p> /* Faudra changer :D */
     ) : (
         <div>
-            <MainLayout className2=''/>
+            <MainLayout className2="" />
             <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                 <img
                     src={movie.image.background || '/defaultBackground.jpg'}
@@ -228,7 +217,7 @@ function MoviePage() {
                         <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                             {movie.title}
                         </h1>
-                        <RatingStars rating={movie.rating / 2} line={true}/>
+                        <RatingStars rating={movie.rating / 2} line={true} />
                         {movie.genres.slice(0, 6).map((element, index) => (
                             <span
                                 key={index}
@@ -240,18 +229,32 @@ function MoviePage() {
                     </div>
                     <div className="flex flex-row w-full mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
                         <button className="mr-10">
-                            <svg className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in" fill="currentColor" viewBox="0 0 13 16">
+                            <svg
+                                className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in"
+                                fill="currentColor"
+                                viewBox="0 0 13 16"
+                            >
                                 <path d="M0 0V16l13-8Z"></path>
                             </svg>
                         </button>
                         <button className="mr-10" onClick={handleToggleModal}>
-                            <svg className="w-6 h-6 text-slate-200 hover:text-blue-50 hover:duration-300 ease-in" fill="currentColor" viewBox="0 0 23 23">
+                            <svg
+                                className="w-6 h-6 text-slate-200 hover:text-blue-50 hover:duration-300 ease-in"
+                                fill="currentColor"
+                                viewBox="0 0 23 23"
+                            >
                                 <path d="M19 4v1h-2V3H7v2H5V3H3v18h2v-2h2v2h10v-2h2v2h2V3h-2v1zM5 7h2v2H5V7zm0 4h2v2H5v-2zm0 6v-2h2v2H5zm12 0v-2h2v2h-2zm2-4h-2v-2h2v2zm-2-4V7h2v2h-2z"></path>
                             </svg>
                         </button>
                         <button className="mr-[10%]" onClick={handleLike}>
-                            <svg className={`w-6 h-6 text-${colorHeart} hover:text-orange-50 hover:duration-300 ease-in`} viewBox="2 2 27 28">
-                                <path fill='currentColor' d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"></path>
+                            <svg
+                                className={`w-6 h-6 text-${colorHeart} hover:text-orange-50 hover:duration-300 ease-in`}
+                                viewBox="2 2 27 28"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M26.996 12.898c-.064-2.207-1.084-4.021-2.527-5.13-1.856-1.428-4.415-1.69-6.542-.132-.702.516-1.359 1.23-1.927 2.168-.568-.938-1.224-1.652-1.927-2.167-2.127-1.559-4.685-1.297-6.542.132-1.444 1.109-2.463 2.923-2.527 5.13-.035 1.172.145 2.48.788 3.803 1.01 2.077 5.755 6.695 10.171 10.683l.035.038.002-.002.002.002.036-.038c4.415-3.987 9.159-8.605 10.17-10.683.644-1.323.822-2.632.788-3.804z"
+                                ></path>
                             </svg>
                         </button>
                     </div>
@@ -265,7 +268,7 @@ function MoviePage() {
                                 d="M3 9H21M7 3V5M17 3V5M6 12H8M11 12H13M16 12H18M6 15H8M11 15H13M16 15H18M6 18H8M11 18H13M16 18H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z"
                                 stroke="currentColor"
                                 strokeWidth="2"
-                            ></path>
+                            />
                         </svg>
                         <p className="ml-2 mr-4 text-slate-200">{movie.year.toString()}</p>
                         <svg className="w-6 h-6 text-blue-50" viewBox="0 0 24 24" fill="none">
@@ -273,7 +276,7 @@ function MoviePage() {
                                 d="M12 7V12L14.5 10.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
                                 stroke="currentColor"
                                 strokeWidth="2"
-                            ></path>
+                            />
                         </svg>
                         <p className="ml-2 mr-4 text-slate-200">{formatDuration(movie.runtime)}</p>
                         <svg className="w-8 h-8 text-yellow-500" viewBox="0 0 48 48" fill="none">
@@ -306,31 +309,60 @@ function MoviePage() {
                             {movie.budget?.toLocaleString().toString()}$
                         </p>
                     </div>
-                    { movie.summary && (
+                    {movie.summary && (
                         <div>
                             <div className="flex flex-row items-center w-full">
-                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">{t('movie.summary')}</span>
-                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">
+                                    {t('movie.summary')}
+                                </span>
+                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                             </div>
                             <p className="pt-3 text-lg tracking-wide sm:text-xl">{movie.summary}</p>
                         </div>
                     )}
-                    { (directors.length || writers.length || producers.length || movie.actors.length) && (
+                    {(directors.length ||
+                        writers.length ||
+                        producers.length ||
+                        movie.actors.length) && (
                         <div>
                             <div className="pt-4 flex flex-row items-center w-full">
-                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">{t('movie.casting')}</span>
-                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700"/>
+                                <span className="mr-4 text-2xl font-extrabold sm:text-3xl">
+                                    {t('movie.casting')}
+                                </span>
+                                <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                             </div>
-                            <div className='flex overflow-auto mt-2'>
-                                {directors.length > 0 && <ImageList title={pluralize(t('movie.director'), directors)} items={directors} />}
-                                {writers.length > 0 && <ImageList title={pluralize(t('movie.writer'), writers)} items={writers} />}
-                                {producers.length > 0 && <ImageList title={pluralize(t('movie.producer'), producers)} items={producers} />}
-                                {movie.actors.length > 0 && <ImageList title={pluralize(t('movie.actor'), movie.actors)} items={movie.actors} />}
+                            <div className="flex overflow-auto mt-2">
+                                {directors.length > 0 && (
+                                    <ImageList
+                                        title={pluralize(t('movie.director'), directors)}
+                                        items={directors}
+                                    />
+                                )}
+                                {writers.length > 0 && (
+                                    <ImageList
+                                        title={pluralize(t('movie.writer'), writers)}
+                                        items={writers}
+                                    />
+                                )}
+                                {producers.length > 0 && (
+                                    <ImageList
+                                        title={pluralize(t('movie.producer'), producers)}
+                                        items={producers}
+                                    />
+                                )}
+                                {movie.actors.length > 0 && (
+                                    <ImageList
+                                        title={pluralize(t('movie.actor'), movie.actors)}
+                                        items={movie.actors}
+                                    />
+                                )}
                             </div>
                         </div>
                     )}
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
-                        <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')} ({comments.length})</span>
+                        <span className="mr-4 text-3xl font-extrabold">
+                            {t('movie.comments')} ({comments.length})
+                        </span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                     </div>
                     <div className="mb-6">
@@ -343,15 +375,27 @@ function MoviePage() {
                                 rows={6}
                                 className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800"
                                 placeholder={t('movie.writeComment')}
+                                value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 required
                             />
-                            <label className={`text-sm text-${comment.length <= 300 ? 'white' : 'red-500'}`}>{comment.length}/300</label>
+                            <label
+                                className={`text-sm text-${
+                                    comment.length <= COMMENT_MAX_LENGTH ? 'white' : 'red-500'
+                                }`}
+                            >
+                                {comment.length}/{COMMENT_MAX_LENGTH}
+                            </label>
                         </div>
                         <button
                             type="submit"
                             onClick={() => postComment()}
-                            className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+                            className={`inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 ${
+                                comment.length === 0 || comment.length > COMMENT_MAX_LENGTH
+                                    ? 'bg-gray-500 hover:bg-gray-500 cursor-not-allowed'
+                                    : 'bg-blue-700 hover:bg-primary-800 text-white'
+                            }`}
+                            disabled={comment.length === 0 || comment.length > COMMENT_MAX_LENGTH}
                         >
                             {t('movie.postComment')}
                         </button>
@@ -365,19 +409,22 @@ function MoviePage() {
                             profilePicture={com.profilePicture}
                             additionalClasses={index !== 0 ? 'border-t' : ''}
                             handleDelete={() => handleDeleteComment(com.id)}
-							handleEdit={(content) => handleEditComment(com.id, content)}
+                            handleEdit={(content) => handleEditComment(com.id, content)}
                             mine={com.userId == user.id}
                         />
                     ))}
                 </div>
                 {isModalVisible && (
-                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
-                            <iframe
-                                src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
-                                title="YouTube video player" 
-                                className="w-[48vw] h-[27vw]"
-                                allowFullScreen
-                            />
+                    <div
+                        className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"
+                        onClick={handleToggleModal}
+                    >
+                        <iframe
+                            src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
+                            title="YouTube video player"
+                            className="w-[48vw] h-[27vw]"
+                            allowFullScreen
+                        />
                     </div>
                 )}
             </div>
