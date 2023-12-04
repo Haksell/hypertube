@@ -11,7 +11,7 @@ import MainLayout from '../layouts/MainLayout'
 
 const limit = 7
 
-type FilterProps = {
+interface FilterProps {
     id: string
     label: string
     handleChange: (value: string) => void
@@ -117,7 +117,7 @@ const MoviesPage = () => {
     }
 
     useEffect(() => {
-        if (shouldFetchMovies()) fetchMovies()
+        if (shouldFetchMovies()) void fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {

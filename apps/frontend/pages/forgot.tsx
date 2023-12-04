@@ -25,7 +25,7 @@ function ForgotPasswordPage() {
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (styleError === false) return
+        if (!styleError) return
         if (error === '') {
             setStyleErrorEmail(false)
         } else if (error === 'UnknownUsername') {
@@ -42,7 +42,7 @@ function ForgotPasswordPage() {
     function handleSignIn(event: any) {
         event.preventDefault()
         // console.log('username=' + email );
-        signInBackend()
+        void signInBackend()
     }
 
     async function signInBackend() {
@@ -72,47 +72,52 @@ function ForgotPasswordPage() {
         }
     }
 
-    // ConfirmMailConfirmationSent
-    return user ? (
-        <UserAlreadySignedIn />
-    ) : created ? (
-        <ConfirmMailConfirmationSent />
-    ) : (
-        <TramePage>
-            <TitleSmall text={t('forgot.title')} />
+    let content;
 
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" action="#" onSubmit={handleSignIn}>
-                    <ShowErrorMessage error={error} message={t('forgot.noRecovery')} />
-                    <ErrorField
-                        name="email1"
-                        type="email"
-                        title={t('email')}
-                        onBlur={handleOnChangeEmail}
-                        init={email}
-                        styleError={styleErrorEmail}
-                        setStyleError={setStyleErrorEmail}
-                    />
+    if (user) {
+        content = <UserAlreadySignedIn />;
+    } else if (created) {
+        content = <ConfirmMailConfirmationSent />;
+    } else {
+        content = (
+            <TramePage>
+                <TitleSmall text={t('forgot.title')} />
 
-                    <div>
-                        <Button
-                            text={t('forgot.recoverPwd')}
-                            type="submit"
-                            stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <form className="space-y-6" action="#" onSubmit={handleSignIn}>
+                        <ShowErrorMessage error={error} message={t('forgot.noRecovery')} />
+                        <ErrorField
+                            name="email1"
+                            type="email"
+                            title={t('email')}
+                            onBlur={handleOnChangeEmail}
+                            init={email}
+                            styleError={styleErrorEmail}
+                            setStyleError={setStyleErrorEmail}
                         />
-                    </div>
-                </form>
 
-                <LinkText firstText={t('NAM')} linkText={t('signUp')} link="/signup" />
-                <LinkText
-                    firstText={t('forgot.rememberPwd')}
-                    linkText={t('signIn')}
-                    link="/signin"
-                    space="1"
-                />
-            </div>
-        </TramePage>
-    )
+                        <div>
+                            <Button
+                                text={t('forgot.recoverPwd')}
+                                type="submit"
+                                stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            />
+                        </div>
+                    </form>
+
+                    <LinkText firstText={t('NAM')} linkText={t('signUp')} link="/signup" />
+                    <LinkText
+                        firstText={t('forgot.rememberPwd')}
+                        linkText={t('signIn')}
+                        link="/signin"
+                        space="1"
+                    />
+                </div>
+            </TramePage>
+        );
+    }
+
+    return content;
 }
 
 export async function getStaticProps({ locale }: {locale: string}) {
