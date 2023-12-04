@@ -1,15 +1,14 @@
-import React from 'react'
 import { UserProvider } from '../src/context/UserContext'
-import { appWithTranslation } from 'next-i18next';
 import '../styles/global.css'
-import { NextPage } from 'next';
+import { NextPage } from 'next'
+import { appWithTranslation } from 'next-i18next'
+import React from 'react'
 
 interface MyAppProps {
-	Component: NextPage;
-	pageProps: Record<string, any>;
-  }
+    Component: NextPage
+    pageProps: Record<string, any>
+}
 
-  
 function MyApp({ Component, pageProps }: MyAppProps) {
     return (
         <UserProvider>
@@ -18,4 +17,4 @@ function MyApp({ Component, pageProps }: MyAppProps) {
     )
 }
 
-export default appWithTranslation(MyApp);
+export default appWithTranslation(MyApp)
