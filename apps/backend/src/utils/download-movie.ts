@@ -1,18 +1,24 @@
 import axios from "axios";
 import { CustomError } from "../types_backend/movies";
 import { Movies, PrismaClient } from "@prisma/client";
+import { getMovieByIMDB } from "./bdd-movie";
 
 const prisma = new PrismaClient()
 
-export async function downloadMovie(movie: Movies) {
+export async function downloadMovie(imdb_code: string) {
+	//get movie
+	var movie = await getMovieByIMDB(imdb_code)
+
+	if (movie.file) return //movie already downloaded
+
 	//get torrent info
-	let torrents = await getTorrentInfo(movie.imdb_code)
+	let torrents = await getTorrentInfo(imdb_code)
 
 	//select torrent:
 	let torrent = selectTorrent(torrents)
 
 	//download movie
-	await downloadTorrent(torrent, movie)
+	await downloadTorrent(torrent, movie.id)
 }
 
 async function getTorrentInfo(imdb_code: string) {
@@ -60,8 +66,10 @@ function selectTorrent(torrents: any) {
 	return hash
 }
 
-export async function downloadTorrent(hash: string, movie: Movies) {
+export async function downloadTorrent(hash: string, movieID: number) {
 	var torrentStream = require('torrent-stream');
+
+	console.log('hash selected=' + hash)
 
 	var engine =  torrentStream(`magnet:?xt=urn:btih:${hash}`, {
 		path: `/tmp/nicoDL`,
@@ -86,7 +94,7 @@ export async function downloadTorrent(hash: string, movie: Movies) {
 				//sauvegarder nom bdd
 				await prisma.movies.update({
 					where: {
-						id: movie.id
+						id: movieID
 					},
 					data: {
 						file: `${engine.path}/${file.path}`

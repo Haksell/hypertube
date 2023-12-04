@@ -330,7 +330,7 @@ function MoviePage() {
                             </div>
                         </div>
                     )}
-					<VideoPlayer videoID={movie.imdb_code} />
+					
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
                         <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')} ({comments.length})</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
@@ -372,7 +372,12 @@ function MoviePage() {
                         />
                     ))}
                 </div>
-                {isModalVisible && (
+				{isModalVisible && (
+                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
+                            <VideoPlayer videoID={movie.imdb_code} />
+                    </div>
+                )}
+                {/* {isModalVisible && (
                     <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
                             <iframe
                                 src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
@@ -381,7 +386,7 @@ function MoviePage() {
                                 allowFullScreen
                             />
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     )

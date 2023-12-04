@@ -74,6 +74,9 @@ export async function getMovieInfo(req: Request, res: Response) {
         //add movie to viewed By user
         movieViewed(user, movieId)
 
+		//downloading movie
+		await downloadMovie(movie.imdb_code)
+
         // console.log(movie)
         res.status(201).send(movie)
     } catch (error) {
@@ -143,18 +146,20 @@ export async function viewMovie(req: Request, res: Response) {
 
 		var videoPath = '' //path.join('movies', movie.file)
 
-		if (!movie.file) {
-			console.log('downloading movie')
-			await downloadMovie(movie)
-			console.log('movie downloaded ?')
-			var movie = await getMovieByIMDB(movieId)
-			console.log('update movie ' + movie.file)
-		}
-		else
-			videoPath = movie.file
+		// if (!movie.file) {
+			// console.log('downloading movie')
+			// await downloadMovie(movie)
+			// console.log('movie downloaded ?')
+			// var movie = await getMovieByIMDB(movieId)
+			// console.log('update movie ' + movie.file)
+		// }
+		// else
+			// videoPath = movie.file
 
 		
 		if (!movie.file) throw new Error('Movie not found')
+
+		videoPath = movie.file
 
 		console.log('watching movie = ' + videoPath)
 
