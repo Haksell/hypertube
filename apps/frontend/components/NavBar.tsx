@@ -60,19 +60,27 @@ const LinkNavBar: React.FC<{
 }
 
 const LogoNavBar = () => {
-	const { user } = useUserContext()
-	const [redir, setRedir] = useState<string>('/signin')
+    const { user } = useUserContext()
+    const [redir, setRedir] = useState<string>('/signin')
 
-	useEffect(() => {
-		if (user) setRedir('/')
-		else setRedir('/signin')
-	}, [user])
+    useEffect(() => {
+        setRedir(user ? '/' : '/signin')
+    }, [user])
 
-    return (<div className="flex flex-shrink-0 items-center sm:pl-5">
+    return (
         <Link href={redir}>
-            <img className="h-8 w-auto sm:h-12" src="/navbar_logo.png" alt="Matcha" />
+            <div className="flex flex-row">
+                <div className="flex flex-shrink-0 items-center sm:pl-5">
+                    <img className="h-8 w-auto sm:h-12" src="/navbar_logo.png" alt="Matcha" />
+                </div>
+                <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
+                        NaanTube
+                    </span>
+                </div>
+            </div>
         </Link>
-    </div>);
+    )
 }
 
 const DropdownMenu = () => {
@@ -200,11 +208,6 @@ function NavBar() {
                         <div className="flex flex-1 sm:items-stretch sm:justify-start">
                             <MobileMenuBoutton showMenu={showMenu} setShowMenu={setShowMenu} />
                             <LogoNavBar />
-                            <div className="text-2xl font-extrabold ... pt-1 pl-1 sm:text-4xl">
-                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-50 via-white to-blue-50">
-                                    NaanTube
-                                </span>
-                            </div>
                             <LinkNavBar
                                 currLink={currLink}
                                 setCurrLink={setCurrLink}
