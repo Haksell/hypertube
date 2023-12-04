@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import React from 'react'
+import { FaGithub } from 'react-icons/fa'
 
 function Footer() {
     return (
@@ -8,9 +10,9 @@ function Footer() {
                     <div className="flex flex-1 sm:items-stretch sm:justify-start">
                         <span>© 2023 NaanTube™. All Rights Reserved.</span>
                     </div>
-                    <a target="_blank" href="https://github.com/Haksell/hypertube">
-                        GitHub
-                    </a>
+                    <Link target="_blank" href="https://github.com/Haksell/hypertube">
+                        <FaGithub size={24} />
+                    </Link>
                 </div>
             </div>
         </div>
