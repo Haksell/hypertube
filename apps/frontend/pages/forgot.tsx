@@ -63,10 +63,10 @@ function ForgotPasswordPage() {
                 setCreated(true)
             }
             return response.data
-        } catch (error: any) {
-            if (error.response) {
+        } catch (errorMsg: any) {
+            if (errorMsg.response) {
                 setStyleError(true)
-                setError(error.response.data)
+                setError(errorMsg.response.data)
                 setCreated(false)
             }
         }

@@ -97,15 +97,15 @@ function SignUpPage() {
                     withCredentials: true,
                 },
             )
-            console.log(response.data)
+            // console.log(response.data)
             setError('')
             setStyleError(false)
             setCreated(true)
             return response.data
-        } catch (error: any) {
+        } catch (errorMsg: any) {
             // console.log(error)
             setStyleError(true)
-            setError(error.response.data)
+            setError(errorMsg.response.data)
             //to handle ?
         }
     }

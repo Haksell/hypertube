@@ -18,8 +18,8 @@ export default function Login42(): JSX.Element {
         try {
             const url = new URL(window.location.href)
             const code = url.searchParams.get('code')
-            const error = url.searchParams.get('error')
-            if (error) setError(true)
+            const errorParam = url.searchParams.get('error')
+            if (errorParam) setError(true)
             if (code) {
                 const res = await axios.post(
                     'http://localhost:5001/auth/' + method,
@@ -30,7 +30,7 @@ export default function Login42(): JSX.Element {
                 router.push('/')
             }
         } catch (err) {
-            console.error(err)
+            // console.error(err)
             setError(true)
         }
     }

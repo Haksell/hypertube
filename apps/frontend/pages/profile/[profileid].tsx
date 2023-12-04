@@ -48,7 +48,7 @@ function ProfilePage() {
 
 	async function likeMovie(movieId: any) {
 		try {
-			const response = await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
+			await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
 				withCredentials: true
 			})
 		}
@@ -86,13 +86,13 @@ function ProfilePage() {
 		}
 	}
 
-	const removeItem = (index: number, id: number) => {
+	const removeItem = (index: number, itemId: number) => {
 		if (userProfile) {
 			const newData = { ...userProfile };
 			newData.moviesLiked = [...userProfile.moviesLiked];
 			newData.moviesLiked.splice(index, 1);
 			setUserProfile(newData);
-			handleLike(id)
+			handleLike(itemId)
 		}
 	};
 	
@@ -192,10 +192,15 @@ function ProfilePage() {
     ) : (<UserNotSignedIn />);
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-    props: {
-      ...await serverSideTranslations(locale as string, ['common']),
-    },
-})
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+    if (!locale) {
+      return {
+        props: { ...await serverSideTranslations('en', ['common']) },
+      };
+    }
+    return {
+        props: { ...await serverSideTranslations(locale, ['common']) },
+    };
+  };
 
 export default ProfilePage;

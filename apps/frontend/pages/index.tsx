@@ -112,7 +112,7 @@ const MoviesPage = () => {
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + response.data.length)
         } catch (error) {
-            console.error('Error fetching movies:', error)
+            // console.error('Error fetching movies:', error)
         }
     }
 

@@ -8,7 +8,7 @@ function Footer() {
                     <div className="flex flex-1 sm:items-stretch sm:justify-start">
                         <span>© 2023 NaanTube™. All Rights Reserved.</span>
                     </div>
-                    <a target="_blank" href="https://github.com/Haksell/hypertube">
+                    <a target="_blank" rel="noreferrer" href="https://github.com/Haksell/hypertube">
                         GitHub
                     </a>
                 </div>

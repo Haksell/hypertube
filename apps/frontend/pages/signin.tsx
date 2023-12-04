@@ -71,19 +71,19 @@ function SignInPage() {
             )
             // console.log(response.data)
             if (response.data) {
-				console.log('you are signed in!')
-				console.log(response.data)
+				// console.log('you are signed in!')
+				// console.log(response.data)
                 loginUser(response.data);
-				console.log('done')
+				// console.log('done')
                 setError('')
                 setStyleError(false)
                 router.push('/')
             }
             return response.data
-        } catch (error: any) {
-            console.log(error)
+        } catch (err: any) {
+            // console.log(error)
             setStyleError(true)
-            setError(error.response.data)
+            setError(err.response.data)
             loginUser(null);
         }
     }

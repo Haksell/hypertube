@@ -45,8 +45,8 @@ function VideoPlayerMedia() {
 
     		
 
-			console.log('response data')
-			console.log(response)
+			// console.log('response data')
+			// console.log(response)
 
 			response.data.pipe(stream);
 
