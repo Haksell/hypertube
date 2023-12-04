@@ -1,6 +1,7 @@
 import Comment from '../../components/Comment'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
+import VideoPlayer from '../../components/video/VideoPlayer'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
@@ -329,6 +330,7 @@ function MoviePage() {
                             </div>
                         </div>
                     )}
+					<VideoPlayer videoID={movie.imdb_code} />
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
                         <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')} ({comments.length})</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
