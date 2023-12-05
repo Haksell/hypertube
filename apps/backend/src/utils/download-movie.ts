@@ -2,6 +2,7 @@ import axios from "axios";
 import { CustomError } from "../types_backend/movies";
 import { Movies, PrismaClient } from "@prisma/client";
 import { getMovieByIMDB } from "./bdd-movie";
+import { getSubtitles } from "./subtitles";
 
 const prisma = new PrismaClient()
 
@@ -19,6 +20,19 @@ export async function downloadMovie(imdb_code: string) {
 
 	//download movie
 	await downloadTorrent(torrent, movie.id)
+
+	//download subtitles
+	try {
+        var movie = await getMovieByIMDB(imdb_code)
+		console.log('start looking for subtitles, path=' + movie.folder)
+		// console.log(movie)
+
+        if (movie && movie.folder) await getSubtitles(movie.title, imdb_code, movie.folder)
+		console.log('end looking for subtitles')
+    } catch (error) {
+        // if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        // else res.status(400).send('Sub not found')
+    }
 }
 
 async function getTorrentInfo(imdb_code: string) {
@@ -85,7 +99,7 @@ export async function downloadTorrent(hash: string, movieID: number) {
 		]
 	});
 
-	engine.on('ready', function() {
+	await engine.on('ready', function() {
 		engine.files.forEach(async function(file: any) {
 			console.log('filename:', file.name);
 			console.log('full path:', `${engine.path} =/= ${file.path}`);

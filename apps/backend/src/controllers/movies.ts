@@ -309,7 +309,6 @@ export async function testDownload(req: Request, res: Response) {
 }
 
 export async function testSub(req: Request, res: Response) {
-    // const imdb_code = 'tt0298203'
     try {
 		const movieId = getMovieId(req)
 

@@ -15,6 +15,8 @@ export function extractLangageSub(req: Request): string {
 export async function getSubtitles(title: string, imdb_code: string, folder: string) {
     var moviePath: string = ''
 
+	console.log('start function sub')
+
 	if (!folder) throw new CustomError('No folder for subtitles')
 
 	//get path to movie
