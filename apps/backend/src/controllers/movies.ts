@@ -16,6 +16,7 @@ import {
 import { PrismaClient, User } from '@prisma/client'
 import { Request, Response } from 'express'
 import { extractLangageSub } from '../utils/subtitles'
+import { downloadMovie } from '../utils/download-movie'
 
 const prisma = new PrismaClient()
 
@@ -72,6 +73,9 @@ export async function getMovieInfo(req: Request, res: Response) {
 
         //add movie to viewed By user
         movieViewed(user, movieId)
+
+		//downloading movie
+		await downloadMovie(movie.imdb_code)
 
         // console.log(movie)
         res.status(201).send(movie)
@@ -138,11 +142,26 @@ export async function viewMovie(req: Request, res: Response) {
 	try {
 		const movieId = getMovieId(req)
 
-		const movie = await getMovieByIMDB(movieId)
+		var movie = await getMovieByIMDB(movieId)
 
-		if (!movie.file) throw new Error('Movie not found')
+		var videoPath = '' //path.join('movies', movie.file)
 
-		const videoPath = path.join('movies', movie.file)
+		// if (!movie.file) {
+			// console.log('downloading movie')
+			// await downloadMovie(movie)
+			// console.log('movie downloaded ?')
+			// var movie = await getMovieByIMDB(movieId)
+			// console.log('update movie ' + movie.file)
+		// }
+		// else
+			// videoPath = movie.file
+
+		
+		if (!movie.file || !movie.folder) throw new Error('Movie not found')
+
+		videoPath = path.join(movie.folder, movie.file)
+
+		// console.log('watching movie = ' + videoPath)
 
 		if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
 		
@@ -253,4 +272,45 @@ export async function convertSrtSubtitle(srtFile: string): Promise<string> {
     .pipe(srt2vtt())
     .pipe(fs.createWriteStream(vttPath))
 	return vttFile
+}
+
+export async function testDownload(req: Request, res: Response) {
+	var torrentStream = require('torrent-stream');
+
+	var hash = '4ADC19F35034A29A4A284FB7EF971F9684349ECD'
+
+	var engine =  torrentStream(`magnet:?xt=urn:btih:${hash}`, {
+		path: `/tmp/nicoDL`,
+		trackers: [
+			'udp://open.demonii.com:1337/announce',
+			'udp://tracker.openbittorrent.com:80',
+			'udp://tracker.coppersurfer.tk:6969',
+			'udp://glotorrents.pw:6969/announce',
+			'udp://tracker.opentrackr.org:1337/announce',
+			'udp://torrent.gresille.org:80/announce',
+			'udp://p4p.arenabg.com:1337',
+			'udp://tracker.leechers-paradise.org:6969',
+		]
+	});
+
+	engine.on('ready', function() {
+		engine.files.forEach(function(file: any) {
+			console.log('filename:', file.name);
+			console.log('engine path:', `${engine.path}`);
+			console.log('file path:', `${file.path}`);
+			console.log('full path:', `${engine.path}/${file.path}`);
+			var stream = file.createReadStream();
+			// stream is readable stream to containing the file content
+		});
+	});
+
+	engine.on('idle', function () {
+		engine.files.forEach(function(file: any) {
+			console.log('finished filename:', file.name);
+			// stream is readable stream to containing the file content
+		});
+	});
+
+
+	res.status(200).send('Movie downloaded')
 }

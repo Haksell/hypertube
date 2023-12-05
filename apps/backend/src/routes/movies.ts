@@ -1,4 +1,4 @@
-import { getMovieInfo, getMovies, getSubtitle, likeMovie, viewMovie } from '../controllers/movies'
+import { getMovieInfo, getMovies, getSubtitle, likeMovie, testDownload, viewMovie } from '../controllers/movies'
 import { getMovieComments } from '../controllers/comments'
 import express, { Router } from 'express'
 import asyncHandler from 'express-async-handler'
@@ -31,6 +31,8 @@ const myImdbSchema = Joi.object({
 })
 
 router.get('/', verifyToken, validator.query(movieSchema), asyncHandler(getMovies))
+
+router.get('/test', verifyToken, asyncHandler(testDownload))
 
 router.get('/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 

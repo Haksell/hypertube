@@ -1,6 +1,7 @@
 import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
+import VideoPlayer from '../../components/video/VideoPlayer'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
@@ -191,6 +192,7 @@ function MoviePage() {
     ) : !movie ? (
         <p>PAS DE FILM</p> /* Faudra changer :D */
     ) : (
+		<>
         <div>
             <MainLayout className2="" />
             <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
@@ -360,6 +362,7 @@ function MoviePage() {
                             </div>
                         </div>
                     )}
+					
                     <div className="pt-4 flex flex-row items-center w-full mb-4">
                         <span className="mr-4 text-3xl font-extrabold">{t('movie.comments')}</span>
                         <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
@@ -411,22 +414,24 @@ function MoviePage() {
                         />
                     ))}
                 </div>
-                {isModalVisible && (
-                    <div
-                        className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"
-                        onClick={handleToggleModal}
-                    >
-                        <iframe
-                            src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
-                            title="YouTube video player"
-                            className="w-[48vw] h-[27vw]"
-                            allowFullScreen
-                        />
+				{isModalVisible && (
+                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
+                            <VideoPlayer videoID={movie.imdb_code} />
                     </div>
                 )}
+                {/* {isModalVisible && (
+                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
+                            <iframe
+                                src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
+                                title="YouTube video player" 
+                                className="w-[48vw] h-[27vw]"
+                                allowFullScreen
+                            />
+                    </div>
+                )} */}
             </div>
         </div>
-    )
+		</>)
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
