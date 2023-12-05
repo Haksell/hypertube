@@ -100,7 +100,8 @@ export async function downloadTorrent(hash: string, movieID: number) {
 					},
 					data: {
 						file: `${file.name}`,
-						folder: folderPath
+						folder: folderPath,
+						dateDownload: new Date(),
 					}
 				})
 			}

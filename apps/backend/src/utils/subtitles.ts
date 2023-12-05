@@ -22,9 +22,11 @@ export async function getSubtitles(title: string, imdb_code: string, folder: str
         .search(title)
         .then((results: any) => {
             if (results && results.length > 0) moviePath = results[0].path
+			else throw new CustomError(`No subtitle found for ${title} (code ${imdb_code})`)
         })
         .catch((err: any) => {
-            throw new CustomError('Error with research on node-subscene-api')
+            if (err instanceof CustomError) throw new CustomError(err.message)
+			throw new CustomError('Error with research on node-subscene-api')
         })
 
     var frenchSubPath: string = ''
@@ -57,7 +59,9 @@ export async function getSubtitles(title: string, imdb_code: string, folder: str
                 }
             }
         })
-        .catch((err: any) => {throw new CustomError('Error with getSubtitles on node-subscene-api')})
+        .catch((err: any) => {
+			throw new CustomError('Error with getSubtitles on node-subscene-api')
+		})
 
     
     //download en+fr files and convert them
