@@ -34,7 +34,7 @@ export async function getMovies(req: Request, res: Response) {
             if (params.type === 'movie') {
                 const moviesYTS: Movie[] = await getMoviesFromYTS(params.limit, params)
                 if (moviesYTS && moviesYTS.length !== 0) movies = movies.concat(moviesYTS)
-            } else if (params.type === 'series') {
+            } else if (params.type === 'tvShow') {
                 const moviesEZTV: Movie[] = await getMoviesEZTV(params.limit, params)
                 if (moviesEZTV && moviesEZTV.length !== 0) movies = movies.concat(moviesEZTV)
             }

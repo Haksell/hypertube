@@ -92,6 +92,7 @@ const MoviesPage = () => {
             if (language) params['language'] = language
             if (sortBy) params['sortBy'] = sortBy
             else params['sortBy'] = 'seeds'
+			if (newType) params['type'] = newType
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
                 withCredentials: true,

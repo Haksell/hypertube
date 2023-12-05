@@ -11,6 +11,7 @@ const router: Router = express.Router()
 const validator = createValidator()
 
 const movieSchema = Joi.object({
+	type: Joi.string(),
     genre: Joi.string(),
 	downloaded: Joi.string(),
     minGrade: Joi.number(),
