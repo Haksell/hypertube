@@ -83,7 +83,8 @@ function SignInPage() {
         } catch (error: any) {
             console.log(error)
             setStyleError(true)
-            setError(error.response.data)
+			if (error && error.response && error.response.data)
+            	setError(error.response.data)
             loginUser(null);
         }
     }
