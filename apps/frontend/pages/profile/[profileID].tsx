@@ -10,6 +10,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
+import { MovieDTO } from '../../src/shared/movies';
 
 function ProfilePage() {
     const { user } = useUserContext();
@@ -20,11 +21,10 @@ function ProfilePage() {
 	const [idUser, setIdUser] = useState<number>(-1)
 	const { t } = useTranslation('common')
 	const [currLink, setCurrLink] = useState<string>('no')
-	const [mainPicture, setMainPicture] = useState<string>('');
-	const [liked, setLiked] = useState<boolean>(false)
+	const [mainPicture] = useState<string>('');
 
     let link: string = '/norminet.jpeg'
-    if (mainPicture) link = `http://localhost:5001/users/image/${mainPicture}`
+    if (mainPicture) link = `http://localhost:5001/users/image/${String(mainPicture)}`
 
 	useEffect(() => {
 		setId();
@@ -85,7 +85,6 @@ function ProfilePage() {
                 withCredentials: true,
             })
 			setUserProfile(response.data)
-			console.log(response.data.moviesLiked[0])
 		}
 		catch (error: any) {
 			setUserProfile(null)
@@ -123,7 +122,12 @@ function ProfilePage() {
 		}
 	};
 	
-    const ImageList = ({ title, items, button }) => (
+
+    const ImageList: React.FC<{
+		title: string
+		items: any
+		button: boolean
+	}> = ({ title, items, button }) => (
         <div className='relative flex flex-none mr-5 mt-10'>
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
                 <p className='text-xl font-bold text-orange-50 sm:text-2xl whitespace-nowrap'>{title}</p>
@@ -171,7 +175,7 @@ function ProfilePage() {
                     }}
                 />
             </div>
-			<div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
+			<div className="flex flex-col sm:h-24 items-center relative overflow-hidden m-5 py-5 justify-center sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
 				<img
 					src={user.picture || './norminet.jpeg'}
 					alt="Profile Picture"
@@ -180,10 +184,7 @@ function ProfilePage() {
                         e.currentTarget.src = '/norminet.jpeg';
                     }}
 				/>
-				<div className=''>
-					<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
-					<p className="text-sm font-normal text-gray-500 sm:text-base">{user.email}</p>
-				</div>
+				<p className="text-lg font-bold text-white sm:text-xl">{user.firstName} {user.lastName}</p>
 				<Link href={'/settings'}>
 					<p
 						className='absolute rounded-md right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
