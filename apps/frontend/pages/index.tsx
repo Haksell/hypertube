@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
 const limit = 7
+const DEFAULT_SORT_BY = 'like_count'
 
 type FilterProps = {
     id: string
@@ -27,7 +28,7 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
             <select
                 id={id}
                 onChange={(e) => handleChange(e.target.value)}
-                className="border text-sm rounded-lg focus:ring-blue-500 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
             >
                 {options.map((option: any) => (
                     <option key={option.value} value={option.value}>
@@ -47,8 +48,7 @@ const MoviesPage = () => {
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
-    const [language, setLanguage] = useState('')
-    const [sortBy, setSortBy] = useState('')
+    const [sortBy, setSortBy] = useState(DEFAULT_SORT_BY)
     const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
@@ -89,21 +89,11 @@ const MoviesPage = () => {
             if (genre) params['genre'] = genre
             if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
-            if (language) params['language'] = language
-            if (sortBy) params['sortBy'] = sortBy
-            else params['sortBy'] = 'seeds'
+            params['sortBy'] = sortBy || DEFAULT_SORT_BY
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
                 withCredentials: true,
             })
-            // let newMovies: Movie[] = movies.slice(0, offset)
-            // newMovies = newMovies.concat(response.data)
-            // newMovies = newMovies.filter((newMovie, index) => {
-            // 	const isDuplicate = newMovies.findIndex(movie => movie.imdb_code === newMovie.imdb_code) !== index;
-            // 	return !isDuplicate;
-            //   });
-            // setMovies(newMovies)
-
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + response.data.length)
         } catch (error) {
@@ -270,13 +260,13 @@ const MoviesPage = () => {
                         label={t('index.sort.name')}
                         handleChange={setSortBy}
                         options={[
+                            { value: 'like_count', label: t('index.sort.like_count') },
                             { value: 'seeds', label: t('index.sort.seeds') },
                             { value: 'rating', label: t('index.sort.rating') },
                             { value: 'year', label: t('index.sort.year') },
                             { value: 'title', label: t('index.sort.title') },
                             { value: 'peers', label: t('index.sort.peers') },
                             { value: 'download_count', label: t('index.sort.download_count') },
-                            { value: 'like_count', label: t('index.sort.like_count') },
                             { value: 'date_added', label: t('index.sort.date_added') },
                         ]}
                     />
