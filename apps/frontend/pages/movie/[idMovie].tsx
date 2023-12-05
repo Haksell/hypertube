@@ -5,7 +5,7 @@ import VideoPlayer from '../../components/video/VideoPlayer'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
-import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
+import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
 import axios from 'axios'
@@ -13,7 +13,7 @@ import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -21,7 +21,6 @@ function MoviePage() {
     const { user } = useUserContext()
     const [movie, setMovieDetails] = useState<MovieDetails | null>(null)
     const [liked, setLiked] = useState<boolean>(false)
-    const [colorHeart, setColorHeart] = useState<string>('white')
     const router = useRouter()
     const { idMovie } = router.query
     const [comment, setComment] = useState<string>('')
@@ -41,16 +40,11 @@ function MoviePage() {
                 withCredentials: true,
             })
             setMovieDetails(response.data)
-            if (response.data.liked) {
-                setLiked(response.data.liked)
-                setColorHeart('orange-50')
-            }
+            if (response.data.liked) setLiked(response.data.liked)
 
             const responseComments = await axios.get(
                 `http://localhost:5001/movies/${idMovie}/comments`,
-                {
-                    withCredentials: true,
-                },
+                { withCredentials: true },
             )
             setComments(responseComments.data)
         } catch {
@@ -114,13 +108,7 @@ function MoviePage() {
             const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
                 withCredentials: true,
             })
-            if (response.data === 'Movie liked') {
-                setLiked(true)
-                setColorHeart('orange-50')
-            } else {
-                setLiked(false)
-                setColorHeart('white')
-            }
+            setLiked(response.data === 'Movie liked')
         } catch {
             // setMovieDetails(null)
         }
@@ -138,7 +126,6 @@ function MoviePage() {
     }
 
     const [isModalVisible, setModalVisible] = useState(false)
-    const modalRef = useRef()
 
     const handleToggleModal = () => {
         setModalVisible(!isModalVisible)
@@ -251,7 +238,9 @@ function MoviePage() {
                             </button>
                             <button className="mr-[10%]" onClick={handleLike}>
                                 <svg
-                                    className={`w-6 h-6 text-${colorHeart} hover:text-orange-50 hover:duration-300 ease-in`}
+                                    className={`w-6 h-6 text-${
+                                        liked ? 'orange-50' : 'white'
+                                    } hover:text-orange-50 hover:duration-300 ease-in`}
                                     viewBox="2 2 27 28"
                                 >
                                     <path
@@ -378,14 +367,20 @@ function MoviePage() {
                             <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                         </div>
                         <div className="mb-6">
-                            <div className="py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700">
+                            <div
+                                className={`py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700 ${
+                                    canPostComment()
+                                        ? 'focus-within:border-blue-700'
+                                        : 'focus-within:border-red-700'
+                                }`}
+                            >
                                 <label htmlFor="comment" className="sr-only">
                                     {t('movie.yourComment')}
                                 </label>
                                 <textarea
                                     id="comment"
-                                    rows={6}
-                                    className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800 resize-none"
+                                    rows={5}
+                                    className="relative px-0 w-full text-sm border-0 text-white placeholder-gray-400 bg-gray-800 resize-none outline-none"
                                     placeholder={t('movie.writeComment')}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
