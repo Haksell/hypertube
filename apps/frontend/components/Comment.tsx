@@ -3,10 +3,6 @@ import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
-<<<<<<< HEAD
-=======
-import { useTranslation } from 'next-i18next'
->>>>>>> ed6a5a9 (Clean NavBar link)
 import Link from 'next/link'
 
 interface CommentProps {
@@ -26,7 +22,6 @@ export const COMMENT_MAX_LENGTH = 300
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
-<<<<<<< HEAD
     const {
         content,
         updatedAt,
@@ -38,10 +33,6 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         handleEdit,
         mine,
     } = props
-=======
-    const { content, updatedAt, username, profilePicture, userId, additionalClasses, handleDelete, handleEdit, mine } =
-        props
->>>>>>> ed6a5a9 (Clean NavBar link)
     const [editableContent, setEditableContent] = useState('')
     const [isEditing, setIsEditing] = useState(false)
     const { t } = useTranslation('common')
