@@ -30,7 +30,7 @@ function SignInPage() {
 	}, [user])
 
     useEffect(() => {
-        if (styleError === false) return
+        if (!styleError) return
         if (error === '' || error === ErMsg('EmailNotVerified', t)) {
             setStyleErrorUsername(false)
             setStyleErrorPwd(false)
@@ -54,7 +54,7 @@ function SignInPage() {
 
     function handleSignIn(event: any) {
         event.preventDefault()
-        signInBackend()
+        void signInBackend()
     }
 
     async function signInBackend() {
@@ -77,7 +77,7 @@ function SignInPage() {
 				// console.log('done')
                 setError('')
                 setStyleError(false)
-                router.push('/')
+                void router.push('/')
             }
             return response.data
         } catch (err: any) {

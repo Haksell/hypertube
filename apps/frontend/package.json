@@ -15,6 +15,7 @@
     "i": "^0.3.7",
     "logger": "workspace:*",
     "next": "^13.4.19",
+    "next-i18next": "^15.0.0",
     "npm": "^10.2.4",
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.7",

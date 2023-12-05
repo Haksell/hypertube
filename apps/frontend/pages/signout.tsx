@@ -9,9 +9,9 @@ function SignOutPage() {
     const { logoutUser } = useUserContext();
 
     useEffect(() => {
-        signOutBackend()
+        void signOutBackend()
         logoutUser();
-        router.push('/signin')
+        void router.push('/signin')
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     async function signOutBackend() {

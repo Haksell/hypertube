@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Prop = {
+interface Prop {
     textAlert: string
     show: boolean
     setShow: any

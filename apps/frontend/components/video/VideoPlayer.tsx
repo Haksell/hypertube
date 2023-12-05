@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-type Prop = {
+interface Prop {
     videoID: string
 }
 function VideoPlayer({ videoID }: Prop) {

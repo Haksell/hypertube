@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-type Prop = {
+interface Prop {
     firstText?: string
     linkText: string
     link: string
@@ -9,7 +9,7 @@ type Prop = {
 }
 
 function LinkText({ firstText, linkText, link, space = '10' }: Prop) {
-    const styleDiv: string = `mt-${space} text-center text-sm text-gray-500`
+    const styleDiv = `mt-${space} text-center text-sm text-gray-500`
     return (
         <div className={styleDiv}>
             {firstText}{' '}

@@ -38,7 +38,7 @@ function ProfilePage() {
 	}, [id])
 
 	useEffect(() => {
-		getUserInfo();
+		void getUserInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [idUser])
 
@@ -59,7 +59,7 @@ function ProfilePage() {
 	}
 
 	function handleLike(movieId: any) {
-		likeMovie(movieId)
+		void likeMovie(movieId)
 	}
 
 	function setId() {

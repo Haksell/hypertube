@@ -1,4 +1,4 @@
-type ErrorArray = {
+interface ErrorArray {
     key: string;
     value: string;
 };  
@@ -48,6 +48,6 @@ export const ErMsg = (key: string, t: (key: string) => string): string | null =>
         { key: 'InvalidPhotoId', value: t('errors.invalidPhotoId') },
       ];
 
-      const item = errorArray.find((item) => item.key === key);
+      const item = errorArray.find((el) => el.key === key);
       return item ? item.value : null;
 };

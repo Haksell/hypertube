@@ -92,14 +92,14 @@ const DropdownMenu = () => {
         <Button
             text={t('navBar.signOut')}
             onClick={() => {
-                router.push('/signout')
+                void router.push('/signout')
             }}
         />
     ) : (
         <Button
             text={t('signIn')}
             onClick={() => {
-                router.push('/signin')
+                void router.push('/signin')
             }}
         />
     )
@@ -140,7 +140,7 @@ function MobileMenuBoutton({ showMenu, setShowMenu }: { showMenu: boolean; setSh
     )
 }
 
-type PropMobileMenuNavBar = {
+interface PropMobileMenuNavBar {
     showMenu: boolean
     currLink: string
     setCurrLink: any

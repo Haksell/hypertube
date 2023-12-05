@@ -9,5 +9,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'off',
     'eslint-comments/require-description': 'off',
     'unicorn/filename-case': 'off',
+    '@typescript-eslint/no-confusing-void-expression': 'off',
+    '@typescript-eslint/no-misused-promises': 'off'
   },
 };

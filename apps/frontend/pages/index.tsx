@@ -143,7 +143,7 @@ const MoviesPage = () => {
 
     const handleSwitch = () => {
         setTimeout(() => {
-            fetchMovies(0)
+            void fetchMovies(0)
         }, 30)
     }
 
