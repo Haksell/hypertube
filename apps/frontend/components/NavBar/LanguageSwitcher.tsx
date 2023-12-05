@@ -26,7 +26,7 @@ const LanguageSelector: React.FC = () => {
                             withCredentials: true,
                         },
                     )
-                    console.log(response.data)
+                    // console.log(response.data)
                 }
         } catch {}
     }

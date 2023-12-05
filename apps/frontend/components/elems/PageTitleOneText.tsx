@@ -1,7 +1,7 @@
 import MainLayout from '../../layouts/MainLayout'
-import LinkText from '../elems/LinkText'
-import TextPage from '../elems/TextPage'
-import TitleSmall from '../elems/TitleSmall'
+import LinkText from './LinkText'
+import TextPage from './TextPage'
+import TitleSmall from './TitleSmall'
 import React from 'react'
 import { useTranslation } from 'next-i18next'
 

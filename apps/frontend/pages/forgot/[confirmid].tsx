@@ -27,22 +27,23 @@ function ResetPasswordPage() {
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        console.log('id=' + confirmid)
-        validateLink()
+        // console.log('id=' + confirmid)
+        void validateLink()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [confirmid])
 
     async function validateLink() {
         if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/forgot/${confirmid}`, {
+            const response = await axios.get(`http://localhost:5001/auth/forgot/${String(confirmid)}`, {
                 withCredentials: true,
             })
-            if (response && response.data.msg) setRetour(response.data.msg)
+            if (response.data.msg) setRetour(response.data.msg)
             // console.log(response.data);
             return response.data
-        } catch (error: any) {
-            if (error.response === ErMsg('InvalidId', t)) router.push('/404')
+        } catch (errorMsg: any) {
+            if (errorMsg.response === ErMsg('InvalidId', t))
+                await router.push('/404')
             setRetour(null)
         }
     }
@@ -50,7 +51,7 @@ function ResetPasswordPage() {
     async function resetPasswordBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/forgot/${confirmid}`,
+                `http://localhost:5001/auth/forgot/${String(confirmid)}`,
                 {
                     password: password,
                 },
@@ -69,10 +70,10 @@ function ResetPasswordPage() {
                 setCreated(false)
             }
             return response.data
-        } catch (error: any) {
+        } catch (errorMsg: any) {
             setStyleErrorPassword(true)
-			if (error.response)
-            	setError(error.response.data)
+			if (errorMsg.response)
+            	setError(errorMsg.response.data)
             setCreated(false)
         }
     }
@@ -82,8 +83,8 @@ function ResetPasswordPage() {
     }
 
     function handleSignIn(event: any) {
-        event.preventDefault()
-        resetPasswordBackend()
+        void event.preventDefault()
+        void resetPasswordBackend()
     }
 
     return retour && retour === ErMsg('SuccessMsg', t) ? (
@@ -128,10 +129,16 @@ function ResetPasswordPage() {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-    props: {
-      ...await serverSideTranslations(locale as string, ['common']),
-    },
-})
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+    if (!locale) {
+      return {
+        props: { translations: await serverSideTranslations('en', ['common']) },
+      };
+    }
+    return {
+        props: { translations: await serverSideTranslations(locale, ['common']) },
+    };
+  };
+
 
 export default ResetPasswordPage

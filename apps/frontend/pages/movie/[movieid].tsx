@@ -74,7 +74,7 @@ function MoviePage() {
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
             } catch (error: any) {
-                console.log(error.response.data)
+                // console.log(error.response.data)
             }
             setComment('')
         }
@@ -85,9 +85,9 @@ function MoviePage() {
             await axios.delete(`http://localhost:5001/comments/${id}`, {
                 withCredentials: true,
             })
-            setComments((prevComments) => prevComments.filter((comment) => comment.id !== id))
+            setComments((prevComments) => prevComments.filter((el) => el.id !== id))
         } catch (error: any) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -102,11 +102,11 @@ function MoviePage() {
 					withCredentials: true,
 				},
 			)
-			setComments((prevComments) => prevComments.map((comment) => {
-				if (comment.id === id) {
-					comment.content = content
+			setComments((prevComments) => prevComments.map((el) => {
+				if (el.id === id) {
+					el.content = content
 				}
-				return comment
+				return el
 			}))
         } catch {
             // console.log()

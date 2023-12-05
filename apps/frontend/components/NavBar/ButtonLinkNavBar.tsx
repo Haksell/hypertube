@@ -35,7 +35,7 @@ function ButtonLinkNavBar({
     }, [currLink])
 
     function handleChangePage(page: string) {
-        console.log(page)
+        // console.log(page)
         setCurrLink(page)
     }
     return (
