@@ -20,46 +20,32 @@ type FilterProps = {
     options: { value: string; label: string }[]
 }
 
+const MoviesSeriesOption: React.FC<{ isActive: boolean; text: string }> = ({ isActive, text }) => (
+    <span
+        className={`z-30 rounded-full py-1 px-3 select-none ${
+            isActive && 'bg-gradient-to-r from-orange-50 to-blue-50'
+        }`}
+    >
+        {text}
+    </span>
+)
+
 const MoviesSeriesSwitch: React.FC<{ handleSwitch: () => void; type: string }> = ({
     handleSwitch,
     type,
 }) => {
     const { t } = useTranslation('common')
-    const choiceRef = useRef<HTMLDivElement>(null)
-    const [width, setWidth] = useState(0)
-    const [height, setHeight] = useState(0)
-
-    useEffect(() => {
-        const choice = choiceRef.current
-        if (choice) {
-            setWidth(choice.offsetWidth)
-            setHeight(choice.offsetHeight)
-        }
-    }, [choiceRef.current != null])
 
     return (
-        <label>
+        <label className="flex items-center rounded-full py-1 px-1 font-bold bg-slate-700 text-white">
             <input
                 type="checkbox"
                 onChange={handleSwitch}
                 checked={type === 'tvShow'}
-                className="peer sr-only"
+                className="sr-only"
             />
-            <div
-                className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
-                style={{ width, height }}
-            >
-                <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
-                    {type === 'movie' ? t('index.movies') : t('index.tv')}
-                </div>
-            </div>
-            <div
-                ref={choiceRef}
-                className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
-            >
-                <span className="z-30">{t('index.movies')}</span>
-                <span className="z-30">{t('index.tv')}</span>
-            </div>
+            <MoviesSeriesOption isActive={type === 'movie'} text={t('index.movies')} />
+            <MoviesSeriesOption isActive={type !== 'movie'} text={t('index.tv')} />
         </label>
     )
 }
