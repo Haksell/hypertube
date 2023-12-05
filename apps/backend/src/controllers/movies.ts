@@ -157,11 +157,11 @@ export async function viewMovie(req: Request, res: Response) {
 			// videoPath = movie.file
 
 		
-		if (!movie.file) throw new Error('Movie not found')
+		if (!movie.file || !movie.folder) throw new Error('Movie not found')
 
-		videoPath = movie.file
+		videoPath = path.join(movie.folder, movie.file)
 
-		console.log('watching movie = ' + videoPath)
+		// console.log('watching movie = ' + videoPath)
 
 		if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
 		

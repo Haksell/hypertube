@@ -38,6 +38,7 @@ model Movies {
 	createdAt DateTime @default(now())
 	imdb_code String
 	title String
+	folder String?
 	file String?
 	dateDownload DateTime?
 	year Int

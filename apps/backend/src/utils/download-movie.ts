@@ -88,16 +88,19 @@ export async function downloadTorrent(hash: string, movieID: number) {
 	engine.on('ready', function() {
 		engine.files.forEach(async function(file: any) {
 			console.log('filename:', file.name);
-			console.log('full path:', `${engine.path}/${file.path}`);
+			console.log('full path:', `${engine.path} =/= ${file.path}`);
+			const filePath: string = file.path.replace(`/${file.name}`, '')
+			const folderPath: string = `${engine.path}/${filePath}`
 			var stream = file.createReadStream();
-			if (file && file.name.endsWith('.mp4')) {
+			if (file && (file.name.endsWith('.mp4') || file.name.endsWith('.mkv'))) {
 				//sauvegarder nom bdd
 				await prisma.movies.update({
 					where: {
 						id: movieID
 					},
 					data: {
-						file: `${engine.path}/${file.path}`
+						file: `${file.name}`,
+						folder: folderPath
 					}
 				})
 			}
