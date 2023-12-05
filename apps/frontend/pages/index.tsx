@@ -1,13 +1,13 @@
-import { MovieCard } from '../components/elems/MovieCard'
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
+import { MovieCard } from '../components/elems/MovieCard'
+import MainLayout from '../layouts/MainLayout'
 import { useUserContext } from '../src/context/UserContext'
+import { MovieDTO } from '../src/shared/movies'
 import axios from 'axios'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
-import { MovieDTO } from '../src/shared/movies'
-import MainLayout from '../layouts/MainLayout'
 
 const limit = 7
 
@@ -54,26 +54,25 @@ const MoviesPage = () => {
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
-	const choiceRef = useRef<HTMLDivElement>(null)
-	const choiceRef2 = useRef<HTMLDivElement>(null)
+    const choiceRef = useRef<HTMLDivElement>(null)
+    const choiceRef2 = useRef<HTMLDivElement>(null)
 
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
-	const [width2, setWidth2] = useState(0)
+    const [width2, setWidth2] = useState(0)
     const [height2, setHeight2] = useState(0)
 
     useEffect(() => {
-		const choice = choiceRef.current
-		const choice2 = choiceRef2.current
-		if (choice) {
-			setWidth(choice.offsetWidth)
-			setHeight(choice.offsetHeight)
-		}
-		if (choice2) {
-			setWidth2(choice2.offsetWidth)
-			setHeight2(choice2.offsetHeight)
-		}
-		
+        const choice = choiceRef.current
+        const choice2 = choiceRef2.current
+        if (choice) {
+            setWidth(choice.offsetWidth)
+            setHeight(choice.offsetHeight)
+        }
+        if (choice2) {
+            setWidth2(choice2.offsetWidth)
+            setHeight2(choice2.offsetHeight)
+        }
     }, [choiceRef.current != null, choiceRef2.current != null])
 
     const shouldFetchMovies = () => {
@@ -85,11 +84,7 @@ const MoviesPage = () => {
 
     const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
         try {
-            const params: any = {
-                offset: offset,
-                limit: limit,
-                downloaded,
-            }
+            const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
             if (genre) params['genre'] = genre
             if (yearRange) params['year'] = yearRange
@@ -145,7 +140,7 @@ const MoviesPage = () => {
         <UserNotSignedIn />
     ) : (
         <div className="min-h-screen bg-black">
-			<MainLayout/>
+            <MainLayout />
             <div className="flex flex-col w-full justify-center items-center">
                 <div className="sm:hidden mr-4 mt-4">
                     <label>
@@ -232,6 +227,7 @@ const MoviesPage = () => {
                             { value: 'Action', label: t('index.genre.action') },
                             { value: 'Adventure', label: t('index.genre.adventure') },
                             { value: 'Animation', label: t('index.genre.animation') },
+                            { value: 'Biography', label: t('index.genre.biography') },
                             { value: 'Comedy', label: t('index.genre.comedy') },
                             { value: 'Crime', label: t('index.genre.crime') },
                             { value: 'Documentary', label: t('index.genre.documentary') },
@@ -318,7 +314,7 @@ const MoviesPage = () => {
     )
 }
 
-export async function getStaticProps({ locale }: {locale: any}) {
+export async function getStaticProps({ locale }: { locale: any }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),
