@@ -1,6 +1,5 @@
 import { convertSrtSubtitle } from '../controllers/movies'
 import { CustomError } from '../types_backend/movies'
-import { movieViewed } from './bdd-movie'
 import { extractStr } from './get-movies'
 import { Request } from 'express'
 
