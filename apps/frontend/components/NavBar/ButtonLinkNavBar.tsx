@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-type PropButtonLinkBar = {
+interface PropButtonLinkBar {
     text: string
     page: string
     selected: boolean
@@ -16,7 +16,7 @@ function ButtonLinkNavBar({
     currLink = null,
     setCurrLink,
 }: PropButtonLinkBar) {
-    let styleInit: string = `text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium ${
+    let styleInit = `text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium ${
         block && 'block'
     }`
     const [style, setStyle] = useState<string>(styleInit)
@@ -34,10 +34,11 @@ function ButtonLinkNavBar({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currLink])
 
-    function handleChangePage(page: string) {
-        // console.log(page)
-        setCurrLink(page)
+    function handleChangePage(pageLink: string) {
+        // console.log(pageLink)
+        setCurrLink(pageLink)
     }
+
     return (
         <Link href={page}>
             <p className={style} aria-current="page" onClick={() => handleChangePage(page)}>

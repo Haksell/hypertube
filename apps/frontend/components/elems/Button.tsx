@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Prop = {
+interface Prop {
     disabled?: boolean
     text: string
     stylePerso?: string

@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useState, ChangeEvent } from 'react'
 import PhotoUploader from './PhotoUpload'
 
-type Prop = {
+interface Prop {
     picture: string //picture to show
     setPicture: any
     setError: any
@@ -11,9 +11,9 @@ type Prop = {
 function ShowImg({ picture, setPicture, setError }: Prop) {
 	const [imageUpdate, setImageUpdate] = useState<string | null>(null);
 
-    let link: string = './norminet.jpeg'
+    let link = './norminet.jpeg'
     if (picture) link = `http://localhost:5001/users/image/${picture}`
-    const altImage: string = `image description ${picture}`
+    const altImage = `image description ${picture}`
     async function deletePictureBackend() {
         try {
             const response = await axios.delete(`http://localhost:5001/users/image/${picture}`, {
@@ -38,7 +38,9 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
             };
             reader.readAsDataURL(selectedImage);
         }
-		if (imageUpdate) {} //useless but for error management purpose
+		if (imageUpdate) {
+            // console.log()
+        } //useless but for error management purpose
 
         if (selectedImage) {
             let formData = new FormData();
@@ -62,7 +64,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
 
     function handleOnDeleteImg(event: any) {
         event.preventDefault()
-        deletePictureBackend()
+        void deletePictureBackend()
     }
     return (
         <div className="relative w-40 flex items-center justify-center">
@@ -85,7 +87,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
                 	/>
                 </label>
 
-				<PhotoUploader picture={picture} setPicture={setPicture} setError={setError} />
+				<PhotoUploader setPicture={setPicture} setError={setError} />
 				{picture && (
                     <label className="block text-sm font-semibold py-1 text-gray-900 dark:text-gray absolute bottom-0 left-0 w-full text-center bg-white bg-opacity-60 cursor-pointer">
                         Delete

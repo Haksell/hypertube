@@ -5,7 +5,7 @@ import TitleSmall from './TitleSmall'
 import React from 'react'
 import { useTranslation } from 'next-i18next'
 
-type Prop = {
+interface Prop {
     title: string
     textBody: string
 }

@@ -26,7 +26,7 @@ function SettingsPage() {
     const [mainPicture, setMainPicture] = useState<string>('')
 
     useEffect(() => {
-        getUserInfo()
+        void getUserInfo()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -82,7 +82,7 @@ function SettingsPage() {
 
     function handleSaveSettings(event: any) {
         event.preventDefault()
-        saveUserInfo()
+        void saveUserInfo()
     }
 
     return !user ? (

@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Prop = {
+interface Prop {
     title: string
     onBlur: any
     styleError?: boolean

@@ -44,7 +44,7 @@ function SignUpPage() {
     }
 
     useEffect(() => {
-        if (styleError === false) return
+        if (!styleError) return
         if (error === '') setFalseAll()
         else {
             setFalseAll()
@@ -79,7 +79,7 @@ function SignUpPage() {
 
     function handleSignUp(event: any) {
         event.preventDefault()
-        signUpBackend()
+        void signUpBackend()
     }
 
     async function signUpBackend() {
@@ -110,71 +110,77 @@ function SignUpPage() {
         }
     }
 
-    return user ? (
-        <UserAlreadySignedIn />
-    ) : created ? (
-        <ConfirmUserCreation />
-    ) : (
-        <MainLayout>
-            <TitleSmall text={t('signup.member')} space="1" />
+    let content
 
-            <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-2" action="#" onSubmit={handleSignUp}>
-                    <ShowErrorMessage error={error} message={t('signup.signUpError')} />
-                    <ErrorField
-                        name="username"
-                        title={t('username')}
-                        onBlur={handleOnChangeUsername}
-                        styleError={styleErrorUsername}
-                        setStyleError={setStyleErrorUsername}
-                        init={username}
-                    />
-                    <ErrorField
-                        name="email"
-                        title={t('email')}
-                        onBlur={handleOnChangeEmail}
-                        styleError={styleErrorEmail}
-                        setStyleError={setStyleErrorEmail}
-                        init={email}
-                    />
-                    <ErrorField
-                        name="password"
-                        title={t('password')}
-                        onBlur={handleOnChangePassword}
-                        styleError={styleErrorPwd}
-                        setStyleError={setStyleErrorPwd}
-                        init={password}
-                    />
-                    <ErrorField
-                        name="firstname"
-                        title={t('firstname')}
-                        onBlur={handleOnChangeFirstname}
-                        styleError={styleErrorFirstname}
-                        setStyleError={setStyleErrorFirstname}
-                        init={firstname}
-                    />
-                    <ErrorField
-                        name="lastname"
-                        title={t('lastname')}
-                        onBlur={handleOnChangeLastname}
-                        styleError={styleErrorLastname}
-                        setStyleError={setStyleErrorLastname}
-                        init={lastname}
-                    />
+    if (user) {
+        content = <UserAlreadySignedIn />
+    } else if (created) {
+        content = <ConfirmUserCreation />
+    } else {
+        content = (
+            <MainLayout>
+                <TitleSmall text={t('signup.member')} space="1" />
 
-                    <div className="pt-5">
-                        <Button
-                            text={t('signUp')}
-                            type="submit"
-                            stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <form className="space-y-2" action="#" onSubmit={handleSignUp}>
+                        <ShowErrorMessage error={error} message={t('signup.signUpError')} />
+                        <ErrorField
+                            name="username"
+                            title={t('username')}
+                            onBlur={handleOnChangeUsername}
+                            styleError={styleErrorUsername}
+                            setStyleError={setStyleErrorUsername}
+                            init={username}
                         />
-                    </div>
-                </form>
+                        <ErrorField
+                            name="email"
+                            title={t('email')}
+                            onBlur={handleOnChangeEmail}
+                            styleError={styleErrorEmail}
+                            setStyleError={setStyleErrorEmail}
+                            init={email}
+                        />
+                        <ErrorField
+                            name="password"
+                            title={t('password')}
+                            onBlur={handleOnChangePassword}
+                            styleError={styleErrorPwd}
+                            setStyleError={setStyleErrorPwd}
+                            init={password}
+                        />
+                        <ErrorField
+                            name="firstname"
+                            title={t('firstname')}
+                            onBlur={handleOnChangeFirstname}
+                            styleError={styleErrorFirstname}
+                            setStyleError={setStyleErrorFirstname}
+                            init={firstname}
+                        />
+                        <ErrorField
+                            name="lastname"
+                            title={t('lastname')}
+                            onBlur={handleOnChangeLastname}
+                            styleError={styleErrorLastname}
+                            setStyleError={setStyleErrorLastname}
+                            init={lastname}
+                        />
 
-                <LinkText firstText={t('signup.AAM')} linkText={t('signIn')} link="/signin" />
-            </div>
-        </MainLayout>
-    )
+                        <div className="pt-5">
+                            <Button
+                                text={t('signUp')}
+                                type="submit"
+                                stylePerso="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            />
+                        </div>
+                    </form>
+
+                    <LinkText firstText={t('signup.AAM')} linkText={t('signIn')} link="/signin" />
+                </div>
+            </MainLayout>
+        )
+    }
+
+    return content
 }
 
 export async function getStaticProps({ locale }: {locale: string}) {
