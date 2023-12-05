@@ -152,10 +152,7 @@ const MoviesPage = () => {
                         />
                         <div
                             className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
-                            style={{
-                                width: width2 + 'px',
-                                height: height2 + 'px',
-                            }}
+                            style={{ width: width2, height: height2 }}
                         >
                             <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
                                 {type === 'movie' ? t('index.movies') : t('index.tv')}
