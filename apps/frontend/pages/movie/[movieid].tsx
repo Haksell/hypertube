@@ -28,7 +28,7 @@ function MoviePage() {
     const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
-    const { t } = useTranslation('common')
+	const { t } = useTranslation('common')
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
 
