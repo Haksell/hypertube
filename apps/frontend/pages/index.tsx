@@ -79,8 +79,9 @@ const MoviesPage = () => {
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
-    const [sortBy, setSortBy] = useState(DEFAULT_SORT_BY)
-    const [type, setType] = useState('movie')
+    const [language] = useState('')
+    const [sortBy, setSortBy] = useState('')
+    const [type] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
@@ -104,7 +105,7 @@ const MoviesPage = () => {
         )
     }
 
-    const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
+    const fetchMovies = async (offset: number = fetchCount) => {
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
@@ -142,9 +143,7 @@ const MoviesPage = () => {
 
     const handleSwitch = () => {
         setTimeout(() => {
-            const newType = type === 'movie' ? 'tvShow' : 'movie'
-            setType(newType)
-            fetchMovies(0, newType)
+            fetchMovies(0)
         }, 30)
     }
 

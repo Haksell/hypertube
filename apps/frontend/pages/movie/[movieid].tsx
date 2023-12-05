@@ -5,7 +5,7 @@ import VideoPlayer from '../../components/video/VideoPlayer'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
-import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
+import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
 import axios from 'axios'
@@ -23,31 +23,32 @@ function MoviePage() {
     const [liked, setLiked] = useState<boolean>(false)
     const [colorHeart, setColorHeart] = useState<string>('white')
     const router = useRouter()
-    const { idMovie } = router.query
+    const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (idMovie) getMovie()
-    }, [idMovie])
+        if (movieid) getMovie()
+    }, [movieid])
 
     const canPostComment = (): boolean =>
         1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/${movieid}`, {
                 withCredentials: true,
             })
             setMovieDetails(response.data)
             if (response.data.liked) {
+                liked;
                 setLiked(response.data.liked)
                 setColorHeart('orange-50')
             }
 
             const responseComments = await axios.get(
-                `http://localhost:5001/movies/${idMovie}/comments`,
+                `http://localhost:5001/movies/${movieid}/comments`,
                 {
                     withCredentials: true,
                 },
@@ -63,8 +64,13 @@ function MoviePage() {
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
-                    { comment, imdbCode: idMovie },
-                    { withCredentials: true },
+                    {
+                        comment: comment,
+                        imdbCode: movieid,
+                    },
+                    {
+                        withCredentials: true,
+                    },
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
             } catch (error: any) {
@@ -85,33 +91,31 @@ function MoviePage() {
         }
     }
 
-    async function handleEditComment(id: number, content: string) {
-        try {
-            const response = await axios.patch(
-                `http://localhost:5001/comments/${id}`,
-                {
-                    comment: content,
-                },
-                {
-                    withCredentials: true,
-                },
-            )
-            setComments((prevComments) =>
-                prevComments.map((comment) => {
-                    if (comment.id === id) {
-                        comment.content = content
-                    }
-                    return comment
-                }),
-            )
-        } catch (error: any) {
-            console.log(error)
+	async function handleEditComment(id: number, content: string) {
+		try {
+			await axios.patch(
+				`http://localhost:5001/comments/${id}`,
+				{
+					comment: content,
+				},
+				{
+					withCredentials: true,
+				},
+			)
+			setComments((prevComments) => prevComments.map((comment) => {
+				if (comment.id === id) {
+					comment.content = content
+				}
+				return comment
+			}))
+        } catch {
+            // console.log()
         }
     }
 
     async function likeMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/like/${String(movieid)}`, {
                 withCredentials: true,
             })
             if (response.data === 'Movie liked') {

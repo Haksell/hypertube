@@ -15,16 +15,12 @@ import { MovieDTO } from '../../src/shared/movies';
 function ProfilePage() {
     const { user } = useUserContext();
 	const router = useRouter()
-    const { profileID } = router.query
-	const id: string = typeof profileID === 'string' ? profileID : ''
+    const { profileid } = router.query
+	const id: string = typeof profileid === 'string' ? profileid : ''
 	const [userProfile, setUserProfile] = useState<TUserProfile | null>(null);
 	const [idUser, setIdUser] = useState<number>(-1)
 	const { t } = useTranslation('common')
 	const [currLink, setCurrLink] = useState<string>('no')
-	const [mainPicture] = useState<string>('');
-
-    let link: string = '/norminet.jpeg'
-    if (mainPicture) link = `http://localhost:5001/users/image/${String(mainPicture)}`
 
 	useEffect(() => {
 		setId();
@@ -91,27 +87,6 @@ function ProfilePage() {
 		}
 	}
 
-	const ButtonLinkNavBar: React.FC<{
-		text: string
-		page: string
-		currLink: string
-		setCurrLink: React.Dispatch<React.SetStateAction<string>>
-	}> = ({ text, page, currLink, setCurrLink }) => (
-		<Link href={page}>
-			<p
-				className={`${
-					page.match(currLink)
-						? 'bg-zinc-900 text-white'
-						: 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
-				} rounded-md px-3 py-2 text-sm font-medium`}
-				aria-current="page"
-				onClick={() => setCurrLink(page)}
-			>
-				{text}
-			</p>
-		</Link>
-	)
-
 	const removeItem = (index: number, id: number) => {
 		if (userProfile) {
 			const newData = { ...userProfile };
@@ -122,12 +97,13 @@ function ProfilePage() {
 		}
 	};
 	
-
-    const ImageList: React.FC<{
-		title: string
-		items: any
-		button: boolean
-	}> = ({ title, items, button }) => (
+	interface ImageListProps {
+		title: string;
+		items: any[];
+		button: boolean;
+	  }
+	  
+	const ImageList: React.FC<ImageListProps> = ({ title, items, button }) => (
         <div className='relative flex flex-none mr-5 mt-10'>
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
                 <p className='text-xl font-bold text-orange-50 sm:text-2xl whitespace-nowrap'>{title}</p>

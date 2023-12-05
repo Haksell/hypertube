@@ -12,7 +12,6 @@ type PropButtonLinkBar = {
 function ButtonLinkNavBar({
     text,
     page,
-    selected,
     block,
     currLink = null,
     setCurrLink,

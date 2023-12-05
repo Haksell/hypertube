@@ -6,7 +6,7 @@ type Prop = {
     setShow: any
 }
 function ShowAlert({ textAlert, show, setShow }: Prop) {
-    function handleOnClick(event: any) {
+    function handleOnClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault()
         setShow(false)
     }
