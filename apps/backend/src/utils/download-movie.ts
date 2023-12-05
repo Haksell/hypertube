@@ -2,6 +2,7 @@ import axios from "axios";
 import { CustomError } from "../types_backend/movies";
 import { Movies, PrismaClient } from "@prisma/client";
 import { getMovieByIMDB } from "./bdd-movie";
+import { getSubtitles } from "./subtitles";
 
 const prisma = new PrismaClient()
 
@@ -18,7 +19,23 @@ export async function downloadMovie(imdb_code: string) {
 	let torrent = selectTorrent(torrents)
 
 	//download movie
-	await downloadTorrent(torrent, movie.id)
+	await downloadTorrent(torrent, movie.id, imdb_code)
+
+	//download subtitles
+}
+
+async function downloadSubtitle(imdb_code: string) {
+	try {
+        var movie = await getMovieByIMDB(imdb_code)
+		console.log('start looking for subtitles, path=' + movie.folder)
+		// console.log(movie)
+
+        if (movie && movie.folder) await getSubtitles(movie.title, imdb_code, movie.folder)
+		console.log('end looking for subtitles')
+    } catch (error) {
+        // if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+        // else res.status(400).send('Sub not found')
+    }
 }
 
 async function getTorrentInfo(imdb_code: string) {
@@ -66,7 +83,7 @@ function selectTorrent(torrents: any) {
 	return hash
 }
 
-export async function downloadTorrent(hash: string, movieID: number) {
+export async function downloadTorrent(hash: string, movieID: number, imdb_code: string) {
 	var torrentStream = require('torrent-stream');
 
 	console.log('hash selected=' + hash)
@@ -100,9 +117,13 @@ export async function downloadTorrent(hash: string, movieID: number) {
 					},
 					data: {
 						file: `${file.name}`,
-						folder: folderPath
+						folder: folderPath,
+						dateDownload: new Date(),
 					}
 				})
+
+				//look for subtitles
+				await downloadSubtitle(imdb_code)
 			}
 			
 			// stream is readable stream to containing the file content
