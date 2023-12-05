@@ -19,9 +19,12 @@ export async function downloadMovie(imdb_code: string) {
 	let torrent = selectTorrent(torrents)
 
 	//download movie
-	await downloadTorrent(torrent, movie.id)
+	await downloadTorrent(torrent, movie.id, imdb_code)
 
 	//download subtitles
+}
+
+async function downloadSubtitle(imdb_code: string) {
 	try {
         var movie = await getMovieByIMDB(imdb_code)
 		console.log('start looking for subtitles, path=' + movie.folder)
@@ -80,7 +83,7 @@ function selectTorrent(torrents: any) {
 	return hash
 }
 
-export async function downloadTorrent(hash: string, movieID: number) {
+export async function downloadTorrent(hash: string, movieID: number, imdb_code: string) {
 	var torrentStream = require('torrent-stream');
 
 	console.log('hash selected=' + hash)
@@ -99,7 +102,7 @@ export async function downloadTorrent(hash: string, movieID: number) {
 		]
 	});
 
-	await engine.on('ready', function() {
+	engine.on('ready', function() {
 		engine.files.forEach(async function(file: any) {
 			console.log('filename:', file.name);
 			console.log('full path:', `${engine.path} =/= ${file.path}`);
@@ -118,6 +121,9 @@ export async function downloadTorrent(hash: string, movieID: number) {
 						dateDownload: new Date(),
 					}
 				})
+
+				//look for subtitles
+				await downloadSubtitle(imdb_code)
 			}
 			
 			// stream is readable stream to containing the file content
