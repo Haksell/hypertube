@@ -20,6 +20,50 @@ type FilterProps = {
     options: { value: string; label: string }[]
 }
 
+const MoviesSeriesSwitch: React.FC<{ handleSwitch: () => void; type: string }> = ({
+    handleSwitch,
+    type,
+}) => {
+    const { t } = useTranslation('common')
+    const choiceRef = useRef<HTMLDivElement>(null)
+    const [width, setWidth] = useState(0)
+    const [height, setHeight] = useState(0)
+
+    useEffect(() => {
+        const choice = choiceRef.current
+        if (choice) {
+            setWidth(choice.offsetWidth)
+            setHeight(choice.offsetHeight)
+        }
+    }, [choiceRef.current != null])
+
+    return (
+        <label>
+            <input
+                type="checkbox"
+                onChange={handleSwitch}
+                checked={type === 'tvShow'}
+                className="peer sr-only"
+            />
+            <div
+                className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
+                style={{ width, height }}
+            >
+                <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
+                    {type === 'movie' ? t('index.movies') : t('index.tv')}
+                </div>
+            </div>
+            <div
+                ref={choiceRef}
+                className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
+            >
+                <span className="z-30">{t('index.movies')}</span>
+                <span className="z-30">{t('index.tv')}</span>
+            </div>
+        </label>
+    )
+}
+
 const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => {
     return (
         <div className="relative w-52 mr-2">
@@ -55,26 +99,17 @@ const MoviesPage = () => {
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
-    const choiceRef = useRef<HTMLDivElement>(null)
     const choiceRef2 = useRef<HTMLDivElement>(null)
-
-    const [width, setWidth] = useState(0)
-    const [height, setHeight] = useState(0)
     const [width2, setWidth2] = useState(0)
     const [height2, setHeight2] = useState(0)
 
     useEffect(() => {
-        const choice = choiceRef.current
         const choice2 = choiceRef2.current
-        if (choice) {
-            setWidth(choice.offsetWidth)
-            setHeight(choice.offsetHeight)
-        }
         if (choice2) {
             setWidth2(choice2.offsetWidth)
             setHeight2(choice2.offsetHeight)
         }
-    }, [choiceRef.current != null, choiceRef2.current != null])
+    }, [choiceRef2.current != null])
 
     const shouldFetchMovies = () => {
         return (
@@ -134,58 +169,11 @@ const MoviesPage = () => {
             <MainLayout />
             <div className="flex flex-col w-full justify-center items-center">
                 <div className="sm:hidden mr-4 mt-4">
-                    <label>
-                        <input
-                            type="checkbox"
-                            onChange={handleSwitch}
-                            checked={type === 'tvShow'}
-                            className="peer sr-only"
-                        />
-                        <div
-                            className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
-                            style={{ width: width2, height: height2 }}
-                        >
-                            <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
-                                {type === 'movie' ? t('index.movies') : t('index.tv')}
-                            </div>
-                        </div>
-                        <div
-                            ref={choiceRef2}
-                            className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
-                        >
-                            <span className="z-30">{t('index.movies')}</span>
-                            <span className="z-30">{t('index.tv')}</span>
-                        </div>
-                    </label>
+                    <MoviesSeriesSwitch type={type} handleSwitch={handleSwitch} />
                 </div>
                 <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
                     <div className="mx-4 hidden sm:block">
-                        <label>
-                            <input
-                                type="checkbox"
-                                onChange={handleSwitch}
-                                checked={type === 'tvShow'}
-                                className="peer sr-only"
-                            />
-                            <div
-                                className="flex absolute items-center z-20 transition-all flex-row peer-checked:flex-row-reverse"
-                                style={{
-                                    width: width + 'px',
-                                    height: height + 'px',
-                                }}
-                            >
-                                <div className="font-bold py-1 px-3 mx-[8px] rounded-full bg-gradient-to-r from-orange-50 to-blue-50 transition-all text-transparent">
-                                    {type === 'movie' ? t('index.movies') : t('index.tv')}
-                                </div>
-                            </div>
-                            <div
-                                ref={choiceRef}
-                                className="z-10 py-2 flex items-center gap-6 rounded-full px-5 font-bold border-slate-600 bg-slate-700 text-white"
-                            >
-                                <span className="z-30">{t('index.movies')}</span>
-                                <span className="z-30">{t('index.tv')}</span>
-                            </div>
-                        </label>
+                        <MoviesSeriesSwitch type={type} handleSwitch={handleSwitch} />
                     </div>
                     <div className="grow relative">
                         <input
