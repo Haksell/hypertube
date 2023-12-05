@@ -28,6 +28,7 @@
     "logger": "workspace:*",
     "morgan": "^1.10.0",
     "multer": "1.4.5-lts.1",
+    "node-subscene-api": "^1.1.1",
     "nodemailer": "^6.9.7",
     "popcorn-api": "^1.1.1",
     "prisma": "^5.6.0",
