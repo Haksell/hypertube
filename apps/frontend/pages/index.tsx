@@ -3,6 +3,7 @@ import { MovieCard } from '../components/elems/MovieCard'
 import MainLayout from '../layouts/MainLayout'
 import { useUserContext } from '../src/context/UserContext'
 import { MovieDTO } from '../src/shared/movies'
+import { range } from '../src/utils'
 import axios from 'axios'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -226,7 +227,7 @@ const MoviesPage = () => {
                             { value: 'Music', label: t('index.genre.music') },
                             { value: 'Mystery', label: t('index.genre.mystery') },
                             { value: 'Romance', label: t('index.genre.romance') },
-                            { value: 'Science-Fiction', label: t('index.genre.science-fiction') },
+                            { value: 'Science-Fiction', label: t('index.genre.sci-fi') },
                             { value: 'Thriller', label: t('index.genre.thriller') },
                             { value: 'War', label: t('index.genre.war') },
                             { value: 'Western', label: t('index.genre.western') },
@@ -238,11 +239,10 @@ const MoviesPage = () => {
                         handleChange={setYearRange}
                         options={[
                             { value: '', label: '-' },
-                            { value: '2024', label: '2024' },
-                            { value: '2023', label: '2023' },
-                            { value: '2022', label: '2022' },
-                            { value: '2021', label: '2021' },
-                            { value: '2020', label: '2020' },
+                            ...range(2023, 1900).map((y) => ({
+                                value: y.toString(),
+                                label: y.toString(),
+                            })),
                         ]}
                     />
                     <Filter
