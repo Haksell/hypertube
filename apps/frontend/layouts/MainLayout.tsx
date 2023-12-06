@@ -17,7 +17,7 @@ const MainLayout: React.FC<{ children?: ReactNode; className?: string; className
             <div
                 className={
                     className2 ||
-                    'flex flex-grow overflow-auto min-h-full flex-col justify-center px-6 py-12 lg:px-8'
+                    'flex flex-grow overflow-auto min-h-full flex-col justify-center py-12'
                 }
             >
                 {children}
