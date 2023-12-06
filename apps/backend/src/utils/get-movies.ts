@@ -105,7 +105,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
                 year: elem.year,
                 length: elem.runtime,
                 imdbRating: elem.rating,
-                imdb_code: elem.imdb_code,
+                imdb_code: `tt${elem.imdb_id}`,
                 langage: '',
                 genre: [],
                 seeds: elem.seeds,
