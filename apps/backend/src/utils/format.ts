@@ -46,13 +46,29 @@ export const formatComment = (comment: CommentPrisma): CommentDTO => {
     }
 }
 
+const dedup = <T>(array: T[]): T[] => {
+    const seen = new Set<T>()
+    return array.filter((item) => {
+        if (seen.has(item)) {
+            return false
+        } else {
+            seen.add(item)
+            return true
+        }
+    })
+}
+
 export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO> => {
-    const viewedMovies = (
-        await Promise.all(profile.viewedMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)))
-    ).filter((m): m is MovieDetails => m !== null)
-    const favoriteMovies = (
-        await Promise.all(profile.favoriteMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)))
-    ).filter((m): m is MovieDetails => m !== null)
+    const viewedMovies = dedup(
+        (await Promise.all(profile.viewedMovies.map((m) => getInfoMovieTorrent(m.imdb_code))))
+            .filter((m): m is MovieDetails => m !== null)
+            .reverse(),
+    )
+    const favoriteMovies = dedup(
+        (
+            await Promise.all(profile.favoriteMovies.map((m) => getInfoMovieTorrent(m.imdb_code)))
+        ).filter((m): m is MovieDetails => m !== null),
+    )
 
     const formattedViewedMovies: MovieDTO[] = viewedMovies.map((mov) => {
         const formattedMovie: MovieDTO = {
