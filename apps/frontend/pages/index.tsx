@@ -143,7 +143,13 @@ const MoviesPage = () => {
     ) : (
         <div className="min-h-screen bg-black">
             <MainLayout>
-                <div className="flex flex-col w-full justify-center items-center">
+                <div
+                    className="flex flex-col w-full justify-center items-center outline-none"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') fetchMovies(0)
+                    }}
+                >
                     <div className="sm:hidden mr-4 mt-4">
                         <MoviesSeriesSwitch type={type} handleSwitch={handleSwitch} />
                     </div>
