@@ -62,20 +62,16 @@ export async function getMovies(req: Request, res: Response) {
 
 export async function getMovieInfo(req: Request, res: Response) {
     try {
-		const { source } = req.query
+        const { source } = req.query
         const movieId = getMovieId(req)
-		const sourceArg: string = extractStr(false, source, 'source', 'YTS')
+        const sourceArg: string = extractStr(false, source, 'source', 'YTS')
 
         const user: User = await getUserWithFavoritesAndViewed(req)
 
-		let movie: MovieDetails | null = null
-        
-		console.log('here we are: source='+sourceArg)
-		//get info from YTS or EZTv
-		if (sourceArg === 'EZTV')
-			movie = await getInfoMovieTorrentEZTV(movieId)
-		else
-        	movie = await getInfoMovieTorrent(movieId)
+        console.log('here we are: source=' + sourceArg)
+        const movie = await (sourceArg === 'EZTV'
+            ? getInfoMovieTorrentEZTV(movieId)
+            : getInfoMovieTorrent(movieId))
 
         //get info from TheMovieDB
         await addDetailsFromMovieDB(movie)
@@ -100,7 +96,7 @@ export async function getMovieInfo(req: Request, res: Response) {
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Error')
-	console.log(error)
+        console.log(error)
     }
 }
 
