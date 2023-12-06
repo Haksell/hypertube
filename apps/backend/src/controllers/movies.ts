@@ -73,6 +73,10 @@ export async function getMovieInfo(req: Request, res: Response) {
             ? getInfoMovieTorrentEZTV(movieId)
             : getInfoMovieTorrent(movieId))
 
+        if (movie === null) {
+            throw new CustomError('Movie not found')
+        }
+
         //get info from TheMovieDB
         await addDetailsFromMovieDB(movie)
 

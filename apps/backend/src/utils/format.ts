@@ -1,6 +1,7 @@
 import { CommentDTO, CommentPrisma } from '../shared/comment'
 import { MovieDTO } from '../shared/movies'
 import { TUserContext, ProfileDTO, TUserProfile, ProfilePrisma } from '../shared/user'
+import { MovieDetails } from '../types_backend/movies'
 import { getInfoMovieTorrent } from './info-movie'
 import { PrismaClient } from '@prisma/client'
 
@@ -46,12 +47,12 @@ export const formatComment = (comment: CommentPrisma): CommentDTO => {
 }
 
 export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO> => {
-    const viewedMovies = await Promise.all(
-        profile.viewedMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)),
-    )
-    const favoriteMovies = await Promise.all(
-        profile.favoriteMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)),
-    )
+    const viewedMovies = (
+        await Promise.all(profile.viewedMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)))
+    ).filter((m): m is MovieDetails => m !== null)
+    const favoriteMovies = (
+        await Promise.all(profile.favoriteMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)))
+    ).filter((m): m is MovieDetails => m !== null)
 
     const formattedViewedMovies: MovieDTO[] = viewedMovies.map((mov) => {
         const formattedMovie: MovieDTO = {
