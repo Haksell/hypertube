@@ -16,7 +16,7 @@ export interface TUserProfile {
     username: string
     firstName: string
     lastName: string
-    picture: string
+    profilePicture: string
     moviesLiked: []
     moviesViewed: []
 }
