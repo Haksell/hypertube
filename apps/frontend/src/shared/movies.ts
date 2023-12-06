@@ -1,4 +1,4 @@
-export type MovieDetails = {
+export interface MovieDetails {
     imdb_code: string
     title: string
     year: number
@@ -15,19 +15,19 @@ export type MovieDetails = {
     budget?: number
 }
 
-export type MovieImage = {
+export interface MovieImage {
     background?: string
     poster: string
 }
 
-export type MovieCrew = {
+export interface MovieCrew {
     department?: string
     job?: string
     name: string
     image?: string
 }
 
-export type MovieActor = {
+export interface MovieActor {
     known_for_department?: string
     name: string
     character: string

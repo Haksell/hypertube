@@ -1,4 +1,4 @@
-type Prop = {
+interface Prop {
     error: string
     message: string
 }

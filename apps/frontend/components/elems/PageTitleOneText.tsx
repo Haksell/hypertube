@@ -1,11 +1,11 @@
 import MainLayout from '../../layouts/MainLayout'
-import LinkText from '../elems/LinkText'
-import TextPage from '../elems/TextPage'
-import TitleSmall from '../elems/TitleSmall'
+import LinkText from './LinkText'
+import TextPage from './TextPage'
+import TitleSmall from './TitleSmall'
 import { useTranslation } from 'next-i18next'
 import React from 'react'
 
-type Prop = {
+interface Prop {
     title: string
     textBody: string
 }

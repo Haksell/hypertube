@@ -3,11 +3,7 @@ import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import React from 'react'
 
-type Prop = {
-    type?: string
-}
-
-function UserAlreadySignedIn({ type }: Prop) {
+function UserAlreadySignedIn() {
     const { t } = useTranslation('common')
     return (
         <MainLayout>

@@ -1,3 +1,4 @@
+import Custom404 from '../404'
 import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
@@ -5,15 +6,16 @@ import VideoPlayer from '../../components/video/VideoPlayer'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import { CommentDTO } from '../../src/shared/comment'
-import { MovieCrew, MovieActor, MovieImage } from '../../src/shared/movies'
+import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
-import { formatDuration } from '../../src/utilsTime'
+import { formatDuration } from '../../src/utils'
+import Loading from '../loading'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -21,40 +23,39 @@ function MoviePage() {
     const { user } = useUserContext()
     const [movie, setMovieDetails] = useState<MovieDetails | null>(null)
     const [liked, setLiked] = useState<boolean>(false)
-    const [colorHeart, setColorHeart] = useState<string>('white')
     const router = useRouter()
-    const { idMovie } = router.query
+    const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
     const { t } = useTranslation('common')
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
-        if (idMovie) getMovie()
-    }, [idMovie])
+        if (movieid) getMovie()
+    }, [movieid])
 
     const canPostComment = (): boolean =>
         1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/${String(movieid)}`, {
                 withCredentials: true,
             })
             setMovieDetails(response.data)
-            if (response.data.liked) {
-                setLiked(response.data.liked)
-                setColorHeart('orange-50')
-            }
+            if (response.data.liked) setLiked(response.data.liked)
 
             const responseComments = await axios.get(
-                `http://localhost:5001/movies/${idMovie}/comments`,
-                {
-                    withCredentials: true,
-                },
+                `http://localhost:5001/movies/${String(movieid)}/comments`,
+                { withCredentials: true },
             )
             setComments(responseComments.data)
         } catch {
             setMovieDetails(null)
+            setError(true)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -63,12 +64,17 @@ function MoviePage() {
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
-                    { comment, imdbCode: idMovie },
-                    { withCredentials: true },
+                    {
+                        comment: comment,
+                        imdbCode: movieid,
+                    },
+                    {
+                        withCredentials: true,
+                    },
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
-            } catch (error: any) {
-                console.log(error.response.data)
+            } catch (errorMsg: any) {
+                // console.log(errorMsg.response.data)
             }
             setComment('')
         }
@@ -79,15 +85,15 @@ function MoviePage() {
             await axios.delete(`http://localhost:5001/comments/${id}`, {
                 withCredentials: true,
             })
-            setComments((prevComments) => prevComments.filter((comment) => comment.id !== id))
-        } catch (error: any) {
-            console.log(error)
+            setComments((prevComments) => prevComments.filter((el) => el.id !== id))
+        } catch (errorMsg: any) {
+            // console.log(errorMsg)
         }
     }
 
     async function handleEditComment(id: number, content: string) {
         try {
-            const response = await axios.patch(
+            await axios.patch(
                 `http://localhost:5001/comments/${id}`,
                 {
                     comment: content,
@@ -97,30 +103,24 @@ function MoviePage() {
                 },
             )
             setComments((prevComments) =>
-                prevComments.map((comment) => {
-                    if (comment.id === id) {
-                        comment.content = content
+                prevComments.map((el) => {
+                    if (el.id === id) {
+                        el.content = content
                     }
-                    return comment
+                    return el
                 }),
             )
-        } catch (error: any) {
-            console.log(error)
+        } catch {
+            // console.log()
         }
     }
 
     async function likeMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/like/${String(movieid)}`, {
                 withCredentials: true,
             })
-            if (response.data === 'Movie liked') {
-                setLiked(true)
-                setColorHeart('orange-50')
-            } else {
-                setLiked(false)
-                setColorHeart('white')
-            }
+            setLiked(response.data === 'Movie liked')
         } catch {
             // setMovieDetails(null)
         }
@@ -138,7 +138,6 @@ function MoviePage() {
     }
 
     const [isModalVisible, setModalVisible] = useState(false)
-    const modalRef = useRef()
 
     const handleToggleModal = () => {
         setModalVisible(!isModalVisible)
@@ -187,12 +186,16 @@ function MoviePage() {
         </div>
     )
 
-    return !user ? (
-        <UserNotSignedIn />
-    ) : !movie ? (
-        <p>PAS DE FILM</p> /* Faudra changer :D */
-    ) : (
-        <>
+    let content
+
+    if (!user) {
+        content = <UserNotSignedIn />
+    } else if (loading) {
+        content = <Loading />
+    } else if (error || !movie) {
+        content = <Custom404 />
+    } else {
+        content = (
             <div>
                 <MainLayout className2="" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
@@ -251,7 +254,9 @@ function MoviePage() {
                             </button>
                             <button className="mr-[10%]" onClick={handleLike}>
                                 <svg
-                                    className={`w-6 h-6 text-${colorHeart} hover:text-orange-50 hover:duration-300 ease-in`}
+                                    className={`w-6 h-6 text-${
+                                        liked ? 'orange-50' : 'white'
+                                    } hover:text-orange-50 hover:duration-300 ease-in`}
                                     viewBox="2 2 27 28"
                                 >
                                     <path
@@ -378,14 +383,20 @@ function MoviePage() {
                             <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                         </div>
                         <div className="mb-6">
-                            <div className="py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700">
+                            <div
+                                className={`py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700 ${
+                                    canPostComment()
+                                        ? 'focus-within:border-blue-700'
+                                        : 'focus-within:border-red-700'
+                                }`}
+                            >
                                 <label htmlFor="comment" className="sr-only">
                                     {t('movie.yourComment')}
                                 </label>
                                 <textarea
                                     id="comment"
-                                    rows={6}
-                                    className="relative px-0 w-full text-sm border-0 focus:ring-0 text-white placeholder-gray-400 bg-gray-800 resize-none"
+                                    rows={5}
+                                    className="relative px-0 w-full text-sm border-0 text-white placeholder-gray-400 bg-gray-800 resize-none outline-none"
                                     placeholder={t('movie.writeComment')}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
@@ -419,10 +430,11 @@ function MoviePage() {
                                 updatedAt={com.updatedAt}
                                 username={com.username}
                                 profilePicture={com.profilePicture}
+                                userId={com.userId}
                                 additionalClasses={index !== 0 ? 'border-t' : ''}
                                 handleDelete={() => handleDeleteComment(com.id)}
-                                handleEdit={(content) => handleEditComment(com.id, content)}
-                                mine={com.userId == user.id}
+                                handleEdit={(contents) => handleEditComment(com.id, contents)}
+                                mine={com.userId === user.id}
                             />
                         ))}
                     </div>
@@ -446,8 +458,10 @@ function MoviePage() {
                 )} */}
                 </div>
             </div>
-        </>
-    )
+        )
+    }
+
+    return content
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({

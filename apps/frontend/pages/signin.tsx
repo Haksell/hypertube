@@ -30,7 +30,7 @@ function SignInPage() {
     }, [user])
 
     useEffect(() => {
-        if (styleError === false) return
+        if (!styleError) return
         if (error === '' || error === ErMsg('EmailNotVerified', t)) {
             setStyleErrorUsername(false)
             setStyleErrorPwd(false)
@@ -54,7 +54,7 @@ function SignInPage() {
 
     function handleSignIn(event: any) {
         event.preventDefault()
-        signInBackend()
+        void signInBackend()
     }
 
     async function signInBackend() {
@@ -71,19 +71,19 @@ function SignInPage() {
             )
             // console.log(response.data)
             if (response.data) {
-                console.log('you are signed in!')
-                console.log(response.data)
+                // console.log('you are signed in!')
+                // console.log(response.data)
                 loginUser(response.data)
-                console.log('done')
+                // console.log('done')
                 setError('')
                 setStyleError(false)
-                router.push('/')
+                void router.push('/')
             }
             return response.data
-        } catch (error: any) {
-            console.log(error)
+        } catch (err: any) {
+            // console.log(error)
             setStyleError(true)
-            if (error && error.response && error.response.data) setError(error.response.data)
+            if (error && err.response && err.response.data) setError(err.response.data)
             loginUser(null)
         }
     }
@@ -214,7 +214,7 @@ function SignInPage() {
     )
 }
 
-export async function getStaticProps({ locale }: { locale: any }) {
+export async function getStaticProps({ locale }: { locale: string }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

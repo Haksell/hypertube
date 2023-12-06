@@ -2,6 +2,7 @@ import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import PageTitleOneText from '../../components/elems/PageTitleOneText'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
+import { MovieDTO } from '../../src/shared/movies'
 import { TUserProfile } from '../../src/shared/user'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
@@ -14,17 +15,12 @@ import React, { useEffect, useState } from 'react'
 function ProfilePage() {
     const { user } = useUserContext()
     const router = useRouter()
-    const { profileID } = router.query
-    const id: string = typeof profileID === 'string' ? profileID : ''
+    const { profileid } = router.query
+    const id: string = typeof profileid === 'string' ? profileid : ''
     const [userProfile, setUserProfile] = useState<TUserProfile | null>(null)
     const [idUser, setIdUser] = useState<number>(-1)
     const { t } = useTranslation('common')
     const [currLink, setCurrLink] = useState<string>('no')
-    const [mainPicture, setMainPicture] = useState<string>('')
-    const [liked, setLiked] = useState<boolean>(false)
-
-    let link: string = '/norminet.jpeg'
-    if (mainPicture) link = `http://localhost:5001/users/image/${mainPicture}`
 
     useEffect(() => {
         setId()
@@ -42,7 +38,7 @@ function ProfilePage() {
     }, [id])
 
     useEffect(() => {
-        getUserInfo()
+        void getUserInfo()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [idUser])
 
@@ -53,7 +49,7 @@ function ProfilePage() {
 
     async function likeMovie(movieId: any) {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
+            await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
                 withCredentials: true,
             })
         } catch {
@@ -62,7 +58,7 @@ function ProfilePage() {
     }
 
     function handleLike(movieId: any) {
-        likeMovie(movieId)
+        void likeMovie(movieId)
     }
 
     function setId() {
@@ -83,44 +79,28 @@ function ProfilePage() {
                 withCredentials: true,
             })
             setUserProfile(response.data)
-            console.log(response.data.moviesLiked[0])
         } catch (error: any) {
             setUserProfile(null)
         }
     }
 
-    const ButtonLinkNavBar: React.FC<{
-        text: string
-        page: string
-        currLink: string
-        setCurrLink: React.Dispatch<React.SetStateAction<string>>
-    }> = ({ text, page, currLink, setCurrLink }) => (
-        <Link href={page}>
-            <p
-                className={`${
-                    page.match(currLink)
-                        ? 'bg-zinc-900 text-white'
-                        : 'text-zinc-300 hover:bg-zinc-700 hover:text-white'
-                } rounded-md px-3 py-2 text-sm font-medium`}
-                aria-current="page"
-                onClick={() => setCurrLink(page)}
-            >
-                {text}
-            </p>
-        </Link>
-    )
-
-    const removeItem = (index: number, id: number) => {
+    const removeItem = (index: number, itemId: number) => {
         if (userProfile) {
             const newData = { ...userProfile }
             newData.moviesLiked = [...userProfile.moviesLiked]
             newData.moviesLiked.splice(index, 1)
             setUserProfile(newData)
-            handleLike(id)
+            handleLike(itemId)
         }
     }
 
-    const ImageList = ({ title, items, button }) => (
+    interface ImageListProps {
+        title: string
+        items: any[]
+        button: boolean
+    }
+
+    const ImageList: React.FC<ImageListProps> = ({ title, items, button }) => (
         <div className="relative flex flex-none mr-5 mt-10">
             <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
                 <p className="text-xl font-bold text-orange-50 sm:text-2xl whitespace-nowrap">
@@ -179,7 +159,7 @@ function ProfilePage() {
                         }}
                     />
                 </div>
-                <div className="flex flex-col items-center relative overflow-hidden m-5 py-5 sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
+                <div className="flex flex-col sm:h-24 items-center relative overflow-hidden m-5 py-5 justify-center sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
                     <img
                         src={user.picture || './norminet.jpeg'}
                         alt="Profile Picture"
@@ -188,14 +168,9 @@ function ProfilePage() {
                             e.currentTarget.src = '/norminet.jpeg'
                         }}
                     />
-                    <div className="">
-                        <p className="text-lg font-bold text-white sm:text-xl">
-                            {user.firstName} {user.lastName}
-                        </p>
-                        <p className="text-sm font-normal text-gray-500 sm:text-base">
-                            {user.email}
-                        </p>
-                    </div>
+                    <p className="text-lg font-bold text-white sm:text-xl">
+                        {user.firstName} {user.lastName}
+                    </p>
                     <Link href={'/settings'}>
                         <p
                             className="absolute rounded-md right-2 top-2 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -248,10 +223,15 @@ function ProfilePage() {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-    props: {
-        ...(await serverSideTranslations(locale as string, ['common'])),
-    },
-})
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+    if (!locale) {
+        return {
+            props: { ...(await serverSideTranslations('en', ['common'])) },
+        }
+    }
+    return {
+        props: { ...(await serverSideTranslations(locale, ['common'])) },
+    }
+}
 
 export default ProfilePage

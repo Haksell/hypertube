@@ -92,14 +92,14 @@ const DropdownMenu = () => {
         <Button
             text={t('navBar.signOut')}
             onClick={() => {
-                router.push('/signout')
+                void router.push('/signout')
             }}
         />
     ) : (
         <Button
             text={t('signIn')}
             onClick={() => {
-                router.push('/signin')
+                void router.push('/signin')
             }}
         />
     )
@@ -140,13 +140,14 @@ function MobileMenuBoutton({ showMenu, setShowMenu }: { showMenu: boolean; setSh
     )
 }
 
-type PropMobileMenuNavBar = {
+interface PropMobileMenuNavBar {
     showMenu: boolean
     currLink: string
     setCurrLink: any
+    profileLink: string
 }
 
-function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
+function MobileMenu({ showMenu, currLink, setCurrLink, profileLink }: PropMobileMenuNavBar) {
     const { t } = useTranslation('common')
     return showMenu ? (
         <>
@@ -156,13 +157,7 @@ function MobileMenu({ showMenu, currLink, setCurrLink }: PropMobileMenuNavBar) {
                     {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                     <ButtonLinkNavBar
                         text={t('navBar.profile')}
-                        page="/profile"
-                        currLink={currLink}
-                        setCurrLink={setCurrLink}
-                    />
-                    <ButtonLinkNavBar
-                        text={t('navBar.browsing')}
-                        page="/find"
+                        page={profileLink}
                         currLink={currLink}
                         setCurrLink={setCurrLink}
                     />
@@ -193,7 +188,6 @@ function NavBar() {
         if (router.pathname.match('/profile')) setCurrLink('/profile')
         else if (router.pathname.match('/settings')) setCurrLink('/settings')
         else if (router.pathname.match('/find')) setCurrLink('/find')
-        else if (router.pathname.match('/map')) setCurrLink('/map')
         else if (router.pathname.match('/movies')) setCurrLink('/movies')
         else setCurrLink('no')
     }, [currLink])
@@ -218,7 +212,12 @@ function NavBar() {
                         <LanguageSwitcher />
                     </div>
                 </div>
-                <MobileMenu showMenu={showMenu} currLink={currLink} setCurrLink={setCurrLink} />
+                <MobileMenu
+                    showMenu={showMenu}
+                    currLink={currLink}
+                    setCurrLink={setCurrLink}
+                    profileLink={profileLink}
+                />
             </nav>
             <div className="h-16" />
         </div>

@@ -25,7 +25,7 @@ export const UserProvider = ({ children }: any) => {
     const [user, setUser] = useState<TUserContext | null>(null)
 
     useEffect(() => {
-        fetchUser()
+        void fetchUser()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -41,7 +41,7 @@ export const UserProvider = ({ children }: any) => {
     }
 
     const verifUser = () => {
-        fetchUser()
+        void fetchUser()
     }
 
     const loginUser = (userData: TUserContext | null) => {

@@ -12,28 +12,31 @@ import { useEffect, useState } from 'react'
 
 function ConfirmEmailPage() {
     const router = useRouter()
-    const { idConfirm } = router.query
+    const { confirmid } = router.query
     const [retour, setRetour] = useState<string | null>(null)
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (idConfirm) {
-            validateLink()
+        if (confirmid) {
+            void validateLink()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idConfirm])
+    }, [confirmid])
 
     async function validateLink() {
-        if (!idConfirm) return
+        if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/confirm/${idConfirm}`, {
-                withCredentials: true,
-            })
+            const response = await axios.get(
+                `http://localhost:5001/auth/confirm/${String(confirmid)}`,
+                {
+                    withCredentials: true,
+                },
+            )
             setRetour(response.data.msg)
             return response.data
         } catch (error: any) {
             if (error.response) {
-                if (error.response.data === ErMsg('InvalidId', t)) router.push('/404')
+                if (error.response.data === ErMsg('InvalidId', t)) await router.push('/404')
                 setRetour(error.response.data)
             } else setRetour(null)
         }
@@ -57,10 +60,23 @@ function ConfirmEmailPage() {
     )
 }
 
+<<<<<<< HEAD:apps/frontend/pages/confirm/[idConfirm].tsx
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
     props: {
         ...(await serverSideTranslations(locale as string, ['common'])),
     },
 })
+=======
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+    if (!locale) {
+        return {
+            props: { ...(await serverSideTranslations('en', ['common'])) },
+        }
+    }
+    return {
+        props: { ...(await serverSideTranslations(locale, ['common'])) },
+    }
+}
+>>>>>>> master:apps/frontend/pages/confirm/[confirmid].tsx
 
 export default ConfirmEmailPage

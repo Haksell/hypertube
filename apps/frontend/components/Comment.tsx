@@ -1,6 +1,7 @@
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
 
@@ -9,6 +10,7 @@ interface CommentProps {
     updatedAt: Date
     username: string
     profilePicture?: string
+    userId: number
     additionalClasses?: string
     handleDelete: () => void
     handleEdit: (content: string) => void
@@ -25,6 +27,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         updatedAt,
         username,
         profilePicture,
+        userId,
         additionalClasses,
         handleDelete,
         handleEdit,
@@ -75,7 +78,10 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         >
             <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                    <p className="inline-flex items-center mr-3 font-semibold text-sm text-white">
+                    <Link
+                        href={`/profile/${userId}`}
+                        className="inline-flex items-center mr-3 font-semibold text-sm text-white"
+                    >
                         <img
                             className="mr-2 w-6 h-6 rounded-full"
                             src={
@@ -85,7 +91,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                             alt="Michael Gough"
                         />
                         {username}
-                    </p>
+                    </Link>
                     <p className="text-sm text-gray-400">
                         <time dateTime={dateTime} title={longFormat}>
                             {abbreviatedFormat}

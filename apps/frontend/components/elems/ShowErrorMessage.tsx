@@ -1,7 +1,7 @@
 import { useTranslation } from 'next-i18next'
 import React from 'react'
 
-type Prop = {
+interface Prop {
     error: string
     message: string
 }

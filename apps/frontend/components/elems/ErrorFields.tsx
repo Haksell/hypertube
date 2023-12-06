@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Prop = {
+interface Prop {
     name: string
     title: string
     onBlur: any

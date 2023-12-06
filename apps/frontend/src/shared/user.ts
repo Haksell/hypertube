@@ -1,6 +1,6 @@
 import { MovieDTO } from './movies'
 
-export type TUserContext = {
+export interface TUserContext {
     id: number
     username: string
     email: string
@@ -11,7 +11,7 @@ export type TUserContext = {
     language: string
 }
 
-export type TUserProfile = {
+export interface TUserProfile {
     id: number
     username: string
     firstName: string
