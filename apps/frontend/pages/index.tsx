@@ -79,24 +79,11 @@ const MoviesPage = () => {
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
-    const [language] = useState('')
     const [sortBy, setSortBy] = useState('')
     const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
-
-    const choiceRef2 = useRef<HTMLDivElement>(null)
-    const [width2, setWidth2] = useState(0)
-    const [height2, setHeight2] = useState(0)
-
-    useEffect(() => {
-        const choice2 = choiceRef2.current
-        if (choice2) {
-            setWidth2(choice2.offsetWidth)
-            setHeight2(choice2.offsetHeight)
-        }
-    }, [choiceRef2.current != null])
 
     const shouldFetchMovies = () => {
         return (
