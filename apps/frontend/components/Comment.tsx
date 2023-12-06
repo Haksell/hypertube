@@ -72,6 +72,8 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         setIsEditing(false)
     }
 
+    console.log(profilePicture)
+
     return (
         <article
             className={'pt-6 mb-2 text-base bg-neutral-900 border-gray-700 ' + additionalClasses}
@@ -85,8 +87,9 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                         <img
                             className="mr-2 w-6 h-6 rounded-full"
                             src={
-                                profilePicture ||
-                                'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
+                                profilePicture
+                                    ? `http://localhost:5001/users/image/${profilePicture}`
+                                    : 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
                             }
                             alt="Michael Gough"
                         />
