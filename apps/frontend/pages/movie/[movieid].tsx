@@ -31,6 +31,9 @@ function MoviePage() {
     const { t } = useTranslation('common')
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
+    const [isModalVisible, setModalVisible] = useState(false)
+    const [isMovieVisible, setMovieVisible] = useState(false)
+
 
     useEffect(() => {
         if (movieid) getMovie()
@@ -139,10 +142,12 @@ function MoviePage() {
         return movie.crews.filter((crew) => job.includes(crew.job as string))
     }
 
-    const [isModalVisible, setModalVisible] = useState(false)
-
     const handleToggleModal = () => {
         setModalVisible(!isModalVisible)
+    }
+
+    const handleToggleMovie = () => {
+        setMovieVisible(!isMovieVisible)
     }
 
     useEffect(() => {
@@ -202,7 +207,7 @@ function MoviePage() {
     } else {
         content = (
             <div>
-                <MainLayout className2="" />
+                <MainLayout className2="bg-black" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
                         src={movie.image.background || '/defaultBackground.jpg'}
@@ -213,7 +218,13 @@ function MoviePage() {
                         }}
                     />
                 </div>
-                <div className="h-[22vh]" />
+                <div className={`flex justify-center transition-all transform duration-500 ${isMovieVisible ? 'h-[40vw] max-h-[40vh] my-[10vw]' : 'h-[18vh]'}`}>
+                    {isMovieVisible && (
+                        <div className='flex justify-center items-center'>
+                            <VideoPlayer videoID={movie.imdb_code} />
+                        </div>
+                    )}
+                </div>
                 <div className="relative">
                     <img
                         src={movie.image.poster || '/errorPicture.jpg'}
@@ -239,7 +250,7 @@ function MoviePage() {
                             ))}
                         </div>
                         <div className="flex flex-row grow mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
-                            <button className="mr-10">
+                            <button className="mr-10" onClick={handleToggleMovie}>
                                 <svg
                                     className="w-5 h-5 text-slate-200 hover:text-orange-50 hover:duration-300 ease-in"
                                     fill="currentColor"
@@ -388,21 +399,23 @@ function MoviePage() {
                                     </span>
                                     <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                                 </div>
-                                <div className='flex flex-row overflow-x mt-6 pl-4'>
-                                    {recommended.map((element: any, index: any) => (
-                                        <div key={index} className="relative my-2 mr-2">
-                                            <Link href={`/movie/${element.imdb_code}`}>
-                                                <img
-                                                    src={element.thumbnail || '/errorPicture.jpg'}
-                                                    alt={element.title + index}
-                                                    className="h-[195px] border-2 border-gray-700 rounded-lg min-[1500px]:h-[13vw]"
-                                                    onError={(e) => {
-                                                        e.currentTarget.src = '/errorPicture.jpg'
-                                                    }}
-                                                />
-                                            </Link>
-                                        </div>
-                                    ))}
+                                <div className='flex overflow-auto mt-6 pl-4'>
+                                    <div className="relative pl-2 flex flex-none mr-5">
+                                        {recommended.map((element: any, index: any) => (
+                                            <div key={index} className="relative my-2 mr-2">
+                                                <Link href={`/movie/${element.imdb_code}`}>
+                                                    <img
+                                                        src={element.thumbnail || '/errorPicture.jpg'}
+                                                        alt={element.title + index}
+                                                        className="h-[195px] border-2 border-gray-700 rounded-lg min-[1500px]:h-[13vw]"
+                                                        onError={(e) => {
+                                                            e.currentTarget.src = '/errorPicture.jpg'
+                                                        }}
+                                                    />
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -469,23 +482,15 @@ function MoviePage() {
                         ))}
                     </div>
                     {isModalVisible && (
-                        <div
-                            className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"
-                            onClick={handleToggleModal}
-                        >
-                            <VideoPlayer videoID={movie.imdb_code} />
+                        <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
+                                    title="YouTube video player" 
+                                    className="w-[48vw] h-[27vw]"
+                                    allowFullScreen
+                                />
                         </div>
                     )}
-                    {/* {isModalVisible && (
-                    <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
-                            <iframe
-                                src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
-                                title="YouTube video player" 
-                                className="w-[48vw] h-[27vw]"
-                                allowFullScreen
-                            />
-                    </div>
-                )} */}
                 </div>
             </div>
         )
