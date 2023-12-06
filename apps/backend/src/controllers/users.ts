@@ -112,7 +112,7 @@ export async function getProfile(req: Request, res: Response) {
     })
 
     if (!profile) {
-        res.status(400).send(InvalidId)
+        res.status(404).send(InvalidId)
         return
     }
 
@@ -178,7 +178,7 @@ export async function updateSettings(req: Request, res: Response) {
                 language: language,
             },
         })
-		res.status(200).json(SuccessMsg)
+        res.status(200).json(SuccessMsg)
     } catch (error) {
         res.status(400).send('Error with settings')
     }

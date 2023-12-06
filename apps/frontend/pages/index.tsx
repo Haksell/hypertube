@@ -144,8 +144,8 @@ const MoviesPage = () => {
     }, [fetchCount])
 
     const handleSwitch = () => {
-		const newType: string = type === 'movie' ? 'tvShow' : 'movie'
-		setType(newType)
+        const newType = type === 'movie' ? 'tvShow' : 'movie'
+        setType(newType)
         setTimeout(() => {
             void fetchMovies(0, newType)
         }, 30)

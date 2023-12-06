@@ -18,7 +18,7 @@ export function getMovieId(req: Request): string {
 }
 
 //for YTS source
-export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails> {
+export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails | null> {
     try {
         const response = await axios.get(`https://yts.mx/api/v2/movie_details.json`, {
             params: {
@@ -53,11 +53,12 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
             liked: false,
             recommended: [],
             source: 'YTS',
-			hash: ''
+            hash: '',
         }
         return retour
     } catch {
-        throw new CustomError('Code not found')
+        console.log(`Movie ${movieId} not found`)
+        return null
     }
 }
 
@@ -93,11 +94,11 @@ export async function getInfoMovieTorrentEZTV(movieId: string): Promise<MovieDet
             liked: false,
             recommended: [],
             source: 'EZTV',
-			hash: movie.hash
+            hash: movie.hash,
         }
         return retour
     } catch (error) {
-		console.log(error)
+        console.log(error)
         throw new CustomError('Code not found')
     }
 }
