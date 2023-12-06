@@ -16,11 +16,9 @@ function VideoPlayer({ videoID }: Prop) {
         <div className="video-wrapper">
             <video
                 ref={videoRef}
-                className="video-area"
+                className="w-full min-[1000px]:w-[60vw] video-area"
                 controls
                 crossOrigin="use-credentials"
-                width="600"
-                height="400"
             >
                 <source src={link} type="video/mp4" />
                 <track
