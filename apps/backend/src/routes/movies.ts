@@ -33,7 +33,7 @@ const myImdbSchema = Joi.object({
 
 router.get('/', verifyToken, validator.query(movieSchema), asyncHandler(getMovies))
 
-router.get('/test', verifyToken, asyncHandler(testDownload))
+// router.get('/test', verifyToken, asyncHandler(testDownload))
 
 router.get('/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 
@@ -43,7 +43,7 @@ router.get('/view/:movieId', verifyToken, validator.params(imdbIdSchema), asyncH
 
 router.get('/subtitle/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getSubtitle))
 
-router.get('/testsub/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(testSub))
+// router.get('/testsub/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(testSub))
 
 router.get('/:movieId/comments', verifyToken, validator.params(myImdbSchema), asyncHandler(getMovieComments))
 

@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { extractStr } from './get-movies'
-import { CustomError, MovieActor, MovieCrew, MovieDetails, MovieImage } from '../types_backend/movies'
+import { CustomError, Movie, MovieActor, MovieCrew, MovieDetails, MovieImage } from '../types_backend/movies'
 import axios from 'axios'
 
 export function getMovieId(req: Request): string {
@@ -30,6 +30,7 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
 		}
 		const retour: MovieDetails = {
 			imdb_code: movieId,
+			id_code: movie.id,
 			title: movie.title,
 			year: movie.year,
 			rating: movie.rating,
@@ -42,7 +43,9 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
 			image: images,
 			actors: [],
 			crews: [],
-			liked: false
+			liked: false,
+			recommended: [],
+			source: 'YTS'
 		}
 		return retour
 	}
@@ -119,4 +122,41 @@ function imageFromMovieDB(path: string): string | undefined {
 		return `https://image.tmdb.org/t/p/w500${path}`
 	}
 	return undefined
+}
+
+export async function addRecommandatedMovies(movie: MovieDetails) {
+	if (movie.source !== 'YTS') return
+	const response = await axios.get(`https://yts.mx/api/v2/movie_suggestions.json`, 
+			{
+				params: {
+					movie_id: movie.id_code
+				}
+		})
+	if (response.data.status !== 'ok') return
+	const moviesRecoY = response.data.data.movies
+    const movies: Movie[] = []
+
+	if (moviesRecoY.length > 0)
+
+    for (const elem of moviesRecoY) {
+        const oneMovie: Movie = {
+            title: elem.title,
+            thumbnail: elem.large_cover_image,
+            year: elem.year,
+            length: elem.runtime,
+            imdbRating: elem.rating,
+			imdb_code: elem.imdb_code,
+			langage: elem.language,
+			genre: elem.genres,
+			seeds: elem.torrents[0].seeds,
+			quality: elem.torrents[0].quality,
+			url: elem.torrents[0].url,
+			viewed: false,
+			liked: false,
+			source: 'YTS',
+        }
+        movies.push(oneMovie)
+    }
+	if (movies.length > 0)
+		movie.recommended = movies
 }

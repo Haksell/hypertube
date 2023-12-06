@@ -36,8 +36,8 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
 				params: parameters
 		})
 
-		console.log(response.config.url)
-		console.log(response.config.params)
+		// console.log(response.config.url)
+		// console.log(response.config.params)
         const moviesYTS = response.data.data.movies
         const movies: Movie[] = []
 
