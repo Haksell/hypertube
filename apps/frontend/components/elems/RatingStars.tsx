@@ -63,7 +63,9 @@ const RatingStars: React.FC<RatingStarsProps> = ({ rating, line }) => {
         <div className={`flex flex-${line ? 'row' : 'col'} items-center`}>
             <div className={`flex items-center mb-${line ? '1' : '0'}`}>{renderStars()}</div>
             <div className={`flex items-center ms-${line ? '1' : '0'}`}>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{rating}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {rating.toFixed(1)}
+                </p>
                 <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t('movie.rateOf')}
                 </p>
