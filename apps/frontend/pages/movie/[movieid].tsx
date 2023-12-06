@@ -468,15 +468,10 @@ function MoviePage() {
     return content
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-    if (!locale) {
-      return {
-        props: { ...await serverSideTranslations('en', ['common']) },
-      };
-    }
-    return {
-        props: { ...await serverSideTranslations(locale, ['common']) },
-    };
-  };
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+    props: {
+        ...(await serverSideTranslations(locale as string, ['common'])),
+    },
+})
 
 export default MoviePage
