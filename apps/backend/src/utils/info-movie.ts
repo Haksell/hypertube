@@ -17,6 +17,7 @@ export function getMovieId(req: Request): string {
     return idStr
 }
 
+//for YTS source
 export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails> {
     try {
         const response = await axios.get(`https://yts.mx/api/v2/movie_details.json`, {
@@ -52,9 +53,51 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
             liked: false,
             recommended: [],
             source: 'YTS',
+			hash: ''
         }
         return retour
     } catch {
+        throw new CustomError('Code not found')
+    }
+}
+
+export async function getInfoMovieTorrentEZTV(movieId: string): Promise<MovieDetails> {
+    try {
+        const response = await axios.get(`https://eztvx.to/api/get-torrents`, {
+            params: {
+                imdb_id: movieId.replace('tt', ''),
+            },
+        })
+        if (response.data.torrents.length === 0) throw new CustomError('Error with EZTV API')
+
+        const movie = response.data.torrents[0]
+
+        const images: MovieImage = {
+            poster: '',
+        }
+        const retour: MovieDetails = {
+            imdb_code: movieId,
+            id_code: movie.id,
+            title: movie.title,
+            year: 0,
+            rating: 0,
+            runtime: 0,
+            langage: '',
+            genres: [],
+            summary: '',
+            description_full: '',
+            yt_trailer_code: '',
+            image: images,
+            actors: [],
+            crews: [],
+            liked: false,
+            recommended: [],
+            source: 'EZTV',
+			hash: movie.hash
+        }
+        return retour
+    } catch (error) {
+		console.log(error)
         throw new CustomError('Code not found')
     }
 }

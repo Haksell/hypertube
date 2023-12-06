@@ -25,6 +25,7 @@ function MoviePage() {
     const [liked, setLiked] = useState<boolean>(false)
     const router = useRouter()
     const { movieid } = router.query
+	const source = router.query.source ? router.query.source : 'YTS'
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
     const { t } = useTranslation('common')
@@ -41,6 +42,9 @@ function MoviePage() {
     async function getMovie() {
         try {
             const response = await axios.get(`http://localhost:5001/movies/${String(movieid)}`, {
+				params: {
+					source: source,
+				},
                 withCredentials: true,
             })
             setMovieDetails(response.data)
