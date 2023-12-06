@@ -1,9 +1,9 @@
+import Custom404 from '../404'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
-import PageTitleOneText from '../../components/elems/PageTitleOneText'
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
-import { MovieDTO } from '../../src/shared/movies'
 import { TUserProfile } from '../../src/shared/user'
+import Loading from '../loading'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -11,14 +11,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import Loading from '../loading'
-import Custom404 from '../404'
 
 function ProfilePage() {
     const { user } = useUserContext()
     const router = useRouter()
     const { profileid } = router.query
-    const id: string = typeof profileid === 'string' ? profileid : ''
+    const id = typeof profileid === 'string' ? profileid : ''
     const [userProfile, setUserProfile] = useState<TUserProfile | null>(null)
     const [idUser, setIdUser] = useState<number>(-1)
     const { t } = useTranslation('common')
@@ -163,8 +161,7 @@ function ProfilePage() {
         content = <Custom404 />
     } else {
         content = (
-            <div>
-                <MainLayout className2="" />
+            <MainLayout className2="">
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
                         src={'/defaultBackground.jpg'}
@@ -222,12 +219,12 @@ function ProfilePage() {
                     {!userProfile.moviesLiked.length && !userProfile.moviesViewed.length && (
                         <div className="w-full text-center h-28">
                             <p className="text-2xl font-bold text-white sm:text-3xl">
-                                Here your future films history.
+                                Here your future movies history.
                             </p>
                         </div>
                     )}
                 </div>
-            </div>
+            </MainLayout>
         )
     }
 
@@ -235,14 +232,7 @@ function ProfilePage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-    if (!locale) {
-        return {
-            props: { ...(await serverSideTranslations('en', ['common'])) },
-        }
-    }
-    return {
-        props: { ...(await serverSideTranslations(locale, ['common'])) },
-    }
+    return { props: { ...(await serverSideTranslations(locale ?? 'en', ['common'])) } }
 }
 
 export default ProfilePage

@@ -193,7 +193,7 @@ function NavBar() {
     }, [currLink])
 
     return (
-        <div>
+        <header>
             <nav className="fixed w-full bg-zinc-800 z-20">
                 <div className="mx-auto max-w-7xl px-2 sm:pl-6 lg:pl-8">
                     <div className="relative flex h-16 items-center justify-between">
@@ -220,7 +220,7 @@ function NavBar() {
                 />
             </nav>
             <div className="h-16" />
-        </div>
+        </header>
     )
 }
 

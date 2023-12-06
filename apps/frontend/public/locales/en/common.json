@@ -60,8 +60,8 @@
     },
     "profile": {
         "edit": "Edit",
-        "likedFilms": "Liked Films",
-        "viewedFilms": "Viewed Films"
+        "likedFilms": "Liked Movies",
+        "viewedFilms": "Viewed Movies"
     },
     "index": {
         "movies": "Movies",
@@ -151,7 +151,7 @@
         "invalidPhotoId": "invalid filename"
     },
     "movie": {
-        "recommended": "Films recommended",
+        "recommended": "Recommended movies",
         "rateOf": "out of",
         "summary": "Summary",
         "casting": "Casting",
