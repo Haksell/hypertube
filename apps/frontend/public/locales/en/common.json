@@ -151,6 +151,7 @@
         "invalidPhotoId": "invalid filename"
     },
     "movie": {
+        "recommended": "Films recommended",
         "rateOf": "out of",
         "summary": "Summary",
         "casting": "Casting",

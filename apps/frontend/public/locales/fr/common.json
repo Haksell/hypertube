@@ -151,6 +151,7 @@
         "invalidPhotoId": "identifiant d'image invalide"
     },
     "movie": {
+        "recommended": "Films recommandés",
         "rateOf": "sur",
         "summary": "Résumé",
         "casting": "Distribution",

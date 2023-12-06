@@ -3,6 +3,7 @@ export interface MovieDetails {
     title: string
     year: number
     rating: number
+    recommended: MovieDTO[]
     runtime: number
     langage: string
     genres: string[]

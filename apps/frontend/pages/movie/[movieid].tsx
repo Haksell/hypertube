@@ -16,6 +16,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -51,7 +52,6 @@ function MoviePage() {
                 { withCredentials: true },
             )
             setComments(responseComments.data)
-            console.log(response)
         } catch {
             setMovieDetails(null)
             setError(true)
@@ -161,13 +161,16 @@ function MoviePage() {
     const directors = searchInCrew(['Director'])
     const writers = searchInCrew(['Story', 'Writer'])
     const producers = searchInCrew(['Producer'])
+    const recommended = movie ? movie.recommended : []
 
     const ImageList = ({ title, items }: { title: any; items: any }) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
-            <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
-                <p className="text-xl font-bold text-orange-50 sm:text-2xl">{title}</p>
-                <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
-            </div>
+            {(title) && (
+                <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
+                    <p className="text-xl font-bold text-orange-50 sm:text-2xl">{title}</p>
+                    <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
+                </div>
+            )}
             {items.map((element: any, index: any) => (
                 <div key={index} className="relative my-2 mr-2">
                     <img
@@ -332,7 +335,7 @@ function MoviePage() {
                                     </span>
                                     <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                                 </div>
-                                <p className="pt-3 text-lg tracking-wide sm:text-xl">
+                                <p className="pt-3 ml-4 text-lg tracking-wide sm:text-xl mb-10">
                                     {movie.summary}
                                 </p>
                             </div>
@@ -341,14 +344,14 @@ function MoviePage() {
                             writers.length ||
                             producers.length ||
                             movie.actors.length) && (
-                            <div>
+                            <div className='mb-10'>
                                 <div className="pt-4 flex flex-row items-center w-full">
                                     <span className="mr-4 text-2xl font-extrabold sm:text-3xl">
                                         {t('movie.casting')}
                                     </span>
                                     <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                                 </div>
-                                <div className="flex overflow-auto mt-2">
+                                <div className="flex overflow-auto mt-2 ml-4">
                                     {directors.length > 0 && (
                                         <ImageList
                                             title={pluralize(t('movie.director'), directors)}
@@ -376,14 +379,39 @@ function MoviePage() {
                                 </div>
                             </div>
                         )}
-
+                        {(recommended) && (
+                            <div className='mb-10'>
+                                <div className="pt-4 flex flex-row items-center w-full">
+                                    <span className="mr-4 text-3xl font-extrabold">
+                                        {t('movie.recommended')}
+                                    </span>
+                                    <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
+                                </div>
+                                <div className='flex flex-row overflow-x mt-6 pl-4'>
+                                    {recommended.map((element: any, index: any) => (
+                                        <div key={index} className="relative my-2 mr-2">
+                                            <Link href={`/movie/${element.imdb_code}`}>
+                                                <img
+                                                    src={element.thumbnail || '/errorPicture.jpg'}
+                                                    alt={element.title + index}
+                                                    className="h-[195px] border-2 border-gray-700 rounded-lg min-[1500px]:h-[13vw]"
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = '/errorPicture.jpg'
+                                                    }}
+                                                />
+                                            </Link>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         <div className="pt-4 flex flex-row items-center w-full mb-4">
                             <span className="mr-4 text-3xl font-extrabold">
                                 {t('movie.comments')}
                             </span>
                             <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                         </div>
-                        <div className="mb-6">
+                        <div className="mt-7 mb-4 ml-4">
                             <div
                                 className={`py-2 px-4 mb-4 rounded-lg rounded-t-lg border bg-gray-800 border-gray-700 ${
                                     canPostComment()

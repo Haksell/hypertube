@@ -141,13 +141,14 @@ export async function addRecommandatedMovies(movie: MovieDetails) {
     })
     if (response.data.status !== 'ok') return
     const moviesRecoY = response.data.data.movies
+    console.log(moviesRecoY)
     const movies: Movie[] = []
 
     if (moviesRecoY.length > 0)
         for (const elem of moviesRecoY) {
             const oneMovie: Movie = {
                 title: elem.title,
-                thumbnail: elem.large_cover_image,
+                thumbnail: elem.medium_cover_image,
                 year: elem.year,
                 length: elem.runtime,
                 imdbRating: elem.rating,
