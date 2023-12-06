@@ -23,6 +23,9 @@ function ProfilePage() {
     const [loading, setLoading] = useState<boolean>(true)
     const [currLink, setCurrLink] = useState<string>('no')
     const [error, setError] = useState<boolean>(false)
+    
+    let link = './norminet.jpeg'
+    if (userProfile?.profilePicture) link = `http://localhost:5001/users/image/${userProfile.profilePicture}`
 
     useEffect(() => {
         setId()
@@ -81,7 +84,6 @@ function ProfilePage() {
                 withCredentials: true,
             })
             setUserProfile(response.data)
-            console.log(userProfile)
         } catch (error: any) {
             setUserProfile(null)
             setError(true)
@@ -161,7 +163,8 @@ function ProfilePage() {
         content = <Custom404 />
     } else {
         content = (
-            <MainLayout className2="">
+            <div className='mb-24'>
+                <MainLayout className2="" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
                         src={'/defaultBackground.jpg'}
@@ -174,7 +177,7 @@ function ProfilePage() {
                 </div>
                 <div className="flex flex-col sm:h-24 items-center relative overflow-hidden m-5 py-5 justify-center sm:pl-20 sm:max-w-md bg-gray-800 rounded-lg">
                     <img
-                        src={user.picture || './norminet.jpeg'}
+                        src={link || '/norminet.jpeg'}
                         alt="Profile Picture"
                         className="relative sm:absolute sm:-left-[16px] sm:-top-4 left-0 w-32 h-32 mb-3 rounded-full shadow-lg"
                         onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -182,7 +185,7 @@ function ProfilePage() {
                         }}
                     />
                     <p className="text-lg font-bold text-white sm:text-xl">
-                        {user.firstName} {user.lastName}
+                        {userProfile.firstName} {userProfile.lastName}
                     </p>
                     <Link href={'/settings'}>
                         <p
@@ -196,7 +199,7 @@ function ProfilePage() {
                 </div>
                 <div className="relative h-full m-5 px-5 pt-2 bg-gray-800 rounded-lg">
                     <p className="mb-5 text-2xl font-bold text-white sm:text-3xl">
-                        {user.username}
+                        {userProfile.username}
                     </p>
                     <div className="flex overflow-auto">
                         {userProfile.moviesLiked.length > 0 && (
@@ -224,7 +227,7 @@ function ProfilePage() {
                         </div>
                     )}
                 </div>
-            </MainLayout>
+            </div>
         )
     }
 
