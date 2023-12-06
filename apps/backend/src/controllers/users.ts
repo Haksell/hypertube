@@ -178,6 +178,7 @@ export async function updateSettings(req: Request, res: Response) {
                 language: language,
             },
         })
+		res.status(200).json(SuccessMsg)
     } catch (error) {
         res.status(400).send('Error with settings')
     }
