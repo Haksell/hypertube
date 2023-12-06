@@ -68,6 +68,7 @@ export const movieParamSortBy = [
 
 export type MovieDetails = {
     imdb_code: string
+    id_code: string
     title: string
     year: number
     rating: number
@@ -82,6 +83,8 @@ export type MovieDetails = {
     crews: MovieCrew[]
     budget?: number
     liked: boolean
+    recommended: Movie[]
+    source: 'YTS' | 'EZTV'
 }
 
 export type MovieImage = {

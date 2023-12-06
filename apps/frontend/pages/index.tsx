@@ -112,6 +112,8 @@ const MoviesPage = () => {
             if (genre) params['genre'] = genre
             if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
+            else params['sortBy'] = 'seeds'
+            // if (newType) params['type'] = newType
             params['sortBy'] = sortBy || DEFAULT_SORT_BY
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,

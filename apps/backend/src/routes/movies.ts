@@ -19,6 +19,7 @@ const router: Router = express.Router()
 const validator = createValidator()
 
 const movieSchema = Joi.object({
+    type: Joi.string(),
     genre: Joi.string(),
     downloaded: Joi.string(),
     minGrade: Joi.number(),
@@ -40,7 +41,7 @@ const myImdbSchema = Joi.object({
 
 router.get('/', verifyToken, validator.query(movieSchema), asyncHandler(getMovies))
 
-router.get('/test', verifyToken, asyncHandler(testDownload))
+// router.get('/test', verifyToken, asyncHandler(testDownload))
 
 router.get('/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(getMovieInfo))
 
@@ -55,7 +56,7 @@ router.get(
     asyncHandler(getSubtitle),
 )
 
-router.get('/testsub/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(testSub))
+// router.get('/testsub/:movieId', verifyToken, validator.params(imdbIdSchema), asyncHandler(testSub))
 
 router.get(
     '/:movieId/comments',

@@ -1,5 +1,9 @@
 import {
     CustomError,
+<<<<<<< HEAD
+    Movie,
+=======
+>>>>>>> master
     MovieActor,
     MovieCrew,
     MovieDetails,
@@ -35,6 +39,10 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
         }
         const retour: MovieDetails = {
             imdb_code: movieId,
+<<<<<<< HEAD
+            id_code: movie.id,
+=======
+>>>>>>> master
             title: movie.title,
             year: movie.year,
             rating: movie.rating,
@@ -48,6 +56,11 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
             actors: [],
             crews: [],
             liked: false,
+<<<<<<< HEAD
+            recommended: [],
+            source: 'YTS',
+=======
+>>>>>>> master
         }
         return retour
     } catch {
@@ -126,4 +139,38 @@ function imageFromMovieDB(path: string): string | undefined {
         return `https://image.tmdb.org/t/p/w500${path}`
     }
     return undefined
+}
+
+export async function addRecommandatedMovies(movie: MovieDetails) {
+    if (movie.source !== 'YTS') return
+    const response = await axios.get(`https://yts.mx/api/v2/movie_suggestions.json`, {
+        params: {
+            movie_id: movie.id_code,
+        },
+    })
+    if (response.data.status !== 'ok') return
+    const moviesRecoY = response.data.data.movies
+    const movies: Movie[] = []
+
+    if (moviesRecoY.length > 0)
+        for (const elem of moviesRecoY) {
+            const oneMovie: Movie = {
+                title: elem.title,
+                thumbnail: elem.large_cover_image,
+                year: elem.year,
+                length: elem.runtime,
+                imdbRating: elem.rating,
+                imdb_code: elem.imdb_code,
+                langage: elem.language,
+                genre: elem.genres,
+                seeds: elem.torrents[0].seeds,
+                quality: elem.torrents[0].quality,
+                url: elem.torrents[0].url,
+                viewed: false,
+                liked: false,
+                source: 'YTS',
+            }
+            movies.push(oneMovie)
+        }
+    if (movies.length > 0) movie.recommended = movies
 }
