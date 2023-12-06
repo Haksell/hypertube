@@ -11,6 +11,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import Loading from '../loading'
+import Custom404 from '../404'
 
 function ProfilePage() {
     const { user } = useUserContext()
@@ -20,7 +22,9 @@ function ProfilePage() {
     const [userProfile, setUserProfile] = useState<TUserProfile | null>(null)
     const [idUser, setIdUser] = useState<number>(-1)
     const { t } = useTranslation('common')
+    const [loading, setLoading] = useState<boolean>(true)
     const [currLink, setCurrLink] = useState<string>('no')
+    const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
         setId()
@@ -79,8 +83,12 @@ function ProfilePage() {
                 withCredentials: true,
             })
             setUserProfile(response.data)
+            console.log(userProfile)
         } catch (error: any) {
             setUserProfile(null)
+            setError(true)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -145,8 +153,16 @@ function ProfilePage() {
         </div>
     )
 
-    return user ? (
-        userProfile ? (
+    let content
+
+    if (!user) {
+        content = <UserNotSignedIn />
+    } else if (loading) {
+        content = <Loading />
+    } else if (error || !userProfile) {
+        content = <Custom404 />
+    } else {
+        content = (
             <div>
                 <MainLayout className2="" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
@@ -212,15 +228,10 @@ function ProfilePage() {
                     )}
                 </div>
             </div>
-        ) : (
-            <PageTitleOneText
-                title="User not found"
-                textBody="It seems we couldn't found this user."
-            />
         )
-    ) : (
-        <UserNotSignedIn />
-    )
+    }
+
+    return content
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {

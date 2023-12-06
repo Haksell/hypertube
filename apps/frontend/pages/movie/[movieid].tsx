@@ -51,6 +51,7 @@ function MoviePage() {
                 { withCredentials: true },
             )
             setComments(responseComments.data)
+            console.log(response)
         } catch {
             setMovieDetails(null)
             setError(true)
