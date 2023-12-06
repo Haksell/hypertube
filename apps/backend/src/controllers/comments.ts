@@ -132,8 +132,8 @@ export async function getMovieComments(req: Request, res: Response) {
         return
     }
 
-    const formattedComments: CommentDTO[] = movie.comments.map(formatComment).sort((a, b) => {
-        return b.updatedAt.getTime() - a.updatedAt.getTime()
-    })
+    const formattedComments: CommentDTO[] = movie.comments
+        .map(formatComment)
+        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
     res.status(200).send(formattedComments)
 }
