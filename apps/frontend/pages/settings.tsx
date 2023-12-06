@@ -91,7 +91,7 @@ function SettingsPage() {
         <MainLayout>
             <TitleSmall text={t('settingsMsg')} space="1" />
 
-            <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div className="my-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-2" action="#" onSubmit={handleSaveSettings}>
                     <ShowErrorMessage error={error} message={t('settings.noSignUp')} />
                     <ErrorField
