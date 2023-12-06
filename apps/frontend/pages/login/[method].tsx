@@ -90,12 +90,5 @@ export default function Login42(): JSX.Element {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-    if (!locale) {
-        return {
-            props: { ...(await serverSideTranslations('en', ['common'])) },
-        }
-    }
-    return {
-        props: { ...(await serverSideTranslations(locale, ['common'])) },
-    }
+    return { props: { ...(await serverSideTranslations(locale ?? 'en', ['common'])) } }
 }

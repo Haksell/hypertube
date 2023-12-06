@@ -133,14 +133,7 @@ function ResetPasswordPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-    if (!locale) {
-        return {
-            props: { translations: await serverSideTranslations('en', ['common']) },
-        }
-    }
-    return {
-        props: { translations: await serverSideTranslations(locale, ['common']) },
-    }
+    return { props: { translations: await serverSideTranslations(locale ?? 'en', ['common']) } }
 }
 
 export default ResetPasswordPage
