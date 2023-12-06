@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface Prop{
+interface Prop {
     children: any
     nbInRow?: string
 }

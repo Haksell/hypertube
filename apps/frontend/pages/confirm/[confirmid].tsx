@@ -3,12 +3,12 @@ import TitleSmall from '../../components/elems/TitleSmall'
 import TramePage from '../../components/elems/TramePage'
 import { ErMsg } from '../../src/shared/errors'
 import axios from 'axios'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import type { GetServerSideProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ConfirmEmailPage() {
     const router = useRouter()
@@ -26,15 +26,17 @@ function ConfirmEmailPage() {
     async function validateLink() {
         if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/confirm/${String(confirmid)}`, {
-                withCredentials: true,
-            })
+            const response = await axios.get(
+                `http://localhost:5001/auth/confirm/${String(confirmid)}`,
+                {
+                    withCredentials: true,
+                },
+            )
             setRetour(response.data.msg)
             return response.data
         } catch (error: any) {
             if (error.response) {
-                if (error.response.data === ErMsg('InvalidId', t))
-                    await router.push('/404')
+                if (error.response.data === ErMsg('InvalidId', t)) await router.push('/404')
                 setRetour(error.response.data)
             } else setRetour(null)
         }
@@ -60,13 +62,13 @@ function ConfirmEmailPage() {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     if (!locale) {
-      return {
-        props: { ...await serverSideTranslations('en', ['common']) },
-      };
+        return {
+            props: { ...(await serverSideTranslations('en', ['common'])) },
+        }
     }
     return {
-        props: { ...await serverSideTranslations(locale, ['common']) },
-    };
-  };
+        props: { ...(await serverSideTranslations(locale, ['common'])) },
+    }
+}
 
 export default ConfirmEmailPage

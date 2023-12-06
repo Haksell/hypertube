@@ -16,9 +16,9 @@ export async function getComments(req: Request, res: Response) {
             updatedAt: true,
             user: {
                 select: {
-					id: true,
+                    id: true,
                     username: true,
-					profile_picture: true,
+                    profile_picture: true,
                 },
             },
         },
@@ -34,7 +34,7 @@ export async function getComment(req: requestWithRessource, res: Response) {
 }
 
 export async function updateComment(req: requestWithRessource, res: Response) {
-	const { commentId } = req.params
+    const { commentId } = req.params
     const { comment: newComment } = req.body
 
     await prisma.comment.update({
@@ -46,8 +46,8 @@ export async function updateComment(req: requestWithRessource, res: Response) {
         },
     })
 
-	req.comment!.text = newComment
-	const formattedComment: CommentDTO = formatComment(req.comment!)
+    req.comment!.text = newComment
+    const formattedComment: CommentDTO = formatComment(req.comment!)
     res.status(200).send(formattedComment)
 }
 
@@ -89,7 +89,7 @@ export async function createComment(req: RequestWithUser, res: Response) {
             updatedAt: true,
             user: {
                 select: {
-					id: true,
+                    id: true,
                     profile_picture: true,
                     username: true,
                 },
@@ -117,7 +117,7 @@ export async function getMovieComments(req: Request, res: Response) {
                     updatedAt: true,
                     user: {
                         select: {
-							id: true,
+                            id: true,
                             profile_picture: true,
                             username: true,
                         },
@@ -133,7 +133,7 @@ export async function getMovieComments(req: Request, res: Response) {
     }
 
     const formattedComments: CommentDTO[] = movie.comments.map(formatComment).sort((a, b) => {
-		return b.updatedAt.getTime() - a.updatedAt.getTime()
-	})
+        return b.updatedAt.getTime() - a.updatedAt.getTime()
+    })
     res.status(200).send(formattedComments)
 }

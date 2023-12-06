@@ -1,10 +1,10 @@
-import React from 'react'
 import MainLayout from '../../layouts/MainLayout'
-import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import React from 'react'
 
 function UserAlreadySignedIn() {
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
     return (
         <MainLayout>
             <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

@@ -9,7 +9,7 @@ export type TUserContext = {
     picture: string
     authMethod: string
     emailConfirmed: boolean
-	language: string
+    language: string
 }
 
 export type TUserProfile = {

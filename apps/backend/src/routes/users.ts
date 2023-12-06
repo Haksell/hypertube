@@ -1,4 +1,13 @@
-import { deleteImg, dowloadImg, getListUsers, getMe, getProfile, getUser, updateSettings, uploadImg } from '../controllers/users'
+import {
+    deleteImg,
+    dowloadImg,
+    getListUsers,
+    getMe,
+    getProfile,
+    getUser,
+    updateSettings,
+    uploadImg,
+} from '../controllers/users'
 import verifyToken from '../middleware/auth.middleware'
 import { imageFileFilter } from '../middleware/photo-middleware'
 import express, { Router } from 'express'
@@ -14,11 +23,11 @@ const updateSchema = Joi.object({
     email: Joi.string().email().required(),
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
-	language: Joi.string().required(),
+    language: Joi.string().required(),
 })
 
 const idShema = Joi.object({
-	id: Joi.number().required()
+    id: Joi.number().required(),
 })
 
 router.get('/me', verifyToken, asyncHandler(getMe))
@@ -29,7 +38,12 @@ router.get('/:id', verifyToken, validator.params(idShema), asyncHandler(getUser)
 
 router.get('/profile/:id', verifyToken, validator.params(idShema), asyncHandler(getProfile))
 
-router.post('/updatesettings', verifyToken, validator.body(updateSchema), asyncHandler(updateSettings))
+router.post(
+    '/updatesettings',
+    verifyToken,
+    validator.body(updateSchema),
+    asyncHandler(updateSettings),
+)
 
 router.post('/image', verifyToken, asyncHandler(uploadImg))
 

@@ -1,4 +1,4 @@
-import { MovieDTO } from "./movies"
+import { MovieDTO } from './movies'
 
 export interface TUserContext {
     id: number
@@ -8,25 +8,25 @@ export interface TUserContext {
     lastName: string
     picture: string
     authMethod: string
-	language: string
+    language: string
 }
 
 export interface TUserProfile {
-	id: number;
-	username: string
+    id: number
+    username: string
     firstName: string
     lastName: string
     picture: string
-	moviesLiked: []
-	moviesViewed: []
+    moviesLiked: []
+    moviesViewed: []
 }
 
 export interface ProfileDTO {
-    id: number;
-	username: string
+    id: number
+    username: string
     firstName: string
     lastName: string
     picture: string
-	moviesLiked: MovieDTO[]
-	moviesViewed: MovieDTO[]
+    moviesLiked: MovieDTO[]
+    moviesViewed: MovieDTO[]
 }

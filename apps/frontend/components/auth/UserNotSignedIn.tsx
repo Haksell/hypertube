@@ -1,12 +1,12 @@
-import React from 'react'
 import LinkText from '../elems/LinkText'
 import TextPage from '../elems/TextPage'
 import TitleSmall from '../elems/TitleSmall'
 import TramePage from '../elems/TramePage'
 import { useTranslation } from 'next-i18next'
+import React from 'react'
 
 function UserNotSignedIn() {
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
     return (
         <TramePage>
             <TitleSmall text={t('UserNotSignedIn.getOut')} />
