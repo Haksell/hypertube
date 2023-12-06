@@ -60,13 +60,6 @@ function ConfirmEmailPage() {
     )
 }
 
-<<<<<<< HEAD:apps/frontend/pages/confirm/[idConfirm].tsx
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-    props: {
-        ...(await serverSideTranslations(locale as string, ['common'])),
-    },
-})
-=======
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     if (!locale) {
         return {
@@ -77,6 +70,5 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         props: { ...(await serverSideTranslations(locale, ['common'])) },
     }
 }
->>>>>>> master:apps/frontend/pages/confirm/[confirmid].tsx
 
 export default ConfirmEmailPage
