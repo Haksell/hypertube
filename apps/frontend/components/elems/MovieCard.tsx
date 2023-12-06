@@ -15,7 +15,7 @@ export function MovieCard({ movie }: { movie: MovieDTO }) {
 
     return (
         <div className="relative group overflow-hidden cursor-pointer">
-            <Link href={`/movie/${movie.imdb_code}`}>
+            <Link href={`/movie/${movie.imdb_code}?source=${movie.source}`}>
                 <img
                     src={movie.thumbnail}
                     alt={movie.title}

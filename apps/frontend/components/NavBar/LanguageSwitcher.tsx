@@ -8,13 +8,14 @@ const LanguageSelector: React.FC = () => {
     const router = useRouter()
     const { i18n } = useTranslation()
 
-    const { user } = useUserContext()
+    const { user, updateUser } = useUserContext()
 
     async function amendLanguage(newLocale: string) {
+		console.log('amending language from ' + user?.language + ' to ' + newLocale)
         try {
-            if (!(newLocale && (newLocale === 'en' || newLocale === 'fr')))
+            if ((newLocale && (newLocale === 'en' || newLocale === 'fr'))) {
                 if (user) {
-                    await axios.post(
+                    const response = await axios.post(
                         `http://localhost:5001/users/updatesettings`,
                         {
                             email: user.email,
@@ -27,7 +28,9 @@ const LanguageSelector: React.FC = () => {
                         },
                     )
                     // console.log(response.data)
+					updateUser({ language: newLocale });
                 }
+			}
         } catch {
             // console.log(response.data)
         }

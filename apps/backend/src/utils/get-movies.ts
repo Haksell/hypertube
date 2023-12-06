@@ -88,8 +88,10 @@ type InfoMovie = {
 // get movies from EZTV source and update them with movieDB source
 export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Promise<Movie[]> {
     try {
+		const page: number =
+            params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
         const response = await axios.get(
-            `https://eztv.re/api/get-torrents?limit=${limit}&page=${params.offset}`,
+            `https://eztv.re/api/get-torrents?limit=${limit}&page=${page}`,
         )
         const moviesEZTV = response.data.torrents
         const movies: Movie[] = []
@@ -105,7 +107,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
                 year: elem.year,
                 length: elem.runtime,
                 imdbRating: elem.rating,
-                imdb_code: elem.imdb_code,
+                imdb_code: `tt${elem.imdb_id}`,
                 langage: '',
                 genre: [],
                 seeds: elem.seeds,

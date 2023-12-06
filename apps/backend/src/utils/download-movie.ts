@@ -13,13 +13,14 @@ export async function downloadMovie(imdb_code: string) {
     if (movie.file) return //movie already downloaded
 
     //get torrent info
-    let torrents = await getTorrentInfo(imdb_code)
+    // let torrents = await getTorrentInfo(imdb_code)
 
     //select torrent:
-    let torrent = selectTorrent(torrents)
+    let torrent: string = ''
+	// = selectTorrent(torrents)
 
     //download movie
-    await downloadTorrent(torrent, movie.id, imdb_code)
+    // await downloadTorrent(torrent, movie.id, imdb_code)
 
     //download subtitles
 }

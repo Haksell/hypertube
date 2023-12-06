@@ -81,7 +81,7 @@ const MoviesPage = () => {
     const [minGrade, setMinGrade] = useState('')
     const [language] = useState('')
     const [sortBy, setSortBy] = useState('')
-    const [type] = useState('movie')
+    const [type, setType] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
@@ -105,7 +105,7 @@ const MoviesPage = () => {
         )
     }
 
-    const fetchMovies = async (offset: number = fetchCount) => {
+    const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
@@ -113,7 +113,7 @@ const MoviesPage = () => {
             if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
             else params['sortBy'] = 'seeds'
-            // if (newType) params['type'] = newType
+            if (newType) params['type'] = newType
             params['sortBy'] = sortBy || DEFAULT_SORT_BY
             const response = await axios.get('http://localhost:5001/movies', {
                 params: params,
@@ -144,8 +144,10 @@ const MoviesPage = () => {
     }, [fetchCount])
 
     const handleSwitch = () => {
+		const newType: string = type === 'movie' ? 'tvShow' : 'movie'
+		setType(newType)
         setTimeout(() => {
-            void fetchMovies(0)
+            void fetchMovies(0, newType)
         }, 30)
     }
 
