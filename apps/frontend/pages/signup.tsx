@@ -12,10 +12,10 @@ import MainLayout from '../layouts/MainLayout'
 import { useUserContext } from '../src/context/UserContext'
 import { ErMsg } from '../src/shared/errors'
 import axios from 'axios'
-import React from 'react'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import React from 'react'
+import { useEffect, useState } from 'react'
 
 function SignUpPage() {
     const [username, setUsername] = useState<string>('')
@@ -30,7 +30,7 @@ function SignUpPage() {
     const [styleErrorFirstname, setStyleErrorFirstname] = useState<boolean>(false)
     const [styleErrorLastname, setStyleErrorLastname] = useState<boolean>(false)
     const [styleError, setStyleError] = useState<boolean>(false)
-    const { user } = useUserContext();
+    const { user } = useUserContext()
     const [created, setCreated] = useState<boolean>(false)
     const [maxAge, setMaxAge] = useState<string>('')
     const { t } = useTranslation('common')
@@ -52,11 +52,19 @@ function SignUpPage() {
         if (error === '') setFalseAll()
         else {
             setFalseAll()
-            if (error === ErMsg('InvalidUsername', t) || error === ErMsg('MissingUsername', t) || error === ErMsg('UsernameTaken', t))
+            if (
+                error === ErMsg('InvalidUsername', t) ||
+                error === ErMsg('MissingUsername', t) ||
+                error === ErMsg('UsernameTaken', t)
+            )
                 setStyleErrorUsername(true)
             else if (error === ErMsg('MissingPwd', t)) setStyleErrorPwd(true)
-            else if (error === ErMsg('EmailTaken', t) || error === ErMsg('InvalidEmail', t)) setStyleErrorEmail(true)
-            else if (error === ErMsg('InvalidFirstName', t) || error === ErMsg('MissingFirstName', t))
+            else if (error === ErMsg('EmailTaken', t) || error === ErMsg('InvalidEmail', t))
+                setStyleErrorEmail(true)
+            else if (
+                error === ErMsg('InvalidFirstName', t) ||
+                error === ErMsg('MissingFirstName', t)
+            )
                 setStyleErrorFirstname(true)
             else if (error === ErMsg('InvalidLastName', t) || error === ErMsg('MissingLastName', t))
                 setStyleErrorLastname(true)
@@ -181,7 +189,7 @@ function SignUpPage() {
     )
 }
 
-export async function getStaticProps({ locale }: {locale: any}) {
+export async function getStaticProps({ locale }: { locale: any }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

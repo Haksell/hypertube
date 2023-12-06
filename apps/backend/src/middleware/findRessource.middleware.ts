@@ -1,7 +1,7 @@
+import { CommentPrisma } from '../shared/comment'
 import { requestWithRessource } from '../shared/request'
 import { PrismaClient } from '@prisma/client'
 import { NextFunction, Response } from 'express'
-import { CommentPrisma } from '../shared/comment'
 
 const prisma = new PrismaClient()
 

@@ -1,6 +1,6 @@
+import PhotoUploader from './PhotoUpload'
 import axios from 'axios'
 import React, { useState, ChangeEvent } from 'react'
-import PhotoUploader from './PhotoUpload'
 
 type Prop = {
     picture: string //picture to show
@@ -9,7 +9,7 @@ type Prop = {
 }
 
 function ShowImg({ picture, setPicture, setError }: Prop) {
-	const [imageUpdate, setImageUpdate] = useState<string | null>(null);
+    const [imageUpdate, setImageUpdate] = useState<string | null>(null)
 
     let link: string = './norminet.jpeg'
     if (picture) link = `http://localhost:5001/users/image/${picture}`
@@ -29,36 +29,34 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
         }
     }
 
-	async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
-        const selectedImage = e.target.files?.[0];
+    async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
+        const selectedImage = e.target.files?.[0]
         if (selectedImage) {
-            const reader = new FileReader();
+            const reader = new FileReader()
             reader.onload = () => {
-                setImageUpdate(reader.result as string);
-            };
-            reader.readAsDataURL(selectedImage);
+                setImageUpdate(reader.result as string)
+            }
+            reader.readAsDataURL(selectedImage)
         }
-		if (imageUpdate) {} //useless but for error management purpose
+        if (imageUpdate) {
+        } //useless but for error management purpose
 
         if (selectedImage) {
-            let formData = new FormData();
+            let formData = new FormData()
 
-            formData.append('image', selectedImage);
+            formData.append('image', selectedImage)
 
             try {
-                const response = await axios.post(
-                    `http://localhost:5001/users/image`,
-                    formData,
-                    { withCredentials: true },
-                );
-				setPicture(response.data);
-				setError('')
+                const response = await axios.post(`http://localhost:5001/users/image`, formData, {
+                    withCredentials: true,
+                })
+                setPicture(response.data)
+                setError('')
             } catch (error: any) {
-				setError(error.response.data)
-			}
+                setError(error.response.data)
+            }
         }
-    };
-
+    }
 
     function handleOnDeleteImg(event: any) {
         event.preventDefault()
@@ -68,25 +66,26 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
         <div className="relative w-40 flex items-center justify-center">
             <img
                 className="w-40 h-40 object-cover"
-                src={link} alt={altImage}
+                src={link}
+                alt={altImage}
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                     e.currentTarget.src = '/norminet.jpeg'
                 }}
             />
             <div className="group absolute top-0 left-0 w-full h-full opacity-0 transition-opacity hover:opacity-100">
-				<label className="block text-sm font-semibold py-1 text-gray-900 dark:text-gray w-full text-center bg-white bg-opacity-60 cursor-pointer">
+                <label className="block text-sm font-semibold py-1 text-gray-900 dark:text-gray w-full text-center bg-white bg-opacity-60 cursor-pointer">
                     Update photo
-					<input
-						id='update-avatar'
-						type="file"
-						accept="image/*"
-						className="hidden"
-						onChange={handleImageChange}
-                	/>
+                    <input
+                        id="update-avatar"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                    />
                 </label>
 
-				<PhotoUploader picture={picture} setPicture={setPicture} setError={setError} />
-				{picture && (
+                <PhotoUploader picture={picture} setPicture={setPicture} setError={setError} />
+                {picture && (
                     <label className="block text-sm font-semibold py-1 text-gray-900 dark:text-gray absolute bottom-0 left-0 w-full text-center bg-white bg-opacity-60 cursor-pointer">
                         Delete
                         <button className="hidden" onClick={handleOnDeleteImg}></button>

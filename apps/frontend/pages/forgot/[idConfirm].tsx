@@ -9,12 +9,12 @@ import MainLayout from '../../layouts/MainLayout'
 import { ErMsg } from '../../src/shared/errors'
 // import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import type { GetServerSideProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ResetPasswordPage() {
     const router = useRouter()
@@ -71,8 +71,7 @@ function ResetPasswordPage() {
             return response.data
         } catch (error: any) {
             setStyleErrorPassword(true)
-			if (error.response)
-            	setError(error.response.data)
+            if (error.response) setError(error.response.data)
             setCreated(false)
         }
     }
@@ -88,26 +87,20 @@ function ResetPasswordPage() {
 
     return retour && retour === ErMsg('SuccessMsg', t) ? (
         created ? (
-            <PageTitleOneText
-                title={t('forgot2.pwdChange')}
-                textBody={t('forgot2.newLog')}
-            />
+            <PageTitleOneText title={t('forgot2.pwdChange')} textBody={t('forgot2.newLog')} />
         ) : (
             <MainLayout>
                 <TitleSmall text={t('forgot2.selectNewPwd')} />
                 <TextPage>
                     <form className="space-y-6" action="#" onSubmit={handleSignIn}>
-                        <ShowErrorMessage
-                            error={error}
-                            message={t('forgot2.noPwdChange')}
-                        />
+                        <ShowErrorMessage error={error} message={t('forgot2.noPwdChange')} />
                         <ErrorField
                             name="password"
                             title={t('forgot2.newPwd')}
                             onBlur={handleOnChangePassword}
                             styleError={styleErrorPassword}
                             setStyleError={setStyleErrorPassword}
-							init={password}
+                            init={password}
                         />
 
                         <div>
@@ -130,7 +123,7 @@ function ResetPasswordPage() {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
     props: {
-      ...await serverSideTranslations(locale as string, ['common']),
+        ...(await serverSideTranslations(locale as string, ['common'])),
     },
 })
 

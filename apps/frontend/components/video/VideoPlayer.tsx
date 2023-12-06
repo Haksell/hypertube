@@ -23,8 +23,20 @@ function VideoPlayer({ videoID }: Prop) {
                 height="400"
             >
                 <source src={link} type="video/mp4" />
-                <track label="English" kind="subtitles" srcLang="en" src={`http://localhost:5001/movies/subtitle/${videoID}?lang=en`} default />
-				<track label="Francais" kind="subtitles" srcLang="fr" src={`http://localhost:5001/movies/subtitle/${videoID}?lang=fr`} default />
+                <track
+                    label="English"
+                    kind="subtitles"
+                    srcLang="en"
+                    src={`http://localhost:5001/movies/subtitle/${videoID}?lang=en`}
+                    default
+                />
+                <track
+                    label="Francais"
+                    kind="subtitles"
+                    srcLang="fr"
+                    src={`http://localhost:5001/movies/subtitle/${videoID}?lang=fr`}
+                    default
+                />
                 Your browser does not support the video tag.
             </video>
         </div>

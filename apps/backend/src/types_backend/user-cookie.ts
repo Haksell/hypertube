@@ -1,5 +1,5 @@
 export type TUserCookie = {
-	user_id: number;
-	username: string;
-	email: string;
+    user_id: number
+    username: string
+    email: string
 }

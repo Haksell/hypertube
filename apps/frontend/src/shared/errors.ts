@@ -1,12 +1,11 @@
 import { useTranslation } from 'next-i18next'
 
 type ErrorArray = {
-    key: string;
-    value: string;
-};  
+    key: string
+    value: string
+}
 
 export const ErMsg = (key: string, t: (key: string) => string): string | null => {
-
     const errorArray: ErrorArray[] = [
         //message
         { key: 'ErrorMsg', value: t('errorMsg') },
@@ -38,7 +37,7 @@ export const ErMsg = (key: string, t: (key: string) => string): string | null =>
         { key: 'MissingGender', value: t('errors.missingGender') },
         { key: 'WeakPwd', value: t('errors.weakPwd') },
         { key: 'InvalidId', value: t('errors.invalidId') },
-        { key: "AlreadyValid", value: t('errors.alreadyValid') },
+        { key: 'AlreadyValid', value: t('errors.alreadyValid') },
         //images
         { key: 'InvalidPhotoExtension', value: t('errors.invalidPhotoExtension') },
         { key: 'EmptyPhoto', value: t('errors.emptyPhoto') },
@@ -48,8 +47,8 @@ export const ErMsg = (key: string, t: (key: string) => string): string | null =>
         //request image
         { key: 'EmptyPhotoId', value: t('errors.emptyPhotoId') },
         { key: 'InvalidPhotoId', value: t('errors.invalidPhotoId') },
-      ];
+    ]
 
-      const item = errorArray.find((item) => item.key === key);
-      return item ? item.value : null;
-};
+    const item = errorArray.find((item) => item.key === key)
+    return item ? item.value : null
+}

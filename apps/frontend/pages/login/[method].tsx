@@ -1,18 +1,18 @@
 import MainLayout from '../../layouts/MainLayout'
 import { useUserContext } from '../../src/context/UserContext'
 import axios from 'axios'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
-import type { GetServerSideProps } from 'next'
-import { useTranslation } from 'next-i18next'
 
 export default function Login42(): JSX.Element {
     const { loginUser } = useUserContext()
     const router = useRouter()
     const { method } = router.query
     const [error, setError] = useState(false)
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
 
     const oauth = async () => {
         try {
@@ -52,9 +52,7 @@ export default function Login42(): JSX.Element {
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">
                         {t('login.authFail')}
                     </h5>
-                    <p className="font-normal text-gray-400 mb-4">
-                        {t('login.accountTryAgain')}
-                    </p>
+                    <p className="font-normal text-gray-400 mb-4">{t('login.accountTryAgain')}</p>
                     <a
                         href="/signin"
                         className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -93,6 +91,6 @@ export default function Login42(): JSX.Element {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
     props: {
-      ...await serverSideTranslations(locale as string, ['common']),
+        ...(await serverSideTranslations(locale as string, ['common'])),
     },
 })

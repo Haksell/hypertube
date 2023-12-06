@@ -1,72 +1,64 @@
-import axios from 'axios';
+import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { Readable } from "stream";
+import { Readable } from 'stream'
 
 // import fs from 'fs'
 
 // responseType: 'arraybuffer',
 
 function VideoPlayerMedia() {
-	const videoRef = useRef(null)
-	const link = 'http://localhost:5001/movies/view/tt0443649'
+    const videoRef = useRef(null)
+    const link = 'http://localhost:5001/movies/view/tt0443649'
 
-	useEffect(() => {
-		if (videoRef.current) {
-			;
-		}
-		getVideo()
-	}, [])
+    useEffect(() => {
+        if (videoRef.current) {
+        }
+        getVideo()
+    }, [])
 
-	async function getVideo() {
-		try {
-			const { Readable } = require('stream');
-			const stream = new Readable({
-				read() {}
-			});
+    async function getVideo() {
+        try {
+            const { Readable } = require('stream')
+            const stream = new Readable({
+                read() {},
+            })
 
+            const response = await axios.get<Readable>(link, {
+                responseType: 'stream',
+                withCredentials: true,
+            })
 
-			const response = await axios.get<Readable>(link, {
-				responseType: "stream",
-				withCredentials: true
-			});
+            // response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
 
-			// response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+            // const videoElement = document.getElementById('video-player');
 
-			// const videoElement = document.getElementById('video-player');
+            // if (videoElement) {
+            // 	// Utilisez le stream directement dans la balise vidéo
+            // 	videoElement.srcObject = response.data;
 
-			// if (videoElement) {
-			// 	// Utilisez le stream directement dans la balise vidéo
-			// 	videoElement.srcObject = response.data;
+            // 	// Autoplay la vidéo
+            // 	videoElement.play();
 
-			// 	// Autoplay la vidéo
-			// 	videoElement.play();
+            // }
 
-			// }
+            console.log('response data')
+            console.log(response)
 
-    		
+            response.data.pipe(stream)
 
-			console.log('response data')
-			console.log(response)
+            // const blobEvent: Blob = new Blob(response.data)
 
-			response.data.pipe(stream);
+            // console.log('blob data')
+            // console.log(blobEvent)
+        } catch {}
+    }
 
-
-			// const blobEvent: Blob = new Blob(response.data)
-
-			// console.log('blob data')
-			// console.log(blobEvent)
-		}
-		catch {
-			;
-		}
-	}
-
-	return (
-	<video ref={videoRef} width='600' height='400' controls autoPlay>
-		<source src={link} type='video/mp4'></source>
-		Browser does not support video tag
-	</video>
-	)
+    return (
+        <video ref={videoRef} width="600" height="400" controls autoPlay>
+            <source src={link} type="video/mp4"></source>
+            Browser does not support video tag
+        </video>
+    )
 }
 
 export default VideoPlayerMedia

@@ -7,7 +7,12 @@ import {
     getMoviesEZTV,
     getMoviesFromYTS,
 } from '../utils/get-movies'
-import { addDetailsFromMovieDB, addRecommandatedMovies, getInfoMovieTorrent, getMovieId } from '../utils/info-movie'
+import {
+    addDetailsFromMovieDB,
+    addRecommandatedMovies,
+    getInfoMovieTorrent,
+    getMovieId,
+} from '../utils/info-movie'
 import { extractLangageSub, getSubtitles } from '../utils/subtitles'
 import {
     addUserDetailsToMovie,
@@ -68,8 +73,8 @@ export async function getMovieInfo(req: Request, res: Response) {
         //add info from user (already viewed / already liked)
         await addUserDetailsToMovie(user, movie)
 
-		// ajout recommandation films
-		await addRecommandatedMovies(movie)
+        // ajout recommandation films
+        await addRecommandatedMovies(movie)
 
         // verif si film existe deja dans BDD. Si non, ajout dans BDD
         await createMovieDB(movie)
@@ -313,7 +318,7 @@ export async function testDownload(req: Request, res: Response) {
 
 export async function testSub(req: Request, res: Response) {
     try {
-		const movieId = getMovieId(req)
+        const movieId = getMovieId(req)
 
         var movie = await getMovieByIMDB(movieId)
 
