@@ -1,9 +1,6 @@
 import {
     CustomError,
-<<<<<<< HEAD
     Movie,
-=======
->>>>>>> master
     MovieActor,
     MovieCrew,
     MovieDetails,
@@ -39,10 +36,7 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
         }
         const retour: MovieDetails = {
             imdb_code: movieId,
-<<<<<<< HEAD
             id_code: movie.id,
-=======
->>>>>>> master
             title: movie.title,
             year: movie.year,
             rating: movie.rating,
@@ -56,11 +50,8 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
             actors: [],
             crews: [],
             liked: false,
-<<<<<<< HEAD
             recommended: [],
             source: 'YTS',
-=======
->>>>>>> master
         }
         return retour
     } catch {
