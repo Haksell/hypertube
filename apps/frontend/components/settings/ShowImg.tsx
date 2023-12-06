@@ -54,7 +54,8 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
                 setPicture(response.data)
                 setError('')
             } catch (error: any) {
-                setError(error.response.data)
+                console.log('TODO', error)
+                if (error && error.response) setError(error.response.data)
             }
         }
     }
@@ -63,6 +64,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
         event.preventDefault()
         void deletePictureBackend()
     }
+
     return (
         <div className="relative w-40 flex items-center justify-center">
             <img
