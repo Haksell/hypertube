@@ -4,6 +4,6 @@ export const signJwt = (user: any) => {
     return jwt.sign(
         { user_id: user.id, username: user.username, email: user.email },
         process.env.TOKEN_KEY || '',
-        { expiresIn: '1h' },
+        { expiresIn: '1d' },
     )
 }
