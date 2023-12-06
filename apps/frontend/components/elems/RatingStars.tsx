@@ -7,6 +7,7 @@ interface RatingStarsProps {
 }
 
 const RatingStars: React.FC<RatingStarsProps> = ({ rating, line }) => {
+    rating = parseFloat(rating.toFixed(1))
     const filledStars = Math.floor(rating)
     const hasHalfStar = rating - filledStars >= 0.5
     const { t } = useTranslation('common')
