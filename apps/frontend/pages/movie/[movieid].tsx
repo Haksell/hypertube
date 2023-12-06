@@ -1,5 +1,6 @@
 import Custom404 from '../404'
 import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
+import Loading from '../../components/Loading'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
 import VideoPlayer from '../../components/video/VideoPlayer'
@@ -9,14 +10,13 @@ import { CommentDTO } from '../../src/shared/comment'
 import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
-import Loading from '../loading'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -33,7 +33,6 @@ function MoviePage() {
     const [error, setError] = useState<boolean>(false)
     const [isModalVisible, setModalVisible] = useState(false)
     const [isMovieVisible, setMovieVisible] = useState(false)
-
 
     useEffect(() => {
         if (movieid) getMovie()
@@ -122,9 +121,12 @@ function MoviePage() {
 
     async function likeMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${String(movieid)}`, {
-                withCredentials: true,
-            })
+            const response = await axios.get(
+                `http://localhost:5001/movies/like/${String(movieid)}`,
+                {
+                    withCredentials: true,
+                },
+            )
             setLiked(response.data === 'Movie liked')
         } catch {
             // setMovieDetails(null)
@@ -171,7 +173,7 @@ function MoviePage() {
 
     const ImageList = ({ title, items }: { title: any; items: any }) => (
         <div className="relative pl-2 flex flex-none mr-5 my-12">
-            {(title) && (
+            {title && (
                 <div className="absolute px-1 left-0 -top-9 flex flex-row items-center w-full">
                     <p className="text-xl font-bold text-orange-50 sm:text-2xl">{title}</p>
                     <hr className="mt-1 ml-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
@@ -218,9 +220,13 @@ function MoviePage() {
                         }}
                     />
                 </div>
-                <div className={`flex justify-center transition-all transform duration-500 ${isMovieVisible ? 'h-[40vw] max-h-[40vh] my-[10vw]' : 'h-[18vh]'}`}>
+                <div
+                    className={`flex justify-center transition-all transform duration-500 ${
+                        isMovieVisible ? 'h-[40vw] max-h-[40vh] my-[10vw]' : 'h-[18vh]'
+                    }`}
+                >
                     {isMovieVisible && (
-                        <div className='flex justify-center items-center'>
+                        <div className="flex justify-center items-center">
                             <VideoPlayer videoID={movie.imdb_code} />
                         </div>
                     )}
@@ -356,7 +362,7 @@ function MoviePage() {
                             writers.length ||
                             producers.length ||
                             movie.actors.length) && (
-                            <div className='mb-10'>
+                            <div className="mb-10">
                                 <div className="pt-4 flex flex-row items-center w-full">
                                     <span className="mr-4 text-2xl font-extrabold sm:text-3xl">
                                         {t('movie.casting')}
@@ -391,25 +397,28 @@ function MoviePage() {
                                 </div>
                             </div>
                         )}
-                        {(recommended) && (
-                            <div className='mb-10'>
+                        {recommended && (
+                            <div className="mb-10">
                                 <div className="pt-4 flex flex-row items-center w-full">
                                     <span className="mr-4 text-3xl font-extrabold">
                                         {t('movie.recommended')}
                                     </span>
                                     <hr className="mt-2 grow h-px bg-gray-200 border-0 dark:bg-gray-700" />
                                 </div>
-                                <div className='flex overflow-auto mt-6 pl-4'>
+                                <div className="flex overflow-auto mt-6 pl-4">
                                     <div className="relative pl-2 flex flex-none mr-5">
                                         {recommended.map((element: any, index: any) => (
                                             <div key={index} className="relative my-2 mr-2">
                                                 <Link href={`/movie/${element.imdb_code}`}>
                                                     <img
-                                                        src={element.thumbnail || '/errorPicture.jpg'}
+                                                        src={
+                                                            element.thumbnail || '/errorPicture.jpg'
+                                                        }
                                                         alt={element.title + index}
                                                         className="h-[195px] border-2 border-gray-700 rounded-lg min-[1500px]:h-[13vw]"
                                                         onError={(e) => {
-                                                            e.currentTarget.src = '/errorPicture.jpg'
+                                                            e.currentTarget.src =
+                                                                '/errorPicture.jpg'
                                                         }}
                                                     />
                                                 </Link>
@@ -482,13 +491,16 @@ function MoviePage() {
                         ))}
                     </div>
                     {isModalVisible && (
-                        <div className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"  onClick={handleToggleModal}>
-                                <iframe
-                                    src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
-                                    title="YouTube video player" 
-                                    className="w-[48vw] h-[27vw]"
-                                    allowFullScreen
-                                />
+                        <div
+                            className="fixed flex z-50 w-full h-full justify-center items-center inset-0 bg-black bg-opacity-80"
+                            onClick={handleToggleModal}
+                        >
+                            <iframe
+                                src={`https://www.youtube.com/embed/${movie.yt_trailer_code}`}
+                                title="YouTube video player"
+                                className="w-[48vw] h-[27vw]"
+                                allowFullScreen
+                            />
                         </div>
                     )}
                 </div>
