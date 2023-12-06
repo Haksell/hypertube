@@ -85,7 +85,7 @@ export type MovieDetails = {
     liked: boolean
     recommended: Movie[]
     source: 'YTS' | 'EZTV'
-	hash: string
+    hash: string
 }
 
 export type MovieImage = {
