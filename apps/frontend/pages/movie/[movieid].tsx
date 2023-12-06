@@ -47,7 +47,7 @@ function MoviePage() {
             if (response.data.liked) setLiked(response.data.liked)
 
             const responseComments = await axios.get(
-                `http://localhost:5001/movies/${idMovie}/comments`,
+                `http://localhost:5001/movies/${String(movieid)}/comments`,
                 { withCredentials: true },
             )
             setComments(responseComments.data)
