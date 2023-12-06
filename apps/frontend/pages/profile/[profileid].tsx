@@ -23,9 +23,10 @@ function ProfilePage() {
     const [loading, setLoading] = useState<boolean>(true)
     const [currLink, setCurrLink] = useState<string>('no')
     const [error, setError] = useState<boolean>(false)
-    
+
     let link = './norminet.jpeg'
-    if (userProfile?.profilePicture) link = `http://localhost:5001/users/image/${userProfile.profilePicture}`
+    if (userProfile?.profilePicture)
+        link = `http://localhost:5001/users/image/${userProfile.profilePicture}`
 
     useEffect(() => {
         setId()
@@ -163,7 +164,7 @@ function ProfilePage() {
         content = <Custom404 />
     } else {
         content = (
-            <div className='mb-24'>
+            <div className="mb-24">
                 <MainLayout className2="" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
