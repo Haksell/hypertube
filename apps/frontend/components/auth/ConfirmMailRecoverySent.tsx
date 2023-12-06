@@ -5,7 +5,7 @@ import TramePage from '../elems/TramePage'
 import { useTranslation } from 'next-i18next'
 
 function ConfirmMailConfirmationSent() {
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
     return (
         <TramePage>
             <TitleSmall text={t('ConfirmMailrecoverySent.check')} />

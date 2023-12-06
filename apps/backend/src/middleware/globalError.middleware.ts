@@ -6,9 +6,14 @@ interface CustomError extends Error {
     details?: Joi.ValidationErrorItem[]
 }
 
-const globalErrorMiddleware = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
+const globalErrorMiddleware = (
+    err: CustomError,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
     if (err.error instanceof Joi.ValidationError) {
-        res.status(400).send("invalidInput")
+        res.status(400).send('invalidInput')
         return
     } else {
         console.error(err.stack)

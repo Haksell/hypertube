@@ -14,32 +14,38 @@ export async function getUserWithFavoritesAndViewed(req: Request) {
         },
         include: {
             favoriteMovies: { include: { movie: true } },
-			viewedMovies: { include: { movie: true } },
+            viewedMovies: { include: { movie: true } },
         },
     })
     if (!user) throw new CustomError(NotConnected)
-	return user
+    return user
 }
 
 export async function addUserDetailsToMovie(user: any, movie: MovieDetails) {
-	//verif film deja liked
-	const alreadyLike: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movie.imdb_code)
-	// console.log(user)
-	// console.log('adding movie ')
-	if (alreadyLike !== -1) movie.liked = true
-	else movie.liked = false
+    //verif film deja liked
+    const alreadyLike: number = user.favoriteMovies.findIndex(
+        (elem: any) => elem.imdb_code === movie.imdb_code,
+    )
+    // console.log(user)
+    // console.log('adding movie ')
+    if (alreadyLike !== -1) movie.liked = true
+    else movie.liked = false
 }
 
 export async function addUserDetailsToMoviesList(user: any, movies: Movie[]) {
-	if (!movies || movies.length === 0) return
-	
-	let i = 0
-	for (i = 0; i < movies.length; i++) {
-		const alreadyLiked: number = user.favoriteMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
-		if (alreadyLiked !== -1) movies[i].liked = true
-		else movies[i].liked = false
-		const alreadyViewed: number = user.viewedMovies.findIndex((elem: any) => elem.imdb_code === movies[i].imdb_code)
-		if (alreadyViewed !== -1) movies[i].viewed = true
-		else movies[i].viewed = false
-	}
+    if (!movies || movies.length === 0) return
+
+    let i = 0
+    for (i = 0; i < movies.length; i++) {
+        const alreadyLiked: number = user.favoriteMovies.findIndex(
+            (elem: any) => elem.imdb_code === movies[i].imdb_code,
+        )
+        if (alreadyLiked !== -1) movies[i].liked = true
+        else movies[i].liked = false
+        const alreadyViewed: number = user.viewedMovies.findIndex(
+            (elem: any) => elem.imdb_code === movies[i].imdb_code,
+        )
+        if (alreadyViewed !== -1) movies[i].viewed = true
+        else movies[i].viewed = false
+    }
 }

@@ -1,8 +1,8 @@
 import { CommentDTO, CommentPrisma } from '../shared/comment'
-import { TUserContext, ProfileDTO, TUserProfile, ProfilePrisma } from '../shared/user'
-import { PrismaClient } from '@prisma/client'
-import { getInfoMovieTorrent } from './info-movie'
 import { MovieDTO } from '../shared/movies'
+import { TUserContext, ProfileDTO, TUserProfile, ProfilePrisma } from '../shared/user'
+import { getInfoMovieTorrent } from './info-movie'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -17,7 +17,7 @@ export const formatUser = (user: any): TUserContext => {
         lastName: user.lastName,
         picture: user.profile_picture,
         emailConfirmed: user.email_verified,
-		language: user.language
+        language: user.language,
     }
 }
 
@@ -46,10 +46,14 @@ export const formatComment = (comment: CommentPrisma): CommentDTO => {
 }
 
 export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO> => {
-    const viewedMovies = await Promise.all(profile.viewedMovies.map(mov => getInfoMovieTorrent(mov.imdb_code)))
-    const favoriteMovies = await Promise.all(profile.favoriteMovies.map(mov => getInfoMovieTorrent(mov.imdb_code)))
+    const viewedMovies = await Promise.all(
+        profile.viewedMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)),
+    )
+    const favoriteMovies = await Promise.all(
+        profile.favoriteMovies.map((mov) => getInfoMovieTorrent(mov.imdb_code)),
+    )
 
-    const formattedViewedMovies: MovieDTO[] = viewedMovies.map(mov => {
+    const formattedViewedMovies: MovieDTO[] = viewedMovies.map((mov) => {
         const formattedMovie: MovieDTO = {
             ...mov,
             thumbnail: mov.image.poster,
@@ -59,12 +63,12 @@ export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO>
             quality: 'yolo',
             url: mov.yt_trailer_code,
             viewed: true,
-            source: "EZTV"
+            source: 'EZTV',
         }
         return formattedMovie
     })
 
-    const formattedFavoriteMovies: MovieDTO[] = favoriteMovies.map(mov => {
+    const formattedFavoriteMovies: MovieDTO[] = favoriteMovies.map((mov) => {
         const formattedMovie: MovieDTO = {
             ...mov,
             thumbnail: mov.image.poster,
@@ -74,7 +78,7 @@ export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO>
             quality: 'yolo',
             url: mov.yt_trailer_code,
             viewed: true,
-            source: "EZTV"
+            source: 'EZTV',
         }
         return formattedMovie
     })
@@ -85,6 +89,6 @@ export const formatProfile = async (profile: ProfilePrisma): Promise<ProfileDTO>
         lastName: profile.lastName,
         profilePicture: profile.profile_picture,
         moviesLiked: formattedFavoriteMovies,
-        moviesViewed: formattedViewedMovies
+        moviesViewed: formattedViewedMovies,
     }
 }

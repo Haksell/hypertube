@@ -212,7 +212,12 @@ function NavBar() {
                         <LanguageSwitcher />
                     </div>
                 </div>
-                <MobileMenu showMenu={showMenu} currLink={currLink} setCurrLink={setCurrLink} profileLink={profileLink} />
+                <MobileMenu
+                    showMenu={showMenu}
+                    currLink={currLink}
+                    setCurrLink={setCurrLink}
+                    profileLink={profileLink}
+                />
             </nav>
             <div className="h-16" />
         </div>

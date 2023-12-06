@@ -57,7 +57,7 @@ function SettingsPage() {
                     email: email,
                     lastname: lastname,
                     firstname: firstname,
-					language: user ? user.language : 'en'
+                    language: user ? user.language : 'en',
                 },
                 {
                     withCredentials: true,

@@ -10,10 +10,10 @@ import { useUserContext } from '../src/context/UserContext'
 import { ErMsg } from '../src/shared/errors'
 // import { useUserContext } from "../context/UserContext";
 import axios from 'axios'
-import React from 'react'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import React from 'react'
+import { useEffect, useState } from 'react'
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState<string>('')
@@ -21,7 +21,7 @@ function ForgotPasswordPage() {
     const [styleErrorEmail, setStyleErrorEmail] = useState<boolean>(false)
     const [styleError, setStyleError] = useState<boolean>(false)
     const [created, setCreated] = useState<boolean>(false)
-    const { user } = useUserContext();
+    const { user } = useUserContext()
     const { t } = useTranslation('common')
 
     useEffect(() => {
@@ -72,12 +72,12 @@ function ForgotPasswordPage() {
         }
     }
 
-    let content;
+    let content
 
     if (user) {
-        content = <UserAlreadySignedIn />;
+        content = <UserAlreadySignedIn />
     } else if (created) {
-        content = <ConfirmMailConfirmationSent />;
+        content = <ConfirmMailConfirmationSent />
     } else {
         content = (
             <TramePage>
@@ -114,13 +114,13 @@ function ForgotPasswordPage() {
                     />
                 </div>
             </TramePage>
-        );
+        )
     }
 
-    return content;
+    return content
 }
 
-export async function getStaticProps({ locale }: {locale: string}) {
+export async function getStaticProps({ locale }: { locale: string }) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['common'])),

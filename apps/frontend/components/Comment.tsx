@@ -1,9 +1,9 @@
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
-import Link from 'next/link'
 
 interface CommentProps {
     content: string
@@ -78,7 +78,10 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         >
             <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
-                    <Link href={`/profile/${userId}`} className="inline-flex items-center mr-3 font-semibold text-sm text-white">
+                    <Link
+                        href={`/profile/${userId}`}
+                        className="inline-flex items-center mr-3 font-semibold text-sm text-white"
+                    >
                         <img
                             className="mr-2 w-6 h-6 rounded-full"
                             src={

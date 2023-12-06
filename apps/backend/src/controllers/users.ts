@@ -8,8 +8,8 @@ import {
     PhotoTooBig,
     SuccessMsg,
 } from '../shared/msg-error'
-import { TUserCookie } from '../types_backend/user-cookie'
 import { ProfileDTO, ProfilePrisma } from '../shared/user'
+import { TUserCookie } from '../types_backend/user-cookie'
 import { formatProfile, formatUser } from '../utils/format'
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
@@ -88,7 +88,7 @@ export async function getUser(req: Request, res: Response) {
 export async function getProfile(req: Request, res: Response) {
     const { id } = req.params
 
-    const profile : ProfilePrisma | null = await prisma.user.findUnique({
+    const profile: ProfilePrisma | null = await prisma.user.findUnique({
         where: {
             id: parseInt(id),
         },
@@ -106,8 +106,8 @@ export async function getProfile(req: Request, res: Response) {
             favoriteMovies: {
                 select: {
                     imdb_code: true,
-                }
-            }
+                },
+            },
         },
     })
 
@@ -124,7 +124,7 @@ export function getUserFromRequest(req: Request): TUserCookie {
     try {
         const token = req.cookies.token
         if (token) {
-            const decoded = jwt.verify(token, process.env.TOKEN_KEY || "") as JwtPayload
+            const decoded = jwt.verify(token, process.env.TOKEN_KEY || '') as JwtPayload
             if (!decoded) throw new Error(NotConnected)
             const decodedCookie: TUserCookie = {
                 user_id: decoded.user_id,
@@ -175,7 +175,7 @@ export async function updateSettings(req: Request, res: Response) {
                 email: email,
                 firstName: firstname,
                 lastName: lastname,
-				language: language,
+                language: language,
             },
         })
     } catch (error) {

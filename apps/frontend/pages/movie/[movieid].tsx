@@ -1,3 +1,4 @@
+import Custom404 from '../404'
 import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
@@ -9,7 +10,6 @@ import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
 import Loading from '../loading'
-import Custom404 from '../404'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -27,7 +27,7 @@ function MoviePage() {
     const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
 
@@ -91,23 +91,25 @@ function MoviePage() {
         }
     }
 
-	async function handleEditComment(id: number, content: string) {
-		try {
-			await axios.patch(
-				`http://localhost:5001/comments/${id}`,
-				{
-					comment: content,
-				},
-				{
-					withCredentials: true,
-				},
-			)
-			setComments((prevComments) => prevComments.map((el) => {
-				if (el.id === id) {
-					el.content = content
-				}
-				return el
-			}))
+    async function handleEditComment(id: number, content: string) {
+        try {
+            await axios.patch(
+                `http://localhost:5001/comments/${id}`,
+                {
+                    comment: content,
+                },
+                {
+                    withCredentials: true,
+                },
+            )
+            setComments((prevComments) =>
+                prevComments.map((el) => {
+                    if (el.id === id) {
+                        el.content = content
+                    }
+                    return el
+                }),
+            )
         } catch {
             // console.log()
         }
@@ -184,18 +186,18 @@ function MoviePage() {
         </div>
     )
 
-    let content;
+    let content
 
     if (!user) {
         content = <UserNotSignedIn />
     } else if (loading) {
-        content = <Loading />;
+        content = <Loading />
     } else if (error || !movie) {
         content = <Custom404 />
     } else {
         content = (
             <div>
-                <MainLayout className2=''/>
+                <MainLayout className2="" />
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
                         src={movie.image.background || '/defaultBackground.jpg'}
@@ -221,7 +223,7 @@ function MoviePage() {
                             <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                                 {movie.title}
                             </h1>
-                            <RatingStars rating={movie.rating / 2} line={true}/>
+                            <RatingStars rating={movie.rating / 2} line={true} />
                             {movie.genres.slice(0, 6).map((element, index) => (
                                 <span
                                     key={index}

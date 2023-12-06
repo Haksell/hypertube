@@ -2,8 +2,8 @@ import MainLayout from '../../layouts/MainLayout'
 import LinkText from './LinkText'
 import TextPage from './TextPage'
 import TitleSmall from './TitleSmall'
-import React from 'react'
 import { useTranslation } from 'next-i18next'
+import React from 'react'
 
 interface Prop {
     title: string
@@ -11,7 +11,7 @@ interface Prop {
 }
 
 function PageTitleOneText({ title, textBody }: Prop) {
-	const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
     return (
         <MainLayout>
             <TitleSmall text={title} />

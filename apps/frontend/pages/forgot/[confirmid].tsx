@@ -9,12 +9,12 @@ import MainLayout from '../../layouts/MainLayout'
 import { ErMsg } from '../../src/shared/errors'
 // import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'
+import type { GetServerSideProps } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'next-i18next'
-import type { GetServerSideProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 function ResetPasswordPage() {
     const router = useRouter()
@@ -35,15 +35,17 @@ function ResetPasswordPage() {
     async function validateLink() {
         if (!confirmid) return
         try {
-            const response = await axios.get(`http://localhost:5001/auth/forgot/${String(confirmid)}`, {
-                withCredentials: true,
-            })
+            const response = await axios.get(
+                `http://localhost:5001/auth/forgot/${String(confirmid)}`,
+                {
+                    withCredentials: true,
+                },
+            )
             if (response.data.msg) setRetour(response.data.msg)
             // console.log(response.data);
             return response.data
         } catch (errorMsg: any) {
-            if (errorMsg.response === ErMsg('InvalidId', t))
-                await router.push('/404')
+            if (errorMsg.response === ErMsg('InvalidId', t)) await router.push('/404')
             setRetour(null)
         }
     }
@@ -72,8 +74,7 @@ function ResetPasswordPage() {
             return response.data
         } catch (errorMsg: any) {
             setStyleErrorPassword(true)
-			if (errorMsg.response)
-            	setError(errorMsg.response.data)
+            if (errorMsg.response) setError(errorMsg.response.data)
             setCreated(false)
         }
     }
@@ -88,14 +89,11 @@ function ResetPasswordPage() {
     }
 
     let content
-    
+
     if (retour && retour === ErMsg('SuccessMsg', t)) {
-        if (created) { 
+        if (created) {
             content = (
-                <PageTitleOneText
-                    title={t('forgot2.pwdChange')}
-                    textBody={t('forgot2.newLog')}
-                />
+                <PageTitleOneText title={t('forgot2.pwdChange')} textBody={t('forgot2.newLog')} />
             )
         } else {
             content = (
@@ -103,10 +101,7 @@ function ResetPasswordPage() {
                     <TitleSmall text={t('forgot2.selectNewPwd')} />
                     <TextPage>
                         <form className="space-y-6" action="#" onSubmit={handleSignIn}>
-                            <ShowErrorMessage
-                                error={error}
-                                message={t('forgot2.noPwdChange')}
-                            />
+                            <ShowErrorMessage error={error} message={t('forgot2.noPwdChange')} />
                             <ErrorField
                                 name="password"
                                 title={t('forgot2.newPwd')}
@@ -128,7 +123,7 @@ function ResetPasswordPage() {
                         <LinkText linkText={t('getBack')} link="/" />
                     </TextPage>
                 </MainLayout>
-            ) 
+            )
         }
     } else {
         content = <PageTitleOneText title={t('forgot2.oups')} textBody={t('forgot2.linkDead')} />
@@ -139,14 +134,13 @@ function ResetPasswordPage() {
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     if (!locale) {
-      return {
-        props: { translations: await serverSideTranslations('en', ['common']) },
-      };
+        return {
+            props: { translations: await serverSideTranslations('en', ['common']) },
+        }
     }
     return {
         props: { translations: await serverSideTranslations(locale, ['common']) },
-    };
-  };
-
+    }
+}
 
 export default ResetPasswordPage

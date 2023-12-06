@@ -310,7 +310,7 @@ export async function testDownload(req: Request, res: Response) {
 
 export async function testSub(req: Request, res: Response) {
     try {
-		const movieId = getMovieId(req)
+        const movieId = getMovieId(req)
 
         var movie = await getMovieByIMDB(movieId)
 
