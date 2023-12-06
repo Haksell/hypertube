@@ -214,7 +214,7 @@ const MoviesPage = () => {
                         handleChange={setYearRange}
                         options={[
                             { value: '', label: '-' },
-                            ...range(2023, 1900).map((y) => ({
+                            ...range(2024, 1900).map((y) => ({
                                 value: y.toString(),
                                 label: y.toString(),
                             })),
@@ -226,8 +226,7 @@ const MoviesPage = () => {
                         handleChange={setMinGrade}
                         options={[
                             { value: '', label: '-' },
-                            { value: '9', label: '9+' },
-                            { value: '8', label: '8+' },
+                            ...range(9, 1).map((r) => ({ value: r.toString(), label: `${r}+` })),
                         ]}
                     />
                     <Filter
