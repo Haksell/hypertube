@@ -13,7 +13,7 @@ import { FaSearch } from 'react-icons/fa'
 const limit = 7
 const DEFAULT_SORT_BY = 'like_count'
 
-type FilterProps = {
+interface FilterProps {
     id: string
     label: string
     handleChange: (value: string) => void
@@ -79,8 +79,9 @@ const MoviesPage = () => {
     const [genre, setGenre] = useState('')
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
-    const [sortBy, setSortBy] = useState(DEFAULT_SORT_BY)
-    const [type, setType] = useState('movie')
+    const [language] = useState('')
+    const [sortBy, setSortBy] = useState('')
+    const [type] = useState('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
@@ -104,7 +105,7 @@ const MoviesPage = () => {
         )
     }
 
-    const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
+    const fetchMovies = async (offset: number = fetchCount) => {
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
@@ -119,12 +120,12 @@ const MoviesPage = () => {
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + response.data.length)
         } catch (error) {
-            console.error('Error fetching movies:', error)
+            // console.error('Error fetching movies:', error)
         }
     }
 
     useEffect(() => {
-        if (shouldFetchMovies()) fetchMovies()
+        if (shouldFetchMovies()) void fetchMovies()
     }, [fetchCount])
 
     const handleScroll = async () => {
@@ -142,9 +143,7 @@ const MoviesPage = () => {
 
     const handleSwitch = () => {
         setTimeout(() => {
-            const newType = type === 'movie' ? 'tvShow' : 'movie'
-            setType(newType)
-            fetchMovies(0, newType)
+            void fetchMovies(0)
         }, 30)
     }
 

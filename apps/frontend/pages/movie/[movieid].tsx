@@ -8,6 +8,8 @@ import { CommentDTO } from '../../src/shared/comment'
 import { MovieCrew } from '../../src/shared/movies'
 import { MovieDetails } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
+import Loading from '../loading'
+import Custom404 from '../404'
 import axios from 'axios'
 import type { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -22,21 +24,23 @@ function MoviePage() {
     const [movie, setMovieDetails] = useState<MovieDetails | null>(null)
     const [liked, setLiked] = useState<boolean>(false)
     const router = useRouter()
-    const { idMovie } = router.query
+    const { movieid } = router.query
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<CommentDTO[]>([])
-    const { t } = useTranslation('common')
+	const { t } = useTranslation('common')
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<boolean>(false)
 
     useEffect(() => {
-        if (idMovie) getMovie()
-    }, [idMovie])
+        if (movieid) getMovie()
+    }, [movieid])
 
     const canPostComment = (): boolean =>
         1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/${String(movieid)}`, {
                 withCredentials: true,
             })
             setMovieDetails(response.data)
@@ -49,6 +53,9 @@ function MoviePage() {
             setComments(responseComments.data)
         } catch {
             setMovieDetails(null)
+            setError(true)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -57,12 +64,17 @@ function MoviePage() {
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
-                    { comment, imdbCode: idMovie },
-                    { withCredentials: true },
+                    {
+                        comment: comment,
+                        imdbCode: movieid,
+                    },
+                    {
+                        withCredentials: true,
+                    },
                 )
                 setComments((prevComments) => [response.data, ...prevComments])
-            } catch (error: any) {
-                console.log(error.response.data)
+            } catch (errorMsg: any) {
+                // console.log(errorMsg.response.data)
             }
             setComment('')
         }
@@ -73,39 +85,37 @@ function MoviePage() {
             await axios.delete(`http://localhost:5001/comments/${id}`, {
                 withCredentials: true,
             })
-            setComments((prevComments) => prevComments.filter((comment) => comment.id !== id))
-        } catch (error: any) {
-            console.log(error)
+            setComments((prevComments) => prevComments.filter((el) => el.id !== id))
+        } catch (errorMsg: any) {
+            // console.log(errorMsg)
         }
     }
 
-    async function handleEditComment(id: number, content: string) {
-        try {
-            const response = await axios.patch(
-                `http://localhost:5001/comments/${id}`,
-                {
-                    comment: content,
-                },
-                {
-                    withCredentials: true,
-                },
-            )
-            setComments((prevComments) =>
-                prevComments.map((comment) => {
-                    if (comment.id === id) {
-                        comment.content = content
-                    }
-                    return comment
-                }),
-            )
-        } catch (error: any) {
-            console.log(error)
+	async function handleEditComment(id: number, content: string) {
+		try {
+			await axios.patch(
+				`http://localhost:5001/comments/${id}`,
+				{
+					comment: content,
+				},
+				{
+					withCredentials: true,
+				},
+			)
+			setComments((prevComments) => prevComments.map((el) => {
+				if (el.id === id) {
+					el.content = content
+				}
+				return el
+			}))
+        } catch {
+            // console.log()
         }
     }
 
     async function likeMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/like/${idMovie}`, {
+            const response = await axios.get(`http://localhost:5001/movies/like/${String(movieid)}`, {
                 withCredentials: true,
             })
             setLiked(response.data === 'Movie liked')
@@ -174,14 +184,18 @@ function MoviePage() {
         </div>
     )
 
-    return !user ? (
-        <UserNotSignedIn />
-    ) : !movie ? (
-        <p>PAS DE FILM</p> /* Faudra changer :D */
-    ) : (
-        <>
+    let content;
+
+    if (!user) {
+        content = <UserNotSignedIn />
+    } else if (loading) {
+        content = <Loading />;
+    } else if (error || !movie) {
+        content = <Custom404 />
+    } else {
+        content = (
             <div>
-                <MainLayout className2="" />
+                <MainLayout className2=''/>
                 <div className="fixed top-0 left-0 w-screen h-screen overflow-hidden -z-10">
                     <img
                         src={movie.image.background || '/defaultBackground.jpg'}
@@ -207,7 +221,7 @@ function MoviePage() {
                             <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                                 {movie.title}
                             </h1>
-                            <RatingStars rating={movie.rating / 2} line={true} />
+                            <RatingStars rating={movie.rating / 2} line={true}/>
                             {movie.genres.slice(0, 6).map((element, index) => (
                                 <span
                                     key={index}
@@ -414,10 +428,11 @@ function MoviePage() {
                                 updatedAt={com.updatedAt}
                                 username={com.username}
                                 profilePicture={com.profilePicture}
+                                userId={com.userId}
                                 additionalClasses={index !== 0 ? 'border-t' : ''}
                                 handleDelete={() => handleDeleteComment(com.id)}
-                                handleEdit={(content) => handleEditComment(com.id, content)}
-                                mine={com.userId == user.id}
+                                handleEdit={(contents) => handleEditComment(com.id, contents)}
+                                mine={com.userId === user.id}
                             />
                         ))}
                     </div>
@@ -441,8 +456,10 @@ function MoviePage() {
                 )} */}
                 </div>
             </div>
-        </>
-    )
+        )
+    }
+
+    return content
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({

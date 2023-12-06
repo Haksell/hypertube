@@ -1,6 +1,6 @@
-import RatingStars from '../../components/elems/RatingStars'
-import { MovieDTO } from '../../src/shared/movies'
 import { formatDuration } from '../../src/utils'
+import { MovieDTO } from '../../src/shared/movies'
+import RatingStars from './RatingStars';
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'

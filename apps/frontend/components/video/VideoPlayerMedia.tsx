@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Readable } from "stream";
 
 // import fs from 'fs'
@@ -11,10 +11,7 @@ function VideoPlayerMedia() {
 	const link = 'http://localhost:5001/movies/view/tt0443649'
 
 	useEffect(() => {
-		if (videoRef.current) {
-			;
-		}
-		getVideo()
+		void getVideo()
 	}, [])
 
 	async function getVideo() {
@@ -23,7 +20,6 @@ function VideoPlayerMedia() {
 			const stream = new Readable({
 				read() {}
 			});
-
 
 			const response = await axios.get<Readable>(link, {
 				responseType: "stream",
@@ -45,8 +41,8 @@ function VideoPlayerMedia() {
 
     		
 
-			console.log('response data')
-			console.log(response)
+			// console.log('response data')
+			// console.log(response)
 
 			response.data.pipe(stream);
 

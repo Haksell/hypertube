@@ -1,12 +1,12 @@
 import React from 'react'
 
-type Prop = {
+interface Prop {
     textAlert: string
     show: boolean
     setShow: any
 }
 function ShowAlert({ textAlert, show, setShow }: Prop) {
-    function handleOnClick(event: any) {
+    function handleOnClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault()
         setShow(false)
     }
