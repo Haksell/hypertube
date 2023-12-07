@@ -17,6 +17,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import sanitizeHtml from 'sanitize-html'
 
 const pluralize = (name: string, arr: MovieCrew[]) => (arr.length >= 2 ? name + 's' : name)
 
@@ -67,12 +68,18 @@ function MoviePage() {
     }
 
     async function postComment() {
+        const sanitizeConf = {
+            allowedTags: ['b', 'i', 'a', 'p', 'br'],
+            allowedAttributes: { a: ['href'] },
+        }
+
         if (canPostComment()) {
+            const formattedComment = sanitizeHtml(comment.replace('\n', '<br>'), sanitizeConf)
             try {
                 const response = await axios.post(
                     `http://localhost:5001/comments/`,
                     {
-                        comment: comment,
+                        comment: formattedComment,
                         imdbCode: movieid,
                     },
                     {

@@ -22,6 +22,20 @@ export const COMMENT_MAX_LENGTH = 300
 export const isValidCommentLength = (comment: string) =>
     1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
 
+function doubleBrEnding(str: string) {
+    // Regular expression to match strings that end with '<br>' or '<br />'
+    const regex = /(?:[^>]|^)(<br>|<br \/>)$/;
+
+    // Check if the string matches the regular expression
+    if (regex.test(str)) {
+        // If it matches, double the ending
+        return str + str.match(regex)![1]
+    }
+
+    // If it doesn't match, return the original string
+    return str
+}
+
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
@@ -46,8 +60,10 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
             allowedTags: ['b', 'i', 'a', 'p', 'br'],
             allowedAttributes: { a: ['href'] },
         }
-
-        setEditableContent(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf))
+        console.log('change')
+        console.log(evt.currentTarget.innerHTML)
+        console.log(doubleBrEnding(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)))
+        setEditableContent(doubleBrEnding(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)))
     }, [])
 
     useEffect(() => {
@@ -115,7 +131,6 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                     'mb-4 break-words ' + (isEditing ? 'border rounded border-gray-700' : '')
                 }
                 onChange={onContentChange}
-                onBlur={onContentChange}
                 html={editableContent}
                 disabled={!isEditing}
             />
