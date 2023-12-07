@@ -51,6 +51,7 @@ model Movies {
 	favoritedBy FavoriteMovie[]
 	viewedBy ViewedMovie[]
 	comments Comment[]
+	status String @default("NOTDOWNLOADED")
 	// likedBy User[] @relation("MoviesLiked")
 	// viewedBy User[] @relation("MoviesViewed")
 }
