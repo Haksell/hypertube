@@ -19,6 +19,9 @@ interface CommentProps {
 
 export const COMMENT_MAX_LENGTH = 300
 
+export const isValidCommentLength = (comment: string) =>
+    1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
+
 const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     const router = useRouter()
     const initialLanguage = router.locale || router.defaultLocale || 'en'
@@ -34,6 +37,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
         mine,
     } = props
     const [editableContent, setEditableContent] = useState('')
+    const [originalContent, setOriginalContent] = useState('')
     const [isEditing, setIsEditing] = useState(false)
     const { t } = useTranslation('common')
 
@@ -47,8 +51,9 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
     }, [])
 
     useEffect(() => {
-        if (content && content.length <= COMMENT_MAX_LENGTH) {
+        if (isValidCommentLength(content)) {
             setEditableContent(content)
+            setOriginalContent(content)
         }
     }, [content])
 
@@ -69,6 +74,11 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
 
     const handleConfirm = async () => {
         handleEdit(editableContent)
+        setIsEditing(false)
+    }
+
+    const handleCancel = () => {
+        setEditableContent(originalContent)
         setIsEditing(false)
     }
 
@@ -107,36 +117,44 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                 html={editableContent}
                 disabled={!isEditing}
             />
-            {mine && !isEditing && (
+            {mine && (
                 <div className="flex gap-2">
-                    <button
-                        className="font-medium text-blue-500 hover:underline"
-                        onClick={() => setIsEditing(true)}
-                    >
-                        {t('movie.edit')}
-                    </button>
-                    <button
-                        className="font-medium text-red-500 hover:underline"
-                        onClick={handleDelete}
-                    >
-                        {t('movie.delete')}
-                    </button>
-                </div>
-            )}
-            {isEditing && (
-                <div className="flex gap-2">
-                    <button
-                        className="font-medium text-blue-500 hover:underline"
-                        onClick={handleConfirm}
-                    >
-                        {t('movie.confirm')}
-                    </button>
-                    <button
-                        className="font-medium text-red-500 hover:underline"
-                        onClick={() => setIsEditing(false)}
-                    >
-                        {t('movie.cancel')}
-                    </button>
+                    {isEditing ? (
+                        <>
+                            <button
+                                className={`font-medium ${
+                                    isValidCommentLength(editableContent)
+                                        ? 'text-blue-500 hover:underline'
+                                        : 'text-red-500'
+                                }`}
+                                onClick={handleConfirm}
+                                disabled={!isValidCommentLength(editableContent)}
+                            >
+                                {t('movie.confirm')}
+                            </button>
+                            <button
+                                className="font-medium text-red-500 hover:underline"
+                                onClick={handleCancel}
+                            >
+                                {t('movie.cancel')}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                className="font-medium text-blue-500 hover:underline"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                {t('movie.edit')}
+                            </button>
+                            <button
+                                className="font-medium text-red-500 hover:underline"
+                                onClick={handleDelete}
+                            >
+                                {t('movie.delete')}
+                            </button>
+                        </>
+                    )}
                 </div>
             )}
         </article>

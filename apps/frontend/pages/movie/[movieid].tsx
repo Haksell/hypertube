@@ -1,5 +1,5 @@
 import Custom404 from '../404'
-import Comment, { COMMENT_MAX_LENGTH } from '../../components/Comment'
+import Comment, { COMMENT_MAX_LENGTH, isValidCommentLength } from '../../components/Comment'
 import Loading from '../../components/Loading'
 import UserNotSignedIn from '../../components/auth/UserNotSignedIn'
 import RatingStars from '../../components/elems/RatingStars'
@@ -39,8 +39,7 @@ function MoviePage() {
         if (movieid) getMovie()
     }, [movieid])
 
-    const canPostComment = (): boolean =>
-        1 <= comment.length && comment.length <= COMMENT_MAX_LENGTH
+    const canPostComment = (): boolean => isValidCommentLength(comment)
 
     async function getMovie() {
         try {
@@ -103,12 +102,8 @@ function MoviePage() {
         try {
             await axios.patch(
                 `http://localhost:5001/comments/${id}`,
-                {
-                    comment: content,
-                },
-                {
-                    withCredentials: true,
-                },
+                { comment: content },
+                { withCredentials: true },
             )
             setComments((prevComments) =>
                 prevComments.map((el) => {
