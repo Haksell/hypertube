@@ -11,7 +11,7 @@ const requestLoggerMiddleware = (req: Request, res: Response, next: NextFunction
     log.push(`Time: ${new Date().toISOString()}`)
     log.push(`Route: ${req.method} ${req.originalUrl}`)
     log.push('Request Parameters:', JSON.stringify(req.params, null, 2))
-    log.push('Request Body:', req.body)
+    log.push('Request Body:', JSON.stringify(req.body, null, 2))
 
     // Intercept the original send function to capture response body
     const originalSend = res.send.bind(res)
