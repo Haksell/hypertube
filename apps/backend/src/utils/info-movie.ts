@@ -129,7 +129,7 @@ export async function addDetailsFromMovieDB(movie: MovieDetails) {
         }
         if (data.credits.crew) {
             const crew: MovieCrew[] = giveListCrews(data.credits.crew)
-            movie.crews = crew
+            movie.crews = crew.filter((elem) => elem.job && ['Director', 'Writer', 'Story', 'Producer'].includes(elem.job))
         }
         return
     } catch {
