@@ -10,7 +10,7 @@ function VideoPlayer({ videoID }: Prop) {
 
     useEffect(() => {
         if (videoRef.current) videoRef.current.src = link
-    }, [])
+    }, [videoID])
 
     return (
         <div className="video-wrapper">
@@ -20,7 +20,6 @@ function VideoPlayer({ videoID }: Prop) {
                 controls
                 crossOrigin="use-credentials"
             >
-                <source src={link} type="video/mp4" />
                 <track
                     label="English"
                     kind="subtitles"
