@@ -86,7 +86,7 @@ export async function login(req: Request, res: Response) {
     const PHash = bcrypt.hashSync(password, user.salt || '') // user.salt is not null if authMethos is email, but typescript doesn't know that
     if (PHash === user.password) {
         const token = signJwt(user)
-        res.cookie('token', token)
+        res.cookie('token', token, { sameSite: 'none', secure: true})
         res.status(200).send(formatUser(user))
         return
     } else {
@@ -127,7 +127,7 @@ export async function login42(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token)
+    res.cookie('token', token, { sameSite: 'none', secure: true})
     res.status(200).send(formatUser(user))
     return
 }
@@ -163,7 +163,7 @@ export async function loginGithub(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token)
+    res.cookie('token', token, { sameSite: 'none', secure: true})
     res.status(200).send(formatUser(user))
     return
 }
@@ -198,7 +198,7 @@ export async function loginFacebook(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token)
+    res.cookie('token', token, { sameSite: 'none', secure: true})
     res.status(200).send(formatUser(user))
     return
 }
