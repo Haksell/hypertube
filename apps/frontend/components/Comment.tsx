@@ -43,7 +43,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
 
     const onContentChange = React.useCallback((evt: any) => {
         const sanitizeConf = {
-            allowedTags: ['b', 'i', 'a', 'p'],
+            allowedTags: ['b', 'i', 'a', 'p', 'br'],
             allowedAttributes: { a: ['href'] },
         }
 
