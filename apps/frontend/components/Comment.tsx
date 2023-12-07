@@ -111,7 +111,9 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                 </div>
             </footer>
             <ContentEditable
-                className={'mb-4 ' + (isEditing ? 'border rounded border-gray-700' : '')}
+                className={
+                    'mb-4 break-words ' + (isEditing ? 'border rounded border-gray-700' : '')
+                }
                 onChange={onContentChange}
                 onBlur={onContentChange}
                 html={editableContent}
