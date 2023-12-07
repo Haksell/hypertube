@@ -3,6 +3,7 @@ import { getMovieByIMDB } from './bdd-movie'
 import { getSubtitles } from './subtitles'
 import { Movies, PrismaClient } from '@prisma/client'
 import axios from 'axios'
+import { File } from './bittorrent/types'
 
 const prisma = new PrismaClient()
 
@@ -10,7 +11,12 @@ export async function downloadMovie(imdb_code: string) {
     //get movie
     var movie = await getMovieByIMDB(imdb_code)
 
-    if (movie.file) return //movie already downloaded
+    if (movie.status == 'DOWNLOADED') return //movie already downloaded
+
+	if (movie.status == 'DOWNLOADING' && downloadStatus.get(imdb_code) !== undefined) {
+		console.log('movie already downloading')
+		return //movie already downloading
+	}
 
     //get torrent info
     let torrents = await getTorrentInfo(imdb_code)
@@ -45,15 +51,12 @@ async function getTorrentInfo(imdb_code: string) {
                 imdb_id: imdb_code,
             },
         })
-        // console.log(response.data)
         if (response.data.status !== 'ok') throw new CustomError('Code not found')
         if (response.data.data.movie.imdb_code !== imdb_code)
             throw new CustomError('Code not found')
 
         const movie = response.data.data.movie
         const torrents = movie.torrents
-        console.log('retour torrents')
-        console.log(torrents)
 
         if (torrents.length === 0) throw new CustomError('No torrents available')
 
@@ -65,74 +68,79 @@ async function getTorrentInfo(imdb_code: string) {
 }
 
 function selectTorrent(torrents: any) {
-    let hash = ''
+	let url: string = ''
     let seeds = 0
-
-    console.log('torrents:')
-    console.log(torrents)
 
     for (const elem of torrents) {
         if (elem.seeds > seeds) {
             seeds = elem.seeds
-            hash = elem.hash
-            break
+            url = elem.url
         }
     }
-    return hash
+    return url
 }
 
-export async function downloadTorrent(hash: string, movieID: number, imdb_code: string) {
+import { open } from './bittorrent/torrent-parser'
+import TorrentManager from './bittorrent/torrentManager'
+import path from 'path'
+
+export const downloadStatus = new Map<string, TorrentManager>()
+
+let isStarting = false
+
+export async function downloadTorrent(url: string, movieID: number, imdb_code: string) {
+	if (isStarting) return
+	isStarting = true
     var torrentStream = require('torrent-stream')
 
-    console.log('hash selected=' + hash)
+    console.log('url selected=' + url)
 
-    var engine = torrentStream(`magnet:?xt=urn:btih:${hash}`, {
-        path: `/tmp/nicoDL`,
-        trackers: [
-            'udp://open.demonii.com:1337/announce',
-            'udp://tracker.openbittorrent.com:80',
-            'udp://tracker.coppersurfer.tk:6969',
-            'udp://glotorrents.pw:6969/announce',
-            'udp://tracker.opentrackr.org:1337/announce',
-            'udp://torrent.gresille.org:80/announce',
-            'udp://p4p.arenabg.com:1337',
-            'udp://tracker.leechers-paradise.org:6969',
-        ],
-    })
+	if (downloadStatus.get(imdb_code) !== undefined) {
+		console.log('movie already downloading 2')
+		return //movie already downloading
+	}
+	const torrent = await open(url)
+	console.log(torrent)
+	const torrentManager = new TorrentManager(torrent)
+	downloadStatus.set(imdb_code, torrentManager)
+	isStarting = false
 
-    engine.on('ready', function () {
-        engine.files.forEach(async function (file: any) {
-            console.log('filename:', file.name)
-            console.log('full path:', `${engine.path} =/= ${file.path}`)
-            const filePath: string = file.path.replace(`/${file.name}`, '')
-            const folderPath: string = `${engine.path}/${filePath}`
-            var stream = file.createReadStream()
-            if (file && (file.name.endsWith('.mp4') || file.name.endsWith('.mkv'))) {
-                //sauvegarder nom bdd
-                await prisma.movies.update({
-                    where: {
-                        id: movieID,
-                    },
-                    data: {
-                        file: `${file.name}`,
-                        folder: folderPath,
-                        dateDownload: new Date(),
-                    },
-                })
+	torrentManager.on('ready', async (fileList: File[]) => {
+		for (const file of fileList) {
+			console.log(file)
+			const filePath: string = path.basename(file.path)
+			const folderPath: string = path.dirname(file.path)
+			// TODO: handle different format webm / webp / mp4 / mkv ?
+			if (file.path.endsWith('.mp4') || file.path.endsWith('.mkv')) {
+				//sauvegarder nom bdd
+				await prisma.movies.update({
+					where: {
+						id: movieID,
+					},
+					data: {
+						file: filePath,
+						folder: folderPath,
+						dateDownload: new Date(),
+						status: 'DOWNLOADING'
+					},
+				})
 
-                //look for subtitles
-                await downloadSubtitle(imdb_code)
-            }
+				//look for subtitles
+				await downloadSubtitle(imdb_code)
+			}
+		}
+	})
 
-            // stream is readable stream to containing the file content
-        })
-    })
+	torrentManager.on('done', (success: boolean) => {
+		prisma.movies.update({
+			where: {
+				id: movieID,
+			},
+			data: {
+				status: success ? 'DOWNLOADED' : 'NOTDOWNLOADED'
+			},
+		})
+	})
 
-    engine.on('idle', function () {
-        engine.files.forEach(function (file: any) {
-            console.log('finished filename:', file.name)
-            if (file.name.endsWith('.srt')) {
-            }
-        })
-    })
+	torrentManager.start()
 }

@@ -25,7 +25,6 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
                 imdb_id: movieId,
             },
         })
-        // console.log(response.data)
         if (response.data.status !== 'ok') throw new CustomError('Code not found')
         if (response.data.data.movie.imdb_code !== movieId) throw new CustomError('Code not found')
 
@@ -57,7 +56,6 @@ export async function getInfoMovieTorrent(movieId: string): Promise<MovieDetails
         }
         return retour
     } catch {
-        console.log(`Movie ${movieId} not found`)
         return null
     }
 }
@@ -98,7 +96,6 @@ export async function getInfoMovieTorrentEZTV(movieId: string): Promise<MovieDet
         }
         return retour
     } catch (error) {
-        console.log(error)
         throw new CustomError('Code not found')
     }
 }
@@ -114,7 +111,6 @@ export async function addDetailsFromMovieDB(movie: MovieDetails) {
                 },
             },
         )
-        // console.log(response.data)
         const data = response.data
         if (data.budget) movie.budget = data.budget
         if (data.overview) movie.summary = data.overview
@@ -129,7 +125,7 @@ export async function addDetailsFromMovieDB(movie: MovieDetails) {
         }
         if (data.credits.crew) {
             const crew: MovieCrew[] = giveListCrews(data.credits.crew)
-            movie.crews = crew
+            movie.crews = crew.filter((elem) => elem.job && ['Director', 'Writer', 'Story', 'Producer'].includes(elem.job))
         }
         return
     } catch {
@@ -185,7 +181,6 @@ export async function addRecommandatedMovies(movie: MovieDetails) {
     })
     if (response.data.status !== 'ok') return
     const moviesRecoY = response.data.data.movies
-    console.log(moviesRecoY)
     const movies: Movie[] = []
 
     if (moviesRecoY.length > 0)
