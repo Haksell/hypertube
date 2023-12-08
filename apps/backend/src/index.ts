@@ -1,11 +1,6 @@
 import intializeDB from './db/init.ts'
-import auth from './middleware/auth.middleware.ts'
 import globalErrorMiddleware from './middleware/globalError.middleware.ts'
 import requestLoggerMiddleware from './middleware/requestLogger.middleware.ts'
-import authRoutes from './routes/auth.ts'
-import commentsRoutes from './routes/comments.ts'
-import moviesRoutes from './routes/movies.ts'
-import usersRoutes from './routes/users.ts'
 import webRoutes from './routes/web.ts'
 import { json, urlencoded } from 'body-parser'
 import cors from 'cors'
@@ -13,6 +8,8 @@ import 'dotenv/config'
 import express from 'express'
 import { scheduleTask } from './utils/files-handling.ts'
 import { oathToken } from './api/auth-api.ts'
+import { authenticateJWT } from './api/middlewares/authJWT.ts'
+import { getOneUser, getUsers } from './api/users-api.ts'
 
 
 const cookieParser = require('cookie-parser')
@@ -32,7 +29,7 @@ const corsOptionsWeb = {
 
 const corsOptionsAPI = {
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 };
@@ -56,10 +53,13 @@ app.use(globalErrorMiddleware)
 app.get('/', (req, res) => res.send('API Root'))
 app.use('/web', webRoutes)
 
-//ROUTES API
-app.post('/oauth/token', cors(corsOptionsAPI), oathToken)
 
+////////////////////ROUTES API////////////////////
 // POST oauth/token
+app.post('/oauth/token', cors(corsOptionsAPI), oathToken)
+app.get('/users', cors(corsOptionsAPI), authenticateJWT, getUsers)
+app.get('/users/:id', cors(corsOptionsAPI), authenticateJWT, getOneUser)
+
 // GET /users
 // GET /users/:id
 // PATCH /users/:id
