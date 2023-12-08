@@ -241,7 +241,7 @@ const MoviesPage = () => {
                                 type="text"
                                 className={`font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none ${
                                     type === 'tvShow'
-                                        ? 'bg-neutral-800 cursor-not-allowed'
+                                        ? 'bg-neutral-800 cursor-not-allowed text-transparent'
                                         : 'bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white'
                                 }`}
                                 placeholder={type === 'movie' ? t('index.searchMovies') : ''}
