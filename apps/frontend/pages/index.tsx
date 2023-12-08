@@ -5,22 +5,17 @@ import { useUserContext } from '../src/context/UserContext'
 import { MovieDTO } from '../src/shared/movies'
 import { range } from '../src/utils'
 import axios from 'axios'
-import { useTranslation } from 'next-i18next'
+import { TFunction, useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
 const limit = 7
 const DEFAULT_SORT_BY = 'like_count'
 
-interface FilterProps {
-    id: string
-    label: string
-    handleChange: (value: string) => void
-    options: { value: string; label: string }[]
-}
+type VideoType = 'movie' | 'tvShow'
 
-const MoviesSeriesOption: React.FC<{ isActive: boolean; text: string }> = ({ isActive, text }) => (
+const MoviesTVShowOption: React.FC<{ isActive: boolean; text: string }> = ({ isActive, text }) => (
     <span
         className={`rounded-full py-1 px-3 select-none ${
             isActive && 'bg-gradient-to-r from-orange-50 to-blue-50'
@@ -30,7 +25,7 @@ const MoviesSeriesOption: React.FC<{ isActive: boolean; text: string }> = ({ isA
     </span>
 )
 
-const MoviesSeriesSwitch: React.FC<{ handleSwitch: () => void; type: string }> = ({
+const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string }> = ({
     handleSwitch,
     type,
 }) => {
@@ -44,13 +39,19 @@ const MoviesSeriesSwitch: React.FC<{ handleSwitch: () => void; type: string }> =
                 checked={type === 'tvShow'}
                 className="sr-only"
             />
-            <MoviesSeriesOption isActive={type === 'movie'} text={t('index.movies')} />
-            <MoviesSeriesOption isActive={type !== 'movie'} text={t('index.tv')} />
+            <MoviesTVShowOption isActive={type === 'movie'} text={t('index.movies')} />
+            <MoviesTVShowOption isActive={type !== 'movie'} text={t('index.tv')} />
         </label>
     )
 }
 
-const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => {
+const Filter: React.FC<{
+    disabled: boolean
+    handleChange: (value: string) => void
+    id: string
+    label: string
+    options: { value: string; label: string }[]
+}> = ({ disabled, handleChange, id, label, options }) => {
     return (
         <div className="relative w-52 mr-2">
             <label htmlFor={id} className="block mb-2 font-bold text-white">
@@ -59,7 +60,10 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
             <select
                 id={id}
                 onChange={(e) => handleChange(e.target.value)}
-                className="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                className={`border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${
+                    disabled && 'bg-neutral-800 border-neutral-800'
+                }`}
+                disabled={disabled}
             >
                 {options.map((option: any) => (
                     <option key={option.value} value={option.value}>
@@ -71,6 +75,27 @@ const Filter: React.FC<FilterProps> = ({ id, label, handleChange, options }) => 
     )
 }
 
+const SearchButton: React.FC<{
+    disabled: boolean
+    fetchMovies: (offset?: number, newType?: string) => Promise<void>
+    forSmallScreens: boolean
+    t: TFunction
+}> = ({ disabled, fetchMovies, forSmallScreens, t }) => (
+    <button
+        className={`${
+            forSmallScreens ? 'block sm:hidden' : 'hidden sm:block'
+        } bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 ${
+            disabled
+                ? 'bg-neutral-800 cursor-not-allowed'
+                : 'hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50'
+        }`}
+        onClick={() => fetchMovies(0)}
+        disabled={disabled}
+    >
+        {t('index.search')}
+    </button>
+)
+
 const MoviesPage = () => {
     const { user } = useUserContext()
     const [movies, setMovies] = useState<MovieDTO[]>([])
@@ -80,7 +105,7 @@ const MoviesPage = () => {
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
     const [sortBy, setSortBy] = useState('')
-    const [type, setType] = useState('movie')
+    const [type, setType] = useState<VideoType>('movie')
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
@@ -151,29 +176,33 @@ const MoviesPage = () => {
                     }}
                 >
                     <div className="sm:hidden mr-4 mt-4">
-                        <MoviesSeriesSwitch type={type} handleSwitch={handleSwitch} />
+                        <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} />
                     </div>
                     <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
                         <div className="mx-4 hidden sm:block">
-                            <MoviesSeriesSwitch type={type} handleSwitch={handleSwitch} />
+                            <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} />
                         </div>
                         <div className="grow relative">
                             <input
                                 type="text"
-                                className="bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none"
-                                placeholder={t('index.searchMovies')}
+                                className={`font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none ${
+                                    type === 'tvShow'
+                                        ? 'bg-neutral-800 cursor-not-allowed'
+                                        : 'bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white'
+                                }`}
+                                placeholder={type === 'movie' ? t('index.searchMovies') : ''}
                                 onChange={(e) => setSearch(e.target.value)}
+                                disabled={type === 'tvShow'}
                                 aria-label="Search movies"
                             />
                             <FaSearch className="absolute top-0 right-0 mt-3 mr-3 text-white" />
                         </div>
-
-                        <button
-                            className="hidden sm:block bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
-                            onClick={() => fetchMovies(0)}
-                        >
-                            {t('index.search')}
-                        </button>
+                        <SearchButton
+                            disabled={type === 'tvShow'}
+                            fetchMovies={fetchMovies}
+                            forSmallScreens={false}
+                            t={t}
+                        />
                     </div>
                     <div className="flex flex-wrap justify-center items-center px-5 w-full max-w-7xl gap-4 mt-4">
                         <Filter
@@ -202,6 +231,7 @@ const MoviesPage = () => {
                                 { value: 'War', label: t('index.genre.war') },
                                 { value: 'Western', label: t('index.genre.western') },
                             ]}
+                            disabled={type === 'tvShow'}
                         />
                         <Filter
                             id="year"
@@ -214,6 +244,7 @@ const MoviesPage = () => {
                                     label: y.toString(),
                                 })),
                             ]}
+                            disabled={type === 'tvShow'}
                         />
                         <Filter
                             id="grade"
@@ -226,6 +257,7 @@ const MoviesPage = () => {
                                     label: `${r}+`,
                                 })),
                             ]}
+                            disabled={type === 'tvShow'}
                         />
                         <Filter
                             id="sort"
@@ -241,6 +273,7 @@ const MoviesPage = () => {
                                 { value: 'download_count', label: t('index.sort.download_count') },
                                 { value: 'date_added', label: t('index.sort.date_added') },
                             ]}
+                            disabled={type === 'tvShow'}
                         />
                         <Filter
                             id="downloaded"
@@ -250,16 +283,16 @@ const MoviesPage = () => {
                                 { value: 'no', label: t('index.availability.all') },
                                 { value: 'yes', label: t('index.availability.server') },
                             ]}
+                            disabled={type === 'tvShow'}
                         />
                     </div>
                     <div className="flex flex-wrap justify-center items-center mt-7 px-8">
-                        <button
-                            className="sm:hidden justify-center bg-gray-700 text-white font-bold py-2 px-8 rounded-full ml-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50"
-                            onClick={() => fetchMovies(0)}
-                            style={{ boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)' }}
-                        >
-                            {t('index.search')}
-                        </button>
+                        <SearchButton
+                            disabled={type === 'tvShow'}
+                            fetchMovies={fetchMovies}
+                            forSmallScreens={true}
+                            t={t}
+                        />
                     </div>
                 </div>
                 <div className="text-white">

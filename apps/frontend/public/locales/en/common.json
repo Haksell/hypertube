@@ -67,7 +67,7 @@
         "movies": "Movies",
         "release": "Release",
         "duration": "Duration",
-        "tv": "Series",
+        "tv": "TV Shows",
         "availability": {
            "name": "Availability",
            "all": "All",
