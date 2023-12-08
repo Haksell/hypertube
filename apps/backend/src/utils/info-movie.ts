@@ -92,7 +92,7 @@ export async function getInfoMovieTorrentEZTV(movieId: string): Promise<MovieDet
             liked: false,
             recommended: [],
             source: 'EZTV',
-            hash: movie.hash,
+            hash: movie.torrent_url,
         }
         return retour
     } catch (error) {
