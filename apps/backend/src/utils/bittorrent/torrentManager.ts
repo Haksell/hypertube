@@ -18,7 +18,7 @@ export default class TorrentManager extends EventEmitter {
     private _fileList: File[]
     private _isComplete: boolean
     private _movieBytesStatus: [start: number, end: number][]
-	private _videoLength: number
+    private _videoLength: number
 
     constructor(torrent: any) {
         super()
@@ -29,23 +29,26 @@ export default class TorrentManager extends EventEmitter {
         this._fileList = []
         this._isComplete = false
         this._movieBytesStatus = []
-		this._videoLength = 0
+        this._videoLength = 0
 
+        const login42 = __dirname.split(path.sep)[4]
+        const downloadsDir = login42 ? path.join('/sgoinfre/goinfre/Perso/', login42) : 'downloads'
+        const pathName = path.join(downloadsDir, torrent.info.name)
+        console.log(pathName)
         if (torrent.info.files) {
             console.log('Torrent contains multiple files')
-            const pathName = path.join('downloads', torrent.info.name)
             fs.mkdirSync(pathName, { recursive: true })
             torrent.info.files.forEach((file: { path: string[]; length: number }) => {
                 const filePath = path.join(pathName, file.path[0])
-				if (filePath.endsWith('.mp4') || filePath.endsWith('.webm')) this._videoLength = file.length
+                if (filePath.endsWith('.mp4') || filePath.endsWith('.webm'))
+                    this._videoLength = file.length
                 const fd = fs.openSync(filePath, 'w')
                 this._fileList.push({ path: filePath, length: file.length, fd })
             })
         } else {
             console.log('Torrent contains single file')
-            const pathName = path.join('downloads', torrent.info.name)
             const fd = fs.openSync(pathName, 'w')
-			this._videoLength = torrent.info.length
+            this._videoLength = torrent.info.length
             this._fileList.push({
                 path: pathName,
                 length: torrent.info.length,
@@ -71,13 +74,13 @@ export default class TorrentManager extends EventEmitter {
         this.manageConnections()
     }
 
-	getVideoLength(): number {
-		return this._videoLength
-	}
+    getVideoLength(): number {
+        return this._videoLength
+    }
 
-	getMovieBytesStatus(): [start: number, end: number][] {
-		return this._movieBytesStatus
-	}
+    getMovieBytesStatus(): [start: number, end: number][] {
+        return this._movieBytesStatus
+    }
 
     async manageConnections() {
         while (

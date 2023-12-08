@@ -216,7 +216,6 @@ export async function viewMovie(req: Request, res: Response) {
         const CHUNK_SIZE = 10 ** 6 // 1MB
         let end = Math.min(start + CHUNK_SIZE, fileSize - 1)
 
-
         if (movie.status === 'DOWNLOADING') {
             const downloadManager = downloadStatus.get(movie.imdb_code)
 
@@ -246,7 +245,7 @@ export async function viewMovie(req: Request, res: Response) {
             }
 
             fileSize = downloadManager.getVideoLength()
-			end = Math.min(start + CHUNK_SIZE, fileSize - 1)
+            end = Math.min(start + CHUNK_SIZE, fileSize - 1)
             console.log('Availabale bytes: ', JSON.stringify(downloadManager.getMovieBytesStatus()))
             let available = downloadManager
                 .getMovieBytesStatus()
@@ -331,8 +330,6 @@ export async function getSubtitle(req: Request, res: Response) {
 
         const movie = await getMovieByIMDB(movieId)
         const movie_path = movie.folder
-        // const nameVttFile1: string = await convertSrtSubtitle(`tt0443649_en.srt`)
-        // const nameVttFile2: string = await convertSrtSubtitle(`tt0443649_fr.srt`)
 
         const subFilename = movieId + '_' + langage + '.vtt'
         console.log('trying to get subtitle ' + movie_path + ', name=' + subFilename)
@@ -343,7 +340,7 @@ export async function getSubtitle(req: Request, res: Response) {
         const rootDir = path.join(__dirname, '..')
 
         if (fs.existsSync(subPath)) {
-            res.status(200).sendFile(path.join(rootDir, subPath), (err) => {
+            res.status(200).sendFile(subPath, (err) => {
                 //process.cwd() + `${movie_path}/${subFilename}`
                 if (err) {
                     console.error("Erreur lors de l'envoi du fichier :", err)
