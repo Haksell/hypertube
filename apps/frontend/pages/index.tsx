@@ -1,3 +1,7 @@
+'use client'
+
+// TODO: fix first 7 bug
+// TODO: select in genre Filter
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import { MovieCard } from '../components/elems/MovieCard'
 import MainLayout from '../layouts/MainLayout'
@@ -7,11 +11,37 @@ import { range } from '../src/utils'
 import axios from 'axios'
 import { TFunction, useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
 const limit = 7
 const DEFAULT_SORT_BY = 'like_count'
+
+const GENRES: Record<string, string> = {
+    Action: 'index.genre.action',
+    Adventure: 'index.genre.adventure',
+    Animation: 'index.genre.animation',
+    Biography: 'index.genre.biography',
+    Comedy: 'index.genre.comedy',
+    Crime: 'index.genre.crime',
+    Documentary: 'index.genre.documentary',
+    Drama: 'index.genre.drama',
+    Family: 'index.genre.family',
+    Fantasy: 'index.genre.fantasy',
+    History: 'index.genre.history',
+    Horror: 'index.genre.horror',
+    Music: 'index.genre.music',
+    Musical: 'index.genre.musical',
+    Mystery: 'index.genre.mystery',
+    Romance: 'index.genre.romance',
+    'Sci-Fi': 'index.genre.sci-fi',
+    Sport: 'index.genre.sport',
+    Thriller: 'index.genre.thriller',
+    War: 'index.genre.war',
+    Western: 'index.genre.western',
+}
 
 type VideoType = 'movie' | 'tvShow'
 
@@ -46,12 +76,13 @@ const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string }> =
 }
 
 const Filter: React.FC<{
+    defaultValue?: string
     disabled: boolean
     handleChange: (value: string) => void
     id: string
     label: string
     options: { value: string; label: string }[]
-}> = ({ disabled, handleChange, id, label, options }) => {
+}> = ({ defaultValue, disabled, handleChange, id, label, options }) => {
     return (
         <div className="relative w-52 mr-2">
             <label htmlFor={id} className="block mb-2 font-bold text-white">
@@ -64,6 +95,7 @@ const Filter: React.FC<{
                     disabled && 'bg-neutral-800 border-neutral-800'
                 }`}
                 disabled={disabled}
+                {...(defaultValue ? { defaultValue: defaultValue } : {})}
             >
                 {options.map((option: any) => (
                     <option key={option.value} value={option.value}>
@@ -77,7 +109,7 @@ const Filter: React.FC<{
 
 const SearchButton: React.FC<{
     disabled: boolean
-    fetchMovies: (offset?: number, newType?: string) => Promise<void>
+    fetchMovies: (offset?: number, newType?: VideoType, newGenre?: string) => Promise<void>
     forSmallScreens: boolean
     t: TFunction
 }> = ({ disabled, fetchMovies, forSmallScreens, t }) => (
@@ -98,10 +130,15 @@ const SearchButton: React.FC<{
 
 const MoviesPage = () => {
     const { user } = useUserContext()
+    const router = useRouter()
+    const searchParams = useSearchParams()
     const [movies, setMovies] = useState<MovieDTO[]>([])
     const [fetchCount, setFetchCount] = useState(0)
     const [search, setSearch] = useState('')
-    const [genre, setGenre] = useState('')
+    const genreParam = searchParams.get('genre')
+    const [genre, setGenre] = useState(
+        typeof genreParam === 'string' && genreParam && genreParam in GENRES ? genreParam : '',
+    )
     const [yearRange, setYearRange] = useState('')
     const [minGrade, setMinGrade] = useState('')
     const [sortBy, setSortBy] = useState('')
@@ -110,37 +147,46 @@ const MoviesPage = () => {
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
-    const shouldFetchMovies = () => {
-        return (
-            window.innerHeight + document.documentElement.scrollTop >=
-            document.documentElement.offsetHeight - window.innerHeight / 2
-        )
-    }
+    useEffect(() => {
+        const genreParam = searchParams.get('genre')
+        if (genreParam && genreParam in GENRES) {
+            setGenre(genreParam)
+            fetchMovies(0, type, genreParam)
+            router.replace({ pathname: router.pathname, query: {} }, undefined, { shallow: true })
+        }
+    }, [searchParams])
 
-    const fetchMovies = async (offset: number = fetchCount, newType: string = type) => {
+    const shouldFetchMovies = () =>
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - window.innerHeight / 2
+
+    const fetchMovies = async (
+        offset: number = fetchCount,
+        newType: VideoType = type,
+        newGenre: string = genre,
+    ) => {
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
-            if (genre) params['genre'] = genre
+            if (newGenre) params['genre'] = newGenre
             if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
-            else params['sortBy'] = 'seeds'
-            if (newType) params['type'] = newType
+            params['type'] = newType
             params['sortBy'] = sortBy || DEFAULT_SORT_BY
             const response = await axios.get('http://localhost:5001/movies', {
-                params: params,
+                params,
                 withCredentials: true,
             })
-            setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
+            setMovies((prevMovies) => {
+                return offset === 0
+                    ? response.data
+                    : [...prevMovies.slice(0, offset), ...response.data]
+            })
             setFetchCount(offset + response.data.length)
         } catch (error) {
             // console.error('Error fetching movies:', error)
         }
     }
-
-    useEffect(() => {
-        if (shouldFetchMovies()) void fetchMovies()
-    }, [fetchCount])
 
     const handleScroll = async () => {
         if (!isFetchingFromScroll) {
@@ -211,27 +257,12 @@ const MoviesPage = () => {
                             handleChange={setGenre}
                             options={[
                                 { value: '', label: '-' },
-                                { value: 'Action', label: t('index.genre.action') },
-                                { value: 'Adventure', label: t('index.genre.adventure') },
-                                { value: 'Animation', label: t('index.genre.animation') },
-                                { value: 'Biography', label: t('index.genre.biography') },
-                                { value: 'Comedy', label: t('index.genre.comedy') },
-                                { value: 'Crime', label: t('index.genre.crime') },
-                                { value: 'Documentary', label: t('index.genre.documentary') },
-                                { value: 'Drama', label: t('index.genre.drama') },
-                                { value: 'Family', label: t('index.genre.family') },
-                                { value: 'Fantasy', label: t('index.genre.fantasy') },
-                                { value: 'History', label: t('index.genre.history') },
-                                { value: 'Horror', label: t('index.genre.horror') },
-                                { value: 'Music', label: t('index.genre.music') },
-                                { value: 'Mystery', label: t('index.genre.mystery') },
-                                { value: 'Romance', label: t('index.genre.romance') },
-                                { value: 'Science-Fiction', label: t('index.genre.sci-fi') },
-                                { value: 'Thriller', label: t('index.genre.thriller') },
-                                { value: 'War', label: t('index.genre.war') },
-                                { value: 'Western', label: t('index.genre.western') },
+                                ...Object.entries(GENRES)
+                                    .sort((a, b) => a[0].localeCompare(b[0]))
+                                    .map(([k, v]) => ({ value: k, label: t(v) })),
                             ]}
                             disabled={type === 'tvShow'}
+                            defaultValue={genre || searchParams.get('genre') || undefined}
                         />
                         <Filter
                             id="year"
@@ -239,7 +270,7 @@ const MoviesPage = () => {
                             handleChange={setYearRange}
                             options={[
                                 { value: '', label: '-' },
-                                ...range(2024, 1900).map((y) => ({
+                                ...range(2023, 1902).map((y) => ({
                                     value: y.toString(),
                                     label: y.toString(),
                                 })),
