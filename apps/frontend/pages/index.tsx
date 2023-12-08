@@ -51,9 +51,10 @@ const MoviesTVShowOption: React.FC<{ isActive: boolean; text: string }> = ({ isA
     </span>
 )
 
-const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string }> = ({
+const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string; loading: boolean}> = ({
     handleSwitch,
     type,
+    loading
 }) => {
     const { t } = useTranslation('common')
 
@@ -64,6 +65,7 @@ const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string }> =
                 onChange={handleSwitch}
                 checked={type === 'tvShow'}
                 className="sr-only"
+                disabled={loading}
             />
             <MoviesTVShowOption isActive={type === 'movie'} text={t('index.movies')} />
             <MoviesTVShowOption isActive={type !== 'movie'} text={t('index.tv')} />
@@ -141,16 +143,23 @@ const MoviesPage = () => {
     const [type, setType] = useState<VideoType>('movie')
     const [stopFetch, setStopFetch] = useState(false)
     const [downloaded, setDownloaded] = useState('no')
+    const [loading, setLoading] = useState<boolean>(false)
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
     useEffect(() => {
-        if (movies.length === 0) fetchMovies(0)
+        if (movies.length === 0) {
+            setLoading(true)
+            setStopFetch(false)
+            fetchMovies(0)
+        }
     }, [])
 
     useEffect(() => {
         const genreParam = searchParams.get('genre')
         if (genreParam && genreParam in GENRES) {
+            setLoading(true)
+            setStopFetch(false)
             setGenre(genreParam)
             fetchMovies(0, type, genreParam)
             router.replace({ pathname: router.pathname, query: {} }, undefined, { shallow: true })
@@ -179,15 +188,16 @@ const MoviesPage = () => {
                 params,
                 withCredentials: true,
             })
-            if (type === 'movie' && response.data.length < limit) setStopFetch(true)
+            if (type === 'movie' && response.data.length < limit)
+                setStopFetch(true)
             setMovies((prevMovies) => {
-                return offset === 0
-                    ? response.data
-                    : [...prevMovies.slice(0, offset), ...response.data]
+                return offset === 0 ? response.data : [...prevMovies.slice(0, offset), ...response.data]
             })
             setFetchCount(offset + response.data.length)
         } catch (error) {
             // console.error('Error fetching movies:', error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -207,144 +217,162 @@ const MoviesPage = () => {
     const handleSwitch = () => {
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
+        setLoading(true)
         setStopFetch(false)
         fetchMovies(0, newType)
         setSearch('')
     }
 
     const handleSearch = () => {
+        setLoading(true)
         setStopFetch(false)
         void fetchMovies(0)
     }
 
-    return !user ? (
-        <UserNotSignedIn />
-    ) : (
-        <div className="min-h-screen bg-black">
-            <MainLayout>
-                <div
-                    className="flex flex-col w-full justify-center items-center outline-none"
-                    tabIndex={0}
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter') handleSearch()
-                    }}
-                >
-                    <div className="sm:hidden mr-4 mt-4">
-                        <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} />
-                    </div>
-                    <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
-                        <div className="mx-4 hidden sm:block">
-                            <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} />
+    let content
+
+    if (!user) {
+        content = <UserNotSignedIn />
+    } else {
+        content = (
+            <div className="min-h-screen bg-black">
+                <MainLayout>
+                    <div
+                        className="flex flex-col w-full justify-center items-center outline-none"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') handleSearch()
+                        }}
+                    >
+                        <div className="sm:hidden mr-4 mt-4">
+                            <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} loading={loading}/>
                         </div>
-                        <div className="grow relative">
-                            <input
-                                type="text"
-                                className={`font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none ${
-                                    type === 'tvShow'
-                                        ? 'bg-neutral-800 cursor-not-allowed text-transparent'
-                                        : 'bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white'
-                                }`}
-                                placeholder={type === 'movie' ? t('index.searchMovies') : ''}
-                                onChange={(e) => setSearch(e.target.value)}
-                                value={search}
+                        <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
+                            <div className="mx-4 hidden sm:block">
+                                <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} loading={loading}/>
+                            </div>
+                            <div className="grow relative">
+                                <input
+                                    type="text"
+                                    className={`font-medium py-2 pl-4 pr-10 rounded-full w-full placeholder-white focus:outline-none ${
+                                        type === 'tvShow'
+                                            ? 'bg-neutral-800 cursor-not-allowed text-transparent'
+                                            : 'bg-gradient-to-r focus:bg-gradient-to-l from-orange-50 via-slate-400 to-blue-50 text-white'
+                                    }`}
+                                    placeholder={type === 'movie' ? t('index.searchMovies') : ''}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    value={search}
+                                    disabled={type === 'tvShow'}
+                                    aria-label="Search movies"
+                                />
+                                <FaSearch className="absolute top-0 right-0 mt-3 mr-3 text-white" />
+                            </div>
+                            <SearchButton
                                 disabled={type === 'tvShow'}
-                                aria-label="Search movies"
+                                handleSearch={handleSearch}
+                                forSmallScreens={false}
+                                t={t}
                             />
-                            <FaSearch className="absolute top-0 right-0 mt-3 mr-3 text-white" />
                         </div>
-                        <SearchButton
-                            disabled={type === 'tvShow'}
-                            handleSearch={handleSearch}
-                            forSmallScreens={false}
-                            t={t}
-                        />
+                        <div className="flex flex-wrap justify-center items-center px-5 w-full max-w-7xl gap-4 mt-4">
+                            <Filter
+                                id="genre"
+                                label={t('index.genre.name')}
+                                handleChange={setGenre}
+                                options={[
+                                    { value: '', label: '-' },
+                                    ...Object.entries(GENRES)
+                                        .sort((a, b) => a[0].localeCompare(b[0]))
+                                        .map(([k, v]) => ({ value: k, label: t(v) })),
+                                ]}
+                                disabled={type === 'tvShow'}
+                                defaultValue={genre || searchParams.get('genre') || undefined}
+                            />
+                            <Filter
+                                id="year"
+                                label={t('index.year')}
+                                handleChange={setYearRange}
+                                options={[
+                                    { value: '', label: '-' },
+                                    ...range(2023, 1902).map((y) => ({
+                                        value: y.toString(),
+                                        label: y.toString(),
+                                    })),
+                                ]}
+                                disabled={type === 'tvShow'}
+                            />
+                            <Filter
+                                id="grade"
+                                label={t('index.grade')}
+                                handleChange={setMinGrade}
+                                options={[
+                                    { value: '', label: '-' },
+                                    ...range(9, 1).map((r) => ({
+                                        value: r.toString(),
+                                        label: `${r}+`,
+                                    })),
+                                ]}
+                                disabled={type === 'tvShow'}
+                            />
+                            <Filter
+                                id="sort"
+                                label={t('index.sort.name')}
+                                handleChange={setSortBy}
+                                options={[
+                                    { value: 'like_count', label: t('index.sort.like_count') },
+                                    { value: 'seeds', label: t('index.sort.seeds') },
+                                    { value: 'rating', label: t('index.sort.rating') },
+                                    { value: 'year', label: t('index.sort.year') },
+                                    { value: 'title', label: t('index.sort.title') },
+                                    { value: 'peers', label: t('index.sort.peers') },
+                                    { value: 'download_count', label: t('index.sort.download_count') },
+                                    { value: 'date_added', label: t('index.sort.date_added') },
+                                ]}
+                                disabled={type === 'tvShow'}
+                            />
+                            <Filter
+                                id="downloaded"
+                                label={t('index.availability.name')}
+                                handleChange={setDownloaded}
+                                options={[
+                                    { value: 'no', label: t('index.availability.all') },
+                                    { value: 'yes', label: t('index.availability.server') },
+                                ]}
+                                disabled={type === 'tvShow'}
+                            />
+                        </div>
+                        <div className="flex flex-wrap justify-center items-center mt-7 px-8">
+                            <SearchButton
+                                disabled={type === 'tvShow'}
+                                handleSearch={handleSearch}
+                                forSmallScreens={true}
+                                t={t}
+                            />
+                        </div>
                     </div>
-                    <div className="flex flex-wrap justify-center items-center px-5 w-full max-w-7xl gap-4 mt-4">
-                        <Filter
-                            id="genre"
-                            label={t('index.genre.name')}
-                            handleChange={setGenre}
-                            options={[
-                                { value: '', label: '-' },
-                                ...Object.entries(GENRES)
-                                    .sort((a, b) => a[0].localeCompare(b[0]))
-                                    .map(([k, v]) => ({ value: k, label: t(v) })),
-                            ]}
-                            disabled={type === 'tvShow'}
-                            defaultValue={genre || searchParams.get('genre') || undefined}
-                        />
-                        <Filter
-                            id="year"
-                            label={t('index.year')}
-                            handleChange={setYearRange}
-                            options={[
-                                { value: '', label: '-' },
-                                ...range(2023, 1902).map((y) => ({
-                                    value: y.toString(),
-                                    label: y.toString(),
-                                })),
-                            ]}
-                            disabled={type === 'tvShow'}
-                        />
-                        <Filter
-                            id="grade"
-                            label={t('index.grade')}
-                            handleChange={setMinGrade}
-                            options={[
-                                { value: '', label: '-' },
-                                ...range(9, 1).map((r) => ({
-                                    value: r.toString(),
-                                    label: `${r}+`,
-                                })),
-                            ]}
-                            disabled={type === 'tvShow'}
-                        />
-                        <Filter
-                            id="sort"
-                            label={t('index.sort.name')}
-                            handleChange={setSortBy}
-                            options={[
-                                { value: 'like_count', label: t('index.sort.like_count') },
-                                { value: 'seeds', label: t('index.sort.seeds') },
-                                { value: 'rating', label: t('index.sort.rating') },
-                                { value: 'year', label: t('index.sort.year') },
-                                { value: 'title', label: t('index.sort.title') },
-                                { value: 'peers', label: t('index.sort.peers') },
-                                { value: 'download_count', label: t('index.sort.download_count') },
-                                { value: 'date_added', label: t('index.sort.date_added') },
-                            ]}
-                            disabled={type === 'tvShow'}
-                        />
-                        <Filter
-                            id="downloaded"
-                            label={t('index.availability.name')}
-                            handleChange={setDownloaded}
-                            options={[
-                                { value: 'no', label: t('index.availability.all') },
-                                { value: 'yes', label: t('index.availability.server') },
-                            ]}
-                            disabled={type === 'tvShow'}
-                        />
-                    </div>
-                    <div className="flex flex-wrap justify-center items-center mt-7 px-8">
-                        <SearchButton
-                            disabled={type === 'tvShow'}
-                            handleSearch={handleSearch}
-                            forSmallScreens={true}
-                            t={t}
-                        />
-                    </div>
-                </div>
-                <div className="text-white">
-                    <div className="grid grid-cols-1 min-[500px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1 p-4">
-                        {movies.map((movie, i) => (
-                            <MovieCard key={i} movie={movie} />
-                        ))}
-                    </div>
-                </div>
-            </MainLayout>
-        </div>
-    )
+                    {(!loading) && (
+                        <div className="text-white">
+                            <div className="grid grid-cols-1 min-[500px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1 p-4">
+                                {movies.map((movie, i) => (
+                                    <MovieCard key={i} movie={movie} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {(loading) && (
+                        <div>
+                            <img
+                                src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/725eef121244331.60c1c7928b5dd.gif"
+                                alt="loading"
+                            />
+                        </div>
+                    )}
+                </MainLayout>
+            </div>
+        )
+    }
+
+    return content
 }
 
 export async function getStaticProps({ locale }: { locale: any }) {

@@ -94,7 +94,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
         const page: number =
             params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
         const response = await axios.get(
-            `https://eztv.re/api/get-torrents?limit=${limit}&page=${page}`,
+            `https://eztv.re/api/get-torrents?limit=${limit + 5}&page=${page}`,
         )
         const moviesEZTV = response.data.torrents
         const movies: Movie[] = []
@@ -126,6 +126,8 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
                 oneMovie.imdbRating = info.imdbRating
 
                 movies.push(oneMovie)
+                if (movies.length === limit)
+                    break
             }
         }
         return movies
