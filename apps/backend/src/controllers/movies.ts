@@ -268,7 +268,7 @@ export async function viewMovie(req: Request, res: Response) {
             'Content-Range': `bytes ${start}-${end}/${fileSize}`,
             'Accept-Ranges': `bytes`,
             'Content-Length': length,
-            'Content-Type': 'video/mp4',
+            'Content-Type': `video/${movie.file.split('.').pop()}`,
         }
         res.writeHead(206, head) //partial response
         file.pipe(res)
