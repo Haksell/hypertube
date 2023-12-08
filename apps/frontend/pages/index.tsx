@@ -145,6 +145,10 @@ const MoviesPage = () => {
     const { t } = useTranslation('common')
 
     useEffect(() => {
+        if (movies.length === 0) fetchMovies(0)
+    }, [])
+
+    useEffect(() => {
         const genreParam = searchParams.get('genre')
         if (genreParam && genreParam in GENRES) {
             setGenre(genreParam)
@@ -201,13 +205,11 @@ const MoviesPage = () => {
     }, [fetchCount])
 
     const handleSwitch = () => {
-        setSearch('')
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
         setStopFetch(false)
-        setTimeout(() => {
-            void fetchMovies(0, newType)
-        }, 30)
+        fetchMovies(0, newType)
+        setSearch('')
     }
 
     const handleSearch = () => {
