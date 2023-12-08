@@ -36,7 +36,7 @@ function ResetPasswordPage() {
         if (!confirmid) return
         try {
             const response = await axios.get(
-                `http://localhost:5001/auth/forgot/${String(confirmid)}`,
+                `http://localhost:5001/web/auth/forgot/${String(confirmid)}`,
                 {
                     withCredentials: true,
                 },
@@ -53,7 +53,7 @@ function ResetPasswordPage() {
     async function resetPasswordBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/forgot/${String(confirmid)}`,
+                `http://localhost:5001/web/auth/forgot/${String(confirmid)}`,
                 {
                     password: password,
                 },

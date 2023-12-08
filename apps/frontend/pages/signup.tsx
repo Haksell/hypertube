@@ -93,7 +93,7 @@ function SignUpPage() {
     async function signUpBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/register`,
+                `http://localhost:5001/web/auth/register`,
                 {
                     username: username,
                     password: password,

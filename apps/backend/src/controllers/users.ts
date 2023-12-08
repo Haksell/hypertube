@@ -71,7 +71,7 @@ export async function getUser(req: Request, res: Response) {
             return
         }
         const image = user.profile_picture
-            ? `http://localhost:5001/users/image/${user.profile_picture}`
+            ? `http://localhost:5001/web/users/image/${user.profile_picture}`
             : null
         const userReturned = {
             username: user.username,

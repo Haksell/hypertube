@@ -6,7 +6,7 @@ interface Prop {
 function VideoPlayer({ videoID }: Prop) {
     const videoRef = useRef<HTMLVideoElement | null>(null)
 
-    const link = `http://localhost:5001/movies/view/${videoID}`
+    const link = `http://localhost:5001/web/movies/view/${videoID}`
 
     useEffect(() => {
         if (videoRef.current) videoRef.current.src = link
@@ -24,14 +24,14 @@ function VideoPlayer({ videoID }: Prop) {
                     label="English"
                     kind="subtitles"
                     srcLang="en"
-                    src={`http://localhost:5001/movies/subtitle/${videoID}?lang=en`}
+                    src={`http://localhost:5001/web/movies/subtitle/${videoID}?lang=en`}
                     default
                 />
                 <track
                     label="Francais"
                     kind="subtitles"
                     srcLang="fr"
-                    src={`http://localhost:5001/movies/subtitle/${videoID}?lang=fr`}
+                    src={`http://localhost:5001/web/movies/subtitle/${videoID}?lang=fr`}
                     default
                 />
                 Your browser does not support the video tag.

@@ -27,7 +27,7 @@ function ConfirmEmailPage() {
         if (!confirmid) return
         try {
             const response = await axios.get(
-                `http://localhost:5001/auth/confirm/${String(confirmid)}`,
+                `http://localhost:5001/web/auth/confirm/${String(confirmid)}`,
                 {
                     withCredentials: true,
                 },

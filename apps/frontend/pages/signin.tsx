@@ -60,7 +60,7 @@ function SignInPage() {
     async function signInBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/login`,
+                `http://localhost:5001/web/auth/login`,
                 { username, password },
                 { withCredentials: true },
             )
