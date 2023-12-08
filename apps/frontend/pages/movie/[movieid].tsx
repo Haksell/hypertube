@@ -240,7 +240,7 @@ function MoviePage() {
                     <img
                         src={movie.image.poster || '/errorPicture.jpg'}
                         alt={movie.title}
-                        className="absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible min-[1000px]:-top-20"
+                        className={`absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible transition-all transform duration-500 ${isMovieVisible ? 'min-[1000px]:top-4' : 'min-[1000px]:-top-20'}`}
                         onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                             e.currentTarget.src = '/errorPicture.jpg'
                         }}
