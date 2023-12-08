@@ -1,3 +1,4 @@
+import { off } from 'process'
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import { MovieCard } from '../components/elems/MovieCard'
 import MainLayout from '../layouts/MainLayout'
@@ -77,10 +78,10 @@ const Filter: React.FC<{
 
 const SearchButton: React.FC<{
     disabled: boolean
-    fetchMovies: (offset?: number, newType?: string) => Promise<void>
+    handleSearch: any
     forSmallScreens: boolean
     t: TFunction
-}> = ({ disabled, fetchMovies, forSmallScreens, t }) => (
+}> = ({ disabled, handleSearch, forSmallScreens, t }) => (
     <button
         className={`${
             forSmallScreens ? 'block sm:hidden' : 'hidden sm:block'
@@ -89,7 +90,7 @@ const SearchButton: React.FC<{
                 ? 'bg-neutral-800 cursor-not-allowed'
                 : 'hover:bg-gradient-to-r hover:from-orange-50 hover:to-blue-50'
         }`}
-        onClick={() => fetchMovies(0)}
+        onClick={() => handleSearch()}
         disabled={disabled}
     >
         {t('index.search')}
@@ -106,13 +107,14 @@ const MoviesPage = () => {
     const [minGrade, setMinGrade] = useState('')
     const [sortBy, setSortBy] = useState('')
     const [type, setType] = useState<VideoType>('movie')
+    const [stopFetch, setStopFetch] = useState(false)
     const [downloaded, setDownloaded] = useState('no')
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
     const shouldFetchMovies = () => {
         return (
-            window.innerHeight + document.documentElement.scrollTop >=
+            !stopFetch && window.innerHeight + document.documentElement.scrollTop >=
             document.documentElement.offsetHeight - window.innerHeight / 2
         )
     }
@@ -131,6 +133,9 @@ const MoviesPage = () => {
                 params: params,
                 withCredentials: true,
             })
+            console.log(response.data.length, offset)
+            if (response.data.length < 7)
+                setStopFetch(true)
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + response.data.length)
         } catch (error) {
@@ -159,8 +164,14 @@ const MoviesPage = () => {
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
         setTimeout(() => {
+            setStopFetch(false)
             void fetchMovies(0, newType)
         }, 30)
+    }
+
+    const handleSearch = () => {
+        setStopFetch(false)
+        void fetchMovies(0)
     }
 
     return !user ? (
@@ -172,7 +183,7 @@ const MoviesPage = () => {
                     className="flex flex-col w-full justify-center items-center outline-none"
                     tabIndex={0}
                     onKeyDown={(event) => {
-                        if (event.key === 'Enter') fetchMovies(0)
+                        if (event.key === 'Enter') handleSearch()
                     }}
                 >
                     <div className="sm:hidden mr-4 mt-4">
@@ -199,7 +210,7 @@ const MoviesPage = () => {
                         </div>
                         <SearchButton
                             disabled={type === 'tvShow'}
-                            fetchMovies={fetchMovies}
+                            handleSearch={handleSearch}
                             forSmallScreens={false}
                             t={t}
                         />
@@ -289,7 +300,7 @@ const MoviesPage = () => {
                     <div className="flex flex-wrap justify-center items-center mt-7 px-8">
                         <SearchButton
                             disabled={type === 'tvShow'}
-                            fetchMovies={fetchMovies}
+                            handleSearch={handleSearch}
                             forSmallScreens={true}
                             t={t}
                         />
