@@ -12,6 +12,7 @@ import { authenticateJWT } from './api/middlewares/authJWT.ts'
 import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchUserSchema } from './api/joi-checks.ts'
+import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
 
 const cookieParser = require('cookie-parser')
 
@@ -61,9 +62,10 @@ app.post('/oauth/token', cors(corsOptionsAPI), oathToken) // POST oauth/token
 app.get('/users', cors(corsOptionsAPI), authenticateJWT, getUsers) // GET /users
 app.get('/users/:id', cors(corsOptionsAPI), authenticateJWT, getOneUser) // GET /users/:id
 app.patch('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchUserSchema), validator.params(idShema), patchOneUser) // PATCH /users/:id
-app.get('/movies', cors(corsOptionsAPI), authenticateJWT, getUsers) // GET /movies
+app.get('/movies', cors(corsOptionsAPI), apiGetMovies) // GET /movies
+app.get('/movies/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneMovie) // GET /movies/:id
 
-// GET /movies/:id
+
 // GET /comments
 // GET /comments/:id
 // PATCH /comments/:id
