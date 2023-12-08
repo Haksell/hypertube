@@ -32,7 +32,7 @@ function SettingsPage() {
 
     async function getUserInfo() {
         try {
-            const response = await axios.get(`http://localhost:5001/users/me`, {
+            const response = await axios.get(`http://localhost:5001/web/users/me`, {
                 withCredentials: true,
             })
             setUserInfoForForm(response.data)
@@ -52,7 +52,7 @@ function SettingsPage() {
     async function saveUserInfo() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/users/updatesettings`,
+                `http://localhost:5001/web/users/updatesettings`,
                 {
                     email: email,
                     lastname: lastname,

@@ -16,7 +16,7 @@ function SignOutPage() {
     }, [])
     async function signOutBackend() {
         try {
-            const response = await axios.get(`http://localhost:5001/auth/signout/`, {
+            const response = await axios.get(`http://localhost:5001/web/auth/signout/`, {
                 withCredentials: true,
             })
             return response.data

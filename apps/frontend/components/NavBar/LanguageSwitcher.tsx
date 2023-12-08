@@ -16,7 +16,7 @@ const LanguageSelector: React.FC = () => {
             if (newLocale && (newLocale === 'en' || newLocale === 'fr')) {
                 if (user) {
                     const response = await axios.post(
-                        `http://localhost:5001/users/updatesettings`,
+                        `http://localhost:5001/web/users/updatesettings`,
                         {
                             email: user.email,
                             lastname: user.lastName,

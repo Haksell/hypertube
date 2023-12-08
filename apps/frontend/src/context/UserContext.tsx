@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: any) => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get(`http://localhost:5001/users/me`, {
+            const response = await axios.get(`http://localhost:5001/web/users/me`, {
                 withCredentials: true,
             })
             if (response.data !== ErMsg('NotConnected', t)) setUser(response.data)
