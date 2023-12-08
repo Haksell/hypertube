@@ -201,10 +201,10 @@ const MoviesPage = () => {
     }, [fetchCount])
 
     const handleSwitch = () => {
+        setSearch('')
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
         setStopFetch(false)
-        setSearch('')
         setTimeout(() => {
             void fetchMovies(0, newType)
         }, 30)
@@ -244,6 +244,7 @@ const MoviesPage = () => {
                                 }`}
                                 placeholder={type === 'movie' ? t('index.searchMovies') : ''}
                                 onChange={(e) => setSearch(e.target.value)}
+                                value={search}
                                 disabled={type === 'tvShow'}
                                 aria-label="Search movies"
                             />
