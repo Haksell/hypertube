@@ -95,7 +95,7 @@ export async function getMovieInfo(req: Request, res: Response) {
         movieViewed(user, movieId)
 
         //downloading movie
-        await downloadMovie(movie.imdb_code)
+        await downloadMovie(movie, sourceArg)
 
         // console.log(movie)
         res.status(201).send(movie)

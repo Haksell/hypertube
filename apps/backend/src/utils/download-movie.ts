@@ -1,4 +1,4 @@
-import { CustomError } from '../types_backend/movies'
+import { CustomError, MovieDetails } from '../types_backend/movies'
 import { getMovieByIMDB } from './bdd-movie'
 import { getSubtitles } from './subtitles'
 import { Movies, PrismaClient } from '@prisma/client'
@@ -7,27 +7,34 @@ import { File } from './bittorrent/types'
 
 const prisma = new PrismaClient()
 
-export async function downloadMovie(imdb_code: string) {
+export async function downloadMovie(movieInfo: MovieDetails, source: string) {
     //get movie
-    var movie = await getMovieByIMDB(imdb_code)
+    var movie = await getMovieByIMDB(movieInfo.imdb_code)
 
     if (movie.status == 'DOWNLOADED') return //movie already downloaded
 
-	if (movie.status == 'DOWNLOADING' && downloadStatus.get(imdb_code) !== undefined) {
+	if (movie.status == 'DOWNLOADING' && downloadStatus.get(movieInfo.imdb_code) !== undefined) {
 		console.log('movie already downloading')
 		return //movie already downloading
 	}
 
-    //get torrent info
-    let torrents = await getTorrentInfo(imdb_code)
+	let torrent: string = ''
+	if (source === 'YTS') {
+		//get torrent info
+		let torrents = await getTorrentInfo(movieInfo.imdb_code)
 
-    //select torrent:
-    let torrent: string = selectTorrent(torrents)
+		//select torrent:
+		torrent = selectTorrent(torrents)
+	}
+	else if (movieInfo.hash !== '')
+		torrent = movieInfo.hash
+    
 
-    //download movie
-    await downloadTorrent(torrent, movie.id, imdb_code)
-
-    //download subtitles
+	if (torrent !== '') {
+		//download movie
+		await downloadTorrent(torrent, movie.id, movieInfo.imdb_code)
+	}
+    
 }
 
 async function downloadSubtitle(imdb_code: string) {
@@ -51,9 +58,9 @@ async function getTorrentInfo(imdb_code: string) {
                 imdb_id: imdb_code,
             },
         })
-        if (response.data.status !== 'ok') throw new CustomError('Code not found')
+        if (response.data.status !== 'ok') throw new CustomError('Code not found 1')
         if (response.data.data.movie.imdb_code !== imdb_code)
-            throw new CustomError('Code not found')
+            throw new CustomError('Code not found 2')
 
         const movie = response.data.data.movie
         const torrents = movie.torrents
