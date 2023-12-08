@@ -58,6 +58,17 @@ app.use('/web', webRoutes)
 //ROUTES API
 
 
+// POST oauth/token
+// GET /users
+// GET /users/:id
+// PATCH /users/:id
+// GET /movies
+// GET /movies/:id
+// GET /comments
+// GET /comments/:id
+// PATCH /comments/:id
+// DELETE /comments/:id
+// POST /comments OR POST /movies/:movie_id/comments
 
 
 // app.use(
