@@ -26,7 +26,7 @@ function ProfilePage() {
 
     let link = './norminet.jpeg'
     if (userProfile?.profilePicture)
-        link = `http://localhost:5001/users/image/${userProfile.profilePicture}`
+        link = `http://localhost:5001/web/users/image/${userProfile.profilePicture}`
 
     useEffect(() => {
         setId()
@@ -55,7 +55,7 @@ function ProfilePage() {
 
     async function likeMovie(movieId: any) {
         try {
-            await axios.get(`http://localhost:5001/movies/like/${movieId}`, {
+            await axios.get(`http://localhost:5001/web/movies/like/${movieId}`, {
                 withCredentials: true,
             })
         } catch {
@@ -81,7 +81,7 @@ function ProfilePage() {
     async function getUserInfo() {
         if (!(idUser > 0)) return
         try {
-            const response = await axios.get(`http://localhost:5001/users/profile/${idUser}`, {
+            const response = await axios.get(`http://localhost:5001/web/users/profile/${idUser}`, {
                 withCredentials: true,
             })
             setUserProfile(response.data)

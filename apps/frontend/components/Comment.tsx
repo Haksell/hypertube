@@ -112,7 +112,7 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
                             className="mr-2 w-6 h-6 rounded-full"
                             src={
                                 profilePicture
-                                    ? `http://localhost:5001/users/image/${profilePicture}`
+                                    ? `http://localhost:5001/web/users/image/${profilePicture}`
                                     : 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
                             }
                             alt={`{username}'s profile picture'`}

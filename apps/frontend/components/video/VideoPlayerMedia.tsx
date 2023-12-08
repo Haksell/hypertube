@@ -8,7 +8,7 @@ import { Readable } from 'stream'
 
 function VideoPlayerMedia() {
     const videoRef = useRef(null)
-    const link = 'http://localhost:5001/movies/view/tt0443649'
+    const link = 'http://localhost:5001/web/movies/view/tt0443649'
 
     useEffect(() => {
         void getVideo()

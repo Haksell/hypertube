@@ -22,7 +22,7 @@ export default function Login42(): JSX.Element {
             if (errorParam) setError(true)
             if (code) {
                 const res = await axios.post(
-                    'http://localhost:5001/auth/' + String(method),
+                    'http://localhost:5001/web/auth/' + String(method),
                     { code: code },
                     { withCredentials: true },
                 )

@@ -102,7 +102,7 @@ const MoviesPage = () => {
             else params['sortBy'] = 'seeds'
             if (newType) params['type'] = newType
             params['sortBy'] = sortBy || DEFAULT_SORT_BY
-            const response = await axios.get('http://localhost:5001/movies', {
+            const response = await axios.get('http://localhost:5001/web/movies', {
                 params: params,
                 withCredentials: true,
             })
