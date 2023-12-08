@@ -133,7 +133,7 @@ const MoviesPage = () => {
                 params: params,
                 withCredentials: true,
             })
-            if (response.data.length < 7)
+            if (type === 'movie' && response.data.length < 7)
                 setStopFetch(true)
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
             setFetchCount(offset + response.data.length)
