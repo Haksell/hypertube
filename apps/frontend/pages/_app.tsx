@@ -10,6 +10,15 @@ interface MyAppProps {
 }
 
 function MyApp({ Component, pageProps }: MyAppProps) {
+    const originalConsoleWarn = console.warn;
+
+    console.warn = (...args: any[]) => {
+        const message = args[0];
+        if (!message.includes('react-i18next:: You will need to pass in an i18next instance by using initReactI18next')) {
+            originalConsoleWarn(...args);
+        }
+    };
+    
     return (
         <UserProvider>
             <Component {...pageProps} />
