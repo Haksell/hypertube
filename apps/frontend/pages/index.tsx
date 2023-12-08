@@ -144,8 +144,6 @@ const MoviesPage = () => {
     let isFetchingFromScroll = false
     const { t } = useTranslation('common')
 
-    useEffect(() => void fetchMovies(0), [])
-
     useEffect(() => {
         const genreParam = searchParams.get('genre')
         if (genreParam && genreParam in GENRES) {
@@ -168,7 +166,7 @@ const MoviesPage = () => {
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
-            if (newGenre) params['genre'] = newGenre
+            if (newGenre || genre) params['genre'] = newGenre || genre
             if (yearRange) params['year'] = yearRange
             if (minGrade) params['minGrade'] = minGrade
             params['type'] = newType
@@ -177,7 +175,7 @@ const MoviesPage = () => {
                 params,
                 withCredentials: true,
             })
-            if (type === 'movie' && response.data.length < 7) setStopFetch(true)
+            if (type === 'movie' && response.data.length < limit) setStopFetch(true)
             setMovies((prevMovies) => {
                 return offset === 0
                     ? response.data
