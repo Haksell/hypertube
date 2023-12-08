@@ -45,28 +45,29 @@ export async function apiGetComments(req: Request, res: Response) {
 
 export async function apiGetOneComment(req: Request, res: Response) {
 	try {
-		let comments = await prisma.comment.findMany({
-			take: 30,
-			include: {
-				user: true
+		const { id } = req.params
+		if (!id) throw new CustomError('empty argument')
+		const numID = parseInt(id)
+		if (isNaN(numID)) throw new CustomError('incorrect ID format')
+
+		let comment = await prisma.comment.findUnique({
+			where: {
+				id: numID,
 			},
-			orderBy: {
-				createdAt: 'desc'
+			include: {
+				user: true,
+				movie: true
 			}
 		})
-		if (!comments) {
+		if (!comment) {
 			res.status(200).json({});
 			return
 		}
-		const commentsObj: TCommentsObj[] = []
-		for (const elem of comments) {
-			const newComment: TCommentsObj = {
-				id: elem.id,
-				author_username: elem.user.username,
-				date: elem.createdAt,
-				content: elem.text
-			}
-			commentsObj.push(newComment)
+		const commentsObj: TCommentsObj = {
+			id: comment.id,
+			author_username: comment.user.username,
+			date: comment.createdAt,
+			content: comment.text
 		}
 		res.status(200).json(commentsObj);
 	}
