@@ -25,7 +25,7 @@ export async function downloadMovie(imdb_code: string) {
     let torrents = await getTorrentInfo(imdb_code)
 
     //select torrent:
-    let torrent: string = selectTorrent(torrents)
+    let torrent = selectTorrent(torrents)
 
     //download movie
     await downloadTorrent(torrent, movie.id, imdb_code)
