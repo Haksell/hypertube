@@ -20,9 +20,6 @@ export async function downloadMovie(movieInfo: MovieDetails, source: string) {
 		console.log('movie already downloading')
 		return //movie already downloading
 	}
-
-	// console.log('coming to download')
-	// console.log(movieInfo)
 	
 	let torrent: string = ''
 	if (source === 'YTS') {
