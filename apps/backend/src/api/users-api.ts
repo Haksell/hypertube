@@ -42,6 +42,8 @@ export async function getOneUser(req: Request, res: Response) {
 			}
 		})
 		if (!user) throw new NotFoundError('no user found with this ID')
+
+		if (user.profile_picture) user.profile_picture = `http://localhost:5001/web/users/image/${user.profile_picture}`;
 		res.status(200).json(user);
 	}
 	catch (error) {
