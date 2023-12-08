@@ -133,7 +133,6 @@ const MoviesPage = () => {
                 params: params,
                 withCredentials: true,
             })
-            console.log(response.data.length, offset)
             if (response.data.length < 7)
                 setStopFetch(true)
             setMovies((prevMovies) => [...prevMovies.slice(0, offset), ...response.data])
