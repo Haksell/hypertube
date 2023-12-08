@@ -1,16 +1,8 @@
-import net from 'net'
-
+import { buildCancel, buildHandshake, buildInterested, buildRequest, parse } from './message'
 import TorrentManager from './torrentManager'
-
 import { Block, Peer, BLOCK_LEN } from './types'
 import { log } from './utils'
-import {
-    buildCancel,
-    buildHandshake,
-    buildInterested,
-    buildRequest,
-    parse,
-} from './message'
+import net from 'net'
 
 export default class Connection {
     private _peer: Peer
@@ -100,12 +92,7 @@ export default class Connection {
         }
     }
 
-    blockHandler(pieceResp: {
-        pieceIndex: number
-        begin: number
-        length: number
-        block: Buffer
-    }) {
+    blockHandler(pieceResp: { pieceIndex: number; begin: number; length: number; block: Buffer }) {
         this.logRecvBlock(pieceResp)
         // this._tM.printProgress()
         this._timeoutPiece.refresh()
@@ -180,12 +167,16 @@ export default class Connection {
                 this.logAlreadyRequested(block)
                 block.delayed = true
                 this.queueBlock(block)
-				this._queue.sort((a, b) => a.pieceIndex - b.pieceIndex)
-				while (this._queue.length && this._tM.currentStatus(this._queue[0]) === 'REQUESTED' && !this._queue[0].delayed ) {
-					const newBlock = this._queue.shift()!
-					newBlock.delayed = true
-					this.queueBlock(newBlock)
-				}
+                this._queue.sort((a, b) => a.pieceIndex - b.pieceIndex)
+                while (
+                    this._queue.length &&
+                    this._tM.currentStatus(this._queue[0]) === 'REQUESTED' &&
+                    !this._queue[0].delayed
+                ) {
+                    const newBlock = this._queue.shift()!
+                    newBlock.delayed = true
+                    this.queueBlock(newBlock)
+                }
             }
         }
     }
@@ -225,9 +216,7 @@ export default class Connection {
     }
 
     private msgLen() {
-        return this._handshake
-            ? this._savedBuf.readInt8(0) + 49
-            : this._savedBuf.readInt32BE(0) + 4
+        return this._handshake ? this._savedBuf.readInt8(0) + 49 : this._savedBuf.readInt32BE(0) + 4
     }
 
     logRecvData(recvBuf: Buffer) {
@@ -275,10 +264,7 @@ export default class Connection {
             false,
             this._peer.ip,
             this._peer.port,
-            'Block already requested : ' +
-                block.pieceIndex +
-                ' - ' +
-                block.begin / BLOCK_LEN,
+            'Block already requested : ' + block.pieceIndex + ' - ' + block.begin / BLOCK_LEN,
         )
     }
 
@@ -321,7 +307,5 @@ export default class Connection {
 const PROTOCOL = 'BitTorrent protocol'
 
 function isHandshake(msg: Buffer) {
-    return (
-        msg.length === msg.readUInt8(0) + 49 && msg.toString('utf8', 1, 20) === PROTOCOL
-    )
+    return msg.length === msg.readUInt8(0) + 49 && msg.toString('utf8', 1, 20) === PROTOCOL
 }

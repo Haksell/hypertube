@@ -120,7 +120,7 @@ export async function downloadTorrent(url: string, movieID: number, imdb_code: s
             const filePath: string = path.basename(file.path)
             const folderPath: string = path.dirname(file.path)
             // TODO: handle different format webm / webp / mp4 / mkv ?
-            if (file.path.endsWith('.mp4') || file.path.endsWith('.mkv')) {
+            if (file.path.endsWith('.mp4') || file.path.endsWith('.mkv') || file.path.endsWith('.webm')) {
                 //sauvegarder nom bdd
                 await prisma.movies.update({
                     where: {
