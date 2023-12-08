@@ -54,7 +54,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
                 setPicture(response.data)
                 setError('')
             } catch (error: any) {
-                console.log('TODO', error)
+                //console.log('TODO', error)
                 if (error && error.response) setError(error.response.data)
             }
         }

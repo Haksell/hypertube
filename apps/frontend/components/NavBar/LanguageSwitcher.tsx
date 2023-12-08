@@ -11,7 +11,7 @@ const LanguageSelector: React.FC = () => {
     const { user, updateUser } = useUserContext()
 
     async function amendLanguage(newLocale: string) {
-        console.log('amending language from ' + user?.language + ' to ' + newLocale)
+        //console.log('amending language from ' + user?.language + ' to ' + newLocale)
         try {
             if (newLocale && (newLocale === 'en' || newLocale === 'fr')) {
                 if (user) {

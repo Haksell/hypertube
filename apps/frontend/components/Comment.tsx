@@ -60,9 +60,9 @@ const Comment: React.FC<CommentProps> = (props: CommentProps) => {
             allowedTags: ['b', 'i', 'a', 'p', 'br'],
             allowedAttributes: { a: ['href'] },
         }
-        console.log('change')
-        console.log(evt.currentTarget.innerHTML)
-        console.log(doubleBrEnding(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)))
+        //console.log('change')
+        //console.log(evt.currentTarget.innerHTML)
+        //console.log(doubleBrEnding(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)))
         setEditableContent(doubleBrEnding(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)))
     }, [])
 
