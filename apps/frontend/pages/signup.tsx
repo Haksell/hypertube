@@ -113,7 +113,7 @@ function SignUpPage() {
         } catch (errorMsg: any) {
             // console.log(error)
             setStyleError(true)
-            setError(errorMsg.response.data)
+            setError(errorMsg?.response?.data ?? 'Failed to sign up')
             //to handle ?
         }
     }

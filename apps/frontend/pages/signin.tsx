@@ -61,13 +61,8 @@ function SignInPage() {
         try {
             const response = await axios.post(
                 `http://localhost:5001/auth/login`,
-                {
-                    username: username,
-                    password: password,
-                },
-                {
-                    withCredentials: true,
-                },
+                { username, password },
+                { withCredentials: true },
             )
             // console.log(response.data)
             if (response.data) {
@@ -93,7 +88,7 @@ function SignInPage() {
     ) : (
         <MainLayout>
             <TitleSmall text={t('signin.signinTitle')} />
-            <div className="my-5 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div className="px-6 my-5 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" onSubmit={handleSignIn}>
                     <ShowErrorMessage error={error} message={''} />
                     <ErrorField
