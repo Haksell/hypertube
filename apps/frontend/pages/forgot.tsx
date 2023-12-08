@@ -48,7 +48,7 @@ function ForgotPasswordPage() {
     async function signInBackend() {
         try {
             const response = await axios.post(
-                `http://localhost:5001/auth/forgotpwd`,
+                `http://localhost:5001/web/auth/forgotpwd`,
                 {
                     email: email,
                 },

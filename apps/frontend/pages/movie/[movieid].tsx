@@ -44,7 +44,7 @@ function MoviePage() {
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/movies/${String(movieid)}`, {
+            const response = await axios.get(`http://localhost:5001/web/movies/${String(movieid)}`, {
                 params: {
                     source: source,
                 },
@@ -54,7 +54,7 @@ function MoviePage() {
             if (response.data.liked) setLiked(response.data.liked)
 
             const responseComments = await axios.get(
-                `http://localhost:5001/movies/${String(movieid)}/comments`,
+                `http://localhost:5001/web/movies/${String(movieid)}/comments`,
                 { withCredentials: true },
             )
             setComments(responseComments.data)
@@ -76,7 +76,7 @@ function MoviePage() {
             const formattedComment = sanitizeHtml(comment.replace('\n', '<br>'), sanitizeConf)
             try {
                 const response = await axios.post(
-                    `http://localhost:5001/comments/`,
+                    `http://localhost:5001/web/comments/`,
                     {
                         comment: formattedComment,
                         imdbCode: movieid,
@@ -95,7 +95,7 @@ function MoviePage() {
 
     async function handleDeleteComment(id: number) {
         try {
-            await axios.delete(`http://localhost:5001/comments/${id}`, {
+            await axios.delete(`http://localhost:5001/web/comments/${id}`, {
                 withCredentials: true,
             })
             setComments((prevComments) => prevComments.filter((el) => el.id !== id))
@@ -107,7 +107,7 @@ function MoviePage() {
     async function handleEditComment(id: number, content: string) {
         try {
             await axios.patch(
-                `http://localhost:5001/comments/${id}`,
+                `http://localhost:5001/web/comments/${id}`,
                 { comment: content },
                 { withCredentials: true },
             )
@@ -127,7 +127,7 @@ function MoviePage() {
     async function likeMovie() {
         try {
             const response = await axios.get(
-                `http://localhost:5001/movies/like/${String(movieid)}`,
+                `http://localhost:5001/web/movies/like/${String(movieid)}`,
                 {
                     withCredentials: true,
                 },
@@ -240,7 +240,7 @@ function MoviePage() {
                     <img
                         src={movie.image.poster || '/errorPicture.jpg'}
                         alt={movie.title}
-                        className="absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible min-[1000px]:-top-20"
+                        className={`absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible transition-all transform duration-500 ${isMovieVisible ? 'min-[1000px]:top-4' : 'min-[1000px]:-top-20'}`}
                         onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                             e.currentTarget.src = '/errorPicture.jpg'
                         }}

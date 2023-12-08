@@ -12,11 +12,11 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
     const [imageUpdate, setImageUpdate] = useState<string | null>(null)
 
     let link = './norminet.jpeg'
-    if (picture) link = `http://localhost:5001/users/image/${picture}`
+    if (picture) link = `http://localhost:5001/web/users/image/${picture}`
     const altImage = `image description ${picture}`
     async function deletePictureBackend() {
         try {
-            const response = await axios.delete(`http://localhost:5001/users/image/${picture}`, {
+            const response = await axios.delete(`http://localhost:5001/web/users/image/${picture}`, {
                 withCredentials: true,
             })
             // console.log(response.data);
@@ -48,7 +48,7 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
             formData.append('image', selectedImage)
 
             try {
-                const response = await axios.post(`http://localhost:5001/users/image`, formData, {
+                const response = await axios.post(`http://localhost:5001/web/users/image`, formData, {
                     withCredentials: true,
                 })
                 setPicture(response.data)
