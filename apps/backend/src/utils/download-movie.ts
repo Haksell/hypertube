@@ -1,9 +1,12 @@
 import { CustomError, MovieDetails } from '../types_backend/movies'
 import { getMovieByIMDB } from './bdd-movie'
+import { open } from './bittorrent/torrent-parser'
+import TorrentManager from './bittorrent/torrentManager'
+import { File } from './bittorrent/types'
 import { getSubtitles } from './subtitles'
 import { Movies, PrismaClient } from '@prisma/client'
 import axios from 'axios'
-import { File } from './bittorrent/types'
+import path from 'path'
 
 const prisma = new PrismaClient()
 
@@ -11,7 +14,7 @@ export async function downloadMovie(movieInfo: MovieDetails, source: string) {
     //get movie
     var movie = await getMovieByIMDB(movieInfo.imdb_code)
 
-    if (movie.status == 'DOWNLOADED') return //movie already downloaded
+    if (movie.status === 'DOWNLOADED') return //movie already downloaded
 
 	if (movie.status == 'DOWNLOADING' && downloadStatus.get(movieInfo.imdb_code) !== undefined) {
 		console.log('movie already downloading')
@@ -78,7 +81,7 @@ async function getTorrentInfo(imdb_code: string) {
 }
 
 function selectTorrent(torrents: any) {
-	let url: string = ''
+    let url: string = ''
     let seeds = 0
 
     for (const elem of torrents) {
@@ -90,67 +93,63 @@ function selectTorrent(torrents: any) {
     return url
 }
 
-import { open } from './bittorrent/torrent-parser'
-import TorrentManager from './bittorrent/torrentManager'
-import path from 'path'
-
 export const downloadStatus = new Map<string, TorrentManager>()
 
 let isStarting = false
 
 export async function downloadTorrent(url: string, movieID: number, imdb_code: string) {
-	if (isStarting) return
-	isStarting = true
+    if (isStarting) return
+    isStarting = true
     var torrentStream = require('torrent-stream')
 
     console.log('url selected=' + url)
 
-	if (downloadStatus.get(imdb_code) !== undefined) {
-		console.log('movie already downloading 2')
-		return //movie already downloading
-	}
-	const torrent = await open(url)
-	console.log(torrent)
-	const torrentManager = new TorrentManager(torrent)
-	downloadStatus.set(imdb_code, torrentManager)
-	isStarting = false
+    if (downloadStatus.get(imdb_code) !== undefined) {
+        console.log('movie already downloading 2')
+        return //movie already downloading
+    }
+    const torrent = await open(url)
+    console.log(torrent)
+    const torrentManager = new TorrentManager(torrent)
+    downloadStatus.set(imdb_code, torrentManager)
+    isStarting = false
 
-	torrentManager.on('ready', async (fileList: File[]) => {
-		for (const file of fileList) {
-			console.log(file)
-			const filePath: string = path.basename(file.path)
-			const folderPath: string = path.dirname(file.path)
-			// TODO: handle different format webm / webp / mp4 / mkv ?
-			if (file.path.endsWith('.mp4') || file.path.endsWith('.mkv')) {
-				//sauvegarder nom bdd
-				await prisma.movies.update({
-					where: {
-						id: movieID,
-					},
-					data: {
-						file: filePath,
-						folder: folderPath,
-						dateDownload: new Date(),
-						status: 'DOWNLOADING'
-					},
-				})
+    torrentManager.on('ready', async (fileList: File[]) => {
+        for (const file of fileList) {
+            console.log(file)
+            const filePath: string = path.basename(file.path)
+            const folderPath: string = path.dirname(file.path)
+            // TODO: handle different format webm / webp / mp4 / mkv ?
+            if (file.path.endsWith('.mp4') || file.path.endsWith('.mkv')) {
+                //sauvegarder nom bdd
+                await prisma.movies.update({
+                    where: {
+                        id: movieID,
+                    },
+                    data: {
+                        file: filePath,
+                        folder: folderPath,
+                        dateDownload: new Date(),
+                        status: 'DOWNLOADING',
+                    },
+                })
 
-				//look for subtitles
-				await downloadSubtitle(imdb_code)
-			}
-		}
-	})
+                //look for subtitles
+                await downloadSubtitle(imdb_code)
+            }
+        }
+    })
 
-	torrentManager.on('done', (success: boolean) => {
-		prisma.movies.update({
-			where: {
-				id: movieID,
-			},
-			data: {
-				status: success ? 'DOWNLOADED' : 'NOTDOWNLOADED'
-			},
-		})
-	})
+    torrentManager.on('done', (success: boolean) => {
+        prisma.movies.update({
+            where: {
+                id: movieID,
+            },
+            data: {
+                status: success ? 'DOWNLOADED' : 'NOTDOWNLOADED',
+            },
+        })
+    })
 
-	torrentManager.start()
+    torrentManager.start()
 }
