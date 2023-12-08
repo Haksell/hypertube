@@ -162,8 +162,9 @@ const MoviesPage = () => {
     const handleSwitch = () => {
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
+        setStopFetch(false)
+        setSearch('')
         setTimeout(() => {
-            setStopFetch(false)
             void fetchMovies(0, newType)
         }, 30)
     }
