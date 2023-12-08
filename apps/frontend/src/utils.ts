@@ -6,7 +6,7 @@ export const formatDuration = (minutes: number) => {
 
 export const range = (start: number, end: number): number[] => {
     let res = [start]
-    if (start == end) return res
+    if (start === end) return res
     const inc = Math.sign(end - start)
     while (true) {
         start += inc
