@@ -12,6 +12,7 @@ import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
 import { scheduleTask } from './utils/files-handling.ts'
+import { oathToken } from './api/auth-api.ts'
 
 
 const cookieParser = require('cookie-parser')
@@ -56,7 +57,7 @@ app.get('/', (req, res) => res.send('API Root'))
 app.use('/web', webRoutes)
 
 //ROUTES API
-
+app.post('/oauth/token', cors(corsOptionsAPI), oathToken)
 
 // POST oauth/token
 // GET /users
