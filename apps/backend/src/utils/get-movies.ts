@@ -21,7 +21,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
         const page: number =
             params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
         const parameters: TRequete = {
-            limit: limit,
+            limit: limit + 5,
             page: page,
             sort_by: params.sort,
         }
@@ -39,6 +39,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
         // console.log(response.config.params)
         const moviesYTS = response.data.data.movies
         const movies: Movie[] = []
+        let i = 0
 
         for (const elem of moviesYTS) {
             const oneMovie: Movie = {
@@ -57,7 +58,12 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
                 liked: false,
                 source: 'YTS',
             }
-            movies.push(oneMovie)
+            if (params.year === oneMovie.year) {
+                movies.push(oneMovie)
+                i++
+            }
+            if (i === limit)
+                break
         }
         return movies
     } catch (error) {
