@@ -9,8 +9,9 @@ import express from 'express'
 import { scheduleTask } from './utils/files-handling.ts'
 import { oathToken } from './api/auth-api.ts'
 import { authenticateJWT } from './api/middlewares/authJWT.ts'
-import { getOneUser, getUsers } from './api/users-api.ts'
-
+import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
+import { createValidator } from 'express-joi-validation'
+import { idShema, patchUserSchema } from './api/joi-checks.ts'
 
 const cookieParser = require('cookie-parser')
 
@@ -55,15 +56,13 @@ app.use('/web', webRoutes)
 
 
 ////////////////////ROUTES API////////////////////
-// POST oauth/token
-app.post('/oauth/token', cors(corsOptionsAPI), oathToken)
-app.get('/users', cors(corsOptionsAPI), authenticateJWT, getUsers)
-app.get('/users/:id', cors(corsOptionsAPI), authenticateJWT, getOneUser)
+const validator = createValidator()
+app.post('/oauth/token', cors(corsOptionsAPI), oathToken) // POST oauth/token
+app.get('/users', cors(corsOptionsAPI), authenticateJWT, getUsers) // GET /users
+app.get('/users/:id', cors(corsOptionsAPI), authenticateJWT, getOneUser) // GET /users/:id
+app.patch('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchUserSchema), validator.params(idShema), patchOneUser) // PATCH /users/:id
+app.get('/movies', cors(corsOptionsAPI), authenticateJWT, getUsers) // GET /movies
 
-// GET /users
-// GET /users/:id
-// PATCH /users/:id
-// GET /movies
 // GET /movies/:id
 // GET /comments
 // GET /comments/:id
