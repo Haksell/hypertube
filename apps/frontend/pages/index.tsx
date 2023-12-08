@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
-const limit = 7
+const limit = 14
 const DEFAULT_SORT_BY = 'like_count'
 
 const GENRES: Record<string, string> = {
