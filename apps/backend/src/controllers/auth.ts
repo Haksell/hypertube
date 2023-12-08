@@ -86,7 +86,7 @@ export async function login(req: Request, res: Response) {
     const PHash = bcrypt.hashSync(password, user.salt || '') // user.salt is not null if authMethos is email, but typescript doesn't know that
     if (PHash === user.password) {
         const token = signJwt(user)
-        res.cookie('token', token, { sameSite: 'none', secure: true})
+        res.cookie('token', token, { sameSite: 'none', secure: true })
         res.status(200).send(formatUser(user))
         return
     } else {
@@ -97,7 +97,13 @@ export async function login(req: Request, res: Response) {
 
 export async function login42(req: Request, res: Response) {
     const { code } = req.body
-    const access_token = await get42Token(code)
+    let access_token: string
+    try {
+        access_token = await get42Token(code)
+    } catch (err) {
+        console.log(err)
+        return
+    }
     const { login, email, first_name, last_name } = await get42User(access_token)
 
     // Find user in db
@@ -127,14 +133,20 @@ export async function login42(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token, { sameSite: 'none', secure: true})
+    res.cookie('token', token, { sameSite: 'none', secure: true })
     res.status(200).send(formatUser(user))
     return
 }
 
 export async function loginGithub(req: Request, res: Response) {
     const { code } = req.body
-    const access_token = await getGithubToken(code)
+    let access_token: string
+    try {
+        access_token = await getGithubToken(code)
+    } catch (err) {
+        console.log(err)
+        return
+    }
     const { login, email, avatar_url } = await getGithubUser(access_token)
 
     // Find user in db
@@ -163,14 +175,20 @@ export async function loginGithub(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token, { sameSite: 'none', secure: true})
+    res.cookie('token', token, { sameSite: 'none', secure: true })
     res.status(200).send(formatUser(user))
     return
 }
 
 export async function loginFacebook(req: Request, res: Response) {
     const { code } = req.body
-    const access_token = await getFacebookToken(code)
+    let access_token: string
+    try {
+        access_token = await getFacebookToken(code)
+    } catch (err) {
+        console.log(err)
+        return
+    }
     const { name, email } = await getFacebookUser(access_token)
 
     // Find user in db
@@ -198,7 +216,7 @@ export async function loginFacebook(req: Request, res: Response) {
     }
 
     const token = signJwt(user)
-    res.cookie('token', token, { sameSite: 'none', secure: true})
+    res.cookie('token', token, { sameSite: 'none', secure: true })
     res.status(200).send(formatUser(user))
     return
 }
