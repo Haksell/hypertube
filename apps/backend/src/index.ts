@@ -13,6 +13,7 @@ import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchUserSchema } from './api/joi-checks.ts'
 import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
+import { apiGetComments, apiGetOneComment } from './api/comments-api.ts'
 
 const cookieParser = require('cookie-parser')
 
@@ -64,10 +65,10 @@ app.get('/users/:id', cors(corsOptionsAPI), authenticateJWT, getOneUser) // GET 
 app.patch('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchUserSchema), validator.params(idShema), patchOneUser) // PATCH /users/:id
 app.get('/movies', cors(corsOptionsAPI), apiGetMovies) // GET /movies
 app.get('/movies/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneMovie) // GET /movies/:id
+app.get('/comments', cors(corsOptionsAPI), apiGetComments) // GET /comments
+app.get('/comments/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneComment) // GET /comments/:id
 
 
-// GET /comments
-// GET /comments/:id
 // PATCH /comments/:id
 // DELETE /comments/:id
 // POST /comments OR POST /movies/:movie_id/comments

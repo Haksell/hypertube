@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import { CustomError, NotFoundError } from '../types_backend/movies';
-import { SuccessMsg } from '../shared/msg-error';
 
 const prisma = new PrismaClient()
 
