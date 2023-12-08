@@ -96,7 +96,7 @@ app.use(globalErrorMiddleware)
 app.listen(port, () => console.log(`API listening on port ${port}!`))
 
 //cron.schedule('*/1 * * * *', async () => { // every minute
-cron.schedule('* * */1 * *', async () => { // every day
+cron.schedule('0 12 * * *', async () => { // every day of the week at 12:00
     console.log("CRON --- Update movies infos")
     await scheduleTask();
 })
