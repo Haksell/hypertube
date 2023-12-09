@@ -190,6 +190,7 @@
     "userUsernameExists": "This username is already taken",
     "userCreated": "Registration successful",
     "invalidCredentials": "Invalid credentials",
+    "emailNotVerified": "Your email is not verified",
     "wrongAuthMethodEMAIL": "An account already exists using email authentication",
     "wrongAuthMethodGITHUB": "An account already exists using GitHub authentication",
     "wrongAuthMethod[METHOD]": "An account already exists using method authentication",

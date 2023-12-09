@@ -66,7 +66,7 @@ function SignInPage() {
             )
             if (response.data) {
                 if (response.data === 'emailNotVerified') {
-                    setError('Your email is not verified')
+                    setError(t('emailNotVerified'))
                     return
                 }
                 loginUser(response.data)
