@@ -2,7 +2,7 @@ import { CustomError, Movie, MovieDetails } from '../types_backend/movies'
 import { createMovieDB, getMovieByIMDB, movieViewed } from '../utils/bdd-movie'
 import TorrentManager from '../utils/bittorrent/torrentManager'
 import { downloadMovie } from '../utils/download-movie'
-import { downloadStatus } from '../utils/download-movie'
+// import { downloadStatus } from '../utils/download-movie'
 import {
     convertRequestParams,
     extractAllMoviesDownloaded,
@@ -186,98 +186,164 @@ export async function viewMovie(req: Request, res: Response) {
         if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
 
         const stat = fs.statSync(videoPath)
-        let fileSize = stat.size
-
-        if (fileSize <= 0) {
-            const downloadManager = downloadStatus.get(movie.imdb_code)
-            if (!downloadManager) {
-                console.log('download manager not found')
-            } else {
-                console.log(
-                    'available bytes: ',
-                    JSON.stringify(downloadManager.getMovieBytesStatus()),
-                )
-            }
-            res.status(400).send('File not yet created.')
-            return
-        }
-
-        console.log('file size: ', fileSize)
+        const fileSize = stat.size
 
         const range = req.headers.range
 
-        if (!range) {
-            res.status(400).send('Requires Range header')
-            return
-        }
+        if (range) {
+            const parts = range.replace(/bytes=/, '').split('-')
+            const start = parseInt(parts[0], 10)
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1
 
-        const parts = range.replace(/bytes=/, '').split('-')
-        const start = parseInt(parts[0], 10)
-        const CHUNK_SIZE = 10 ** 6 // 1MB
-        let end = Math.min(start + CHUNK_SIZE, fileSize - 1)
-
-        if (movie.status === 'DOWNLOADING') {
-            const downloadManager = downloadStatus.get(movie.imdb_code)
-
-            if (!downloadManager) {
-                // TODO: Delete completely with function in cron fron Nico
-                const folderExists = await fs
-                    .access(movie.folder)
-                    .then(() => true)
-                    .catch(() => false)
-
-                if (folderExists) {
-                    await fs.rm(movie.folder, { recursive: true })
-                }
-                await prisma.movies.update({
-                    where: {
-                        id: movie.id,
-                    },
-                    data: {
-                        status: 'NOTDOWNLOADED',
-                        folder: null,
-                        file: null,
-                    },
-                })
-
-                res.status(400).send('Downloading failed. You can reload and try again')
-                return
+            const chuncksize = end - start + 1
+            const file = fs.createReadStream(videoPath, { start, end })
+            const head = {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': `bytes`,
+                'Content-Length': chuncksize,
+                'Content-Type': 'video/mp4',
             }
-
-            fileSize = downloadManager.getVideoLength()
-            end = Math.min(start + CHUNK_SIZE, fileSize - 1)
-            console.log('Availabale bytes: ', JSON.stringify(downloadManager.getMovieBytesStatus()))
-            let available = downloadManager
-                .getMovieBytesStatus()
-                .some((range) => range[0] <= start && range[1] >= end)
-            if (!available) {
-                console.log('waiting for available bytes: ' + start + ' - ' + end)
-                const startTime = Date.now()
-                available = await waitForAvailable(start, end, downloadManager, startTime, 20000)
-                if (!available) {
-                    res.status(400).send('Data not yet available. Try again later.')
-                    return
-                }
+            res.writeHead(206, head) //partial response
+            file.pipe(res)
+        } else {
+            const head = {
+                'Content-Length': fileSize,
+                'Content-Type': 'video/mp4',
             }
+            res.writeHead(200, head)
+            const videoStream = fs.createReadStream(videoPath)
+            videoStream.pipe(res)
         }
-
-        const length = end - start + 1
-        const file = fs.createReadStream(videoPath, { start, end })
-        console.log('sending bytes: ' + start + ' - ' + end)
-        const head = {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': `bytes`,
-            'Content-Length': length,
-            'Content-Type': `video/${movie.file.split('.').pop()}`,
-        }
-        res.writeHead(206, head) //partial response
-        file.pipe(res)
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(404).send('Movie not found')
         console.log(error)
     }
 }
+
+
+// export async function viewMovie(req: Request, res: Response) {
+//     const path = require('path')
+//     const fs = require('fs')
+
+//     try {
+//         const movieId = getMovieId(req)
+
+//         var movie = await getMovieByIMDB(movieId)
+
+//         var videoPath = '' //path.join('movies', movie.file)
+
+//         // if (!movie.file) {
+//         // console.log('downloading movie')
+//         // await downloadMovie(movie)
+//         // console.log('movie downloaded ?')
+//         // var movie = await getMovieByIMDB(movieId)
+//         // console.log('update movie ' + movie.file)
+//         // }
+//         // else
+//         // videoPath = movie.file
+
+//         if (!movie.file || !movie.folder) throw new Error('Movie not found')
+
+//         videoPath = path.join(movie.folder, movie.file)
+
+//         // console.log('watching movie = ' + videoPath)
+
+//         if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
+
+//         const stat = fs.statSync(videoPath)
+//         let fileSize = stat.size
+
+//         if (fileSize <= 0) {
+//             const downloadManager = downloadStatus.get(movie.imdb_code)
+//             if (!downloadManager) {
+//                 console.log('download manager not found')
+//             } else {
+//                 console.log(
+//                     'available bytes: ',
+//                     JSON.stringify(downloadManager.getMovieBytesStatus()),
+//                 )
+//             }
+//             res.status(400).send('File not yet created.')
+//             return
+//         }
+
+//         console.log('file size: ', fileSize)
+
+//         const range = req.headers.range
+
+//         if (!range) {
+//             res.status(400).send('Requires Range header')
+//             return
+//         }
+
+//         const parts = range.replace(/bytes=/, '').split('-')
+//         const start = parseInt(parts[0], 10)
+//         const CHUNK_SIZE = 10 ** 6 // 1MB
+//         let end = Math.min(start + CHUNK_SIZE, fileSize - 1)
+
+//         if (movie.status === 'DOWNLOADING') {
+//             const downloadManager = downloadStatus.get(movie.imdb_code)
+
+//             if (!downloadManager) {
+//                 // TODO: Delete completely with function in cron fron Nico
+//                 const folderExists = await fs
+//                     .access(movie.folder)
+//                     .then(() => true)
+//                     .catch(() => false)
+
+//                 if (folderExists) {
+//                     await fs.rm(movie.folder, { recursive: true })
+//                 }
+//                 await prisma.movies.update({
+//                     where: {
+//                         id: movie.id,
+//                     },
+//                     data: {
+//                         status: 'NOTDOWNLOADED',
+//                         folder: null,
+//                         file: null,
+//                     },
+//                 })
+
+//                 res.status(400).send('Downloading failed. You can reload and try again')
+//                 return
+//             }
+
+//             fileSize = downloadManager.getVideoLength()
+//             end = Math.min(start + CHUNK_SIZE, fileSize - 1)
+//             console.log('Availabale bytes: ', JSON.stringify(downloadManager.getMovieBytesStatus()))
+//             let available = downloadManager
+//                 .getMovieBytesStatus()
+//                 .some((range) => range[0] <= start && range[1] >= end)
+//             if (!available) {
+//                 console.log('waiting for available bytes: ' + start + ' - ' + end)
+//                 const startTime = Date.now()
+//                 available = await waitForAvailable(start, end, downloadManager, startTime, 20000)
+//                 if (!available) {
+//                     res.status(400).send('Data not yet available. Try again later.')
+//                     return
+//                 }
+//             }
+//         }
+
+//         const length = end - start + 1
+//         const file = fs.createReadStream(videoPath, { start, end })
+//         console.log('sending bytes: ' + start + ' - ' + end)
+//         const head = {
+//             'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+//             'Accept-Ranges': `bytes`,
+//             'Content-Length': length,
+//             'Content-Type': `video/${movie.file.split('.').pop()}`,
+//         }
+//         res.writeHead(206, head) //partial response
+//         file.pipe(res)
+//     } catch (error) {
+//         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+//         else res.status(404).send('Movie not found')
+//         console.log(error)
+//     }
+// }
 
 async function waitForAvailable(
     start: number,
