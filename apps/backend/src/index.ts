@@ -11,9 +11,9 @@ import { oathToken } from './api/auth-api.ts'
 import { authenticateJWT } from './api/middlewares/authJWT.ts'
 import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
-import { idShema, patchUserSchema } from './api/joi-checks.ts'
+import { idShema, patchCommentSchema, patchUserSchema } from './api/joi-checks.ts'
 import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
-import { apiGetComments, apiGetOneComment } from './api/comments-api.ts'
+import { apiGetComments, apiGetOneComment, apiPatchComment } from './api/comments-api.ts'
 
 const cookieParser = require('cookie-parser')
 
@@ -67,27 +67,11 @@ app.get('/movies', cors(corsOptionsAPI), apiGetMovies) // GET /movies
 app.get('/movies/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneMovie) // GET /movies/:id
 app.get('/comments', cors(corsOptionsAPI), apiGetComments) // GET /comments
 app.get('/comments/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneComment) // GET /comments/:id
+app.patch('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchCommentSchema), validator.params(idShema), apiPatchComment) // PATCH /comments/:id
+app.delete('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiPatchComment) // PATCH /comments/:id
 
-
-// PATCH /comments/:id
 // DELETE /comments/:id
 // POST /comments OR POST /movies/:movie_id/comments
-
-
-// app.use(
-//     urlencoded({ extended: true }),
-//     cors({
-//         origin: 'http://localhost:3000',
-//         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-//         allowedHeaders: ['Content-Type', 'Authorization'],
-//         credentials: true,
-//     }),
-// )
-
-// app.use('/users', usersRoutes)
-// app.use('/movies', moviesRoutes)
-// app.use('/auth', authRoutes)
-// app.use('/comments', commentsRoutes)
 
 
 app.listen(port, () => console.log(`API listening on port ${port}!`))
