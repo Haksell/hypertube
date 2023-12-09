@@ -1,3 +1,4 @@
+import { LoadingNoLayout } from '../components/Loading'
 import UserNotSignedIn from '../components/auth/UserNotSignedIn'
 import { MovieCard } from '../components/elems/MovieCard'
 import MainLayout from '../layouts/MainLayout'
@@ -51,11 +52,11 @@ const MoviesTVShowOption: React.FC<{ isActive: boolean; text: string }> = ({ isA
     </span>
 )
 
-const MoviesTVShowSwitch: React.FC<{ handleSwitch: () => void; type: string; loading: boolean}> = ({
-    handleSwitch,
-    type,
-    loading
-}) => {
+const MoviesTVShowSwitch: React.FC<{
+    handleSwitch: () => void
+    type: string
+    loading: boolean
+}> = ({ handleSwitch, type, loading }) => {
     const { t } = useTranslation('common')
 
     return (
@@ -188,10 +189,11 @@ const MoviesPage = () => {
                 params,
                 withCredentials: true,
             })
-            if (type === 'movie' && response.data.length < limit)
-                setStopFetch(true)
+            if (type === 'movie' && response.data.length < limit) setStopFetch(true)
             setMovies((prevMovies) => {
-                return offset === 0 ? response.data : [...prevMovies.slice(0, offset), ...response.data]
+                return offset === 0
+                    ? response.data
+                    : [...prevMovies.slice(0, offset), ...response.data]
             })
             setFetchCount(offset + response.data.length)
         } catch (error) {
@@ -245,11 +247,19 @@ const MoviesPage = () => {
                         }}
                     >
                         <div className="sm:hidden mr-4 mt-4">
-                            <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} loading={loading}/>
+                            <MoviesTVShowSwitch
+                                type={type}
+                                handleSwitch={handleSwitch}
+                                loading={loading}
+                            />
                         </div>
                         <div className="flex justify-center items-center mt-4 px-5 w-full max-w-7xl">
                             <div className="mx-4 hidden sm:block">
-                                <MoviesTVShowSwitch type={type} handleSwitch={handleSwitch} loading={loading}/>
+                                <MoviesTVShowSwitch
+                                    type={type}
+                                    handleSwitch={handleSwitch}
+                                    loading={loading}
+                                />
                             </div>
                             <div className="grow relative">
                                 <input
@@ -325,7 +335,10 @@ const MoviesPage = () => {
                                     { value: 'year', label: t('index.sort.year') },
                                     { value: 'title', label: t('index.sort.title') },
                                     { value: 'peers', label: t('index.sort.peers') },
-                                    { value: 'download_count', label: t('index.sort.download_count') },
+                                    {
+                                        value: 'download_count',
+                                        label: t('index.sort.download_count'),
+                                    },
                                     { value: 'date_added', label: t('index.sort.date_added') },
                                 ]}
                                 disabled={type === 'tvShow'}
@@ -350,7 +363,7 @@ const MoviesPage = () => {
                             />
                         </div>
                     </div>
-                    {(!loading) && (
+                    {!loading && (
                         <div className="text-white">
                             <div className="grid grid-cols-1 min-[500px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1 p-4">
                                 {movies.map((movie, i) => (
@@ -359,14 +372,7 @@ const MoviesPage = () => {
                             </div>
                         </div>
                     )}
-                    {(loading) && (
-                        <div>
-                            <img
-                                src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/725eef121244331.60c1c7928b5dd.gif"
-                                alt="loading"
-                            />
-                        </div>
-                    )}
+                    {loading && <LoadingNoLayout />}
                 </MainLayout>
             </div>
         )
