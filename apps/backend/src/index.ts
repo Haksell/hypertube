@@ -13,7 +13,7 @@ import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchCommentSchema, patchUserSchema, postCommentSchema } from './api/joi-checks.ts'
 import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
-import { apiDeleteComment, apiGetComments, apiGetOneComment, apiPatchComment } from './api/comments-api.ts'
+import { apiDeleteComment, apiGetComments, apiGetOneComment, apiPatchComment, apiPostComment } from './api/comments-api.ts'
 
 const cookieParser = require('cookie-parser')
 

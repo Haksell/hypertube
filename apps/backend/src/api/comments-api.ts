@@ -149,12 +149,62 @@ export async function apiDeleteComment(req: Request, res: Response) {
 				id: numID
 			}
 		})
-		
+
 		res.status(200).json(SuccessMsg);
 	}
 	catch (error) {
 		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
 		else if (error instanceof NotFoundError) res.status(404).send(`Error: ${error.message}`)
         else res.status(400).send('Error with request')
+	}
+}
+
+export async function apiPostComment(req: Request, res: Response) {
+	try {
+		const { movie_id, comment } = req.body
+		if (!movie_id) throw new CustomError('empty argument')
+		const numID = parseInt(movie_id)
+		if (isNaN(numID)) throw new CustomError('incorrect ID format')
+		let movie = await prisma.movies.findUnique({
+			where: {
+				id: numID
+			}
+		})
+		if (!movie) throw new NotFoundError('no movie found with this ID')
+
+		//check if we can link the comment to one user
+		const userID: number = await findIDUserExisting()
+
+		//post comment
+		await prisma.comment.create({
+			data: {
+				text: comment,
+				userId: userID,
+				movieId: movie_id,
+			}
+		})
+
+		res.status(200).json(SuccessMsg);
+	}
+	catch (error) {
+		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+		else if (error instanceof NotFoundError) res.status(404).send(`Error: ${error.message}`)
+        else res.status(400).send('Error with request')
+	}
+}
+
+async function findIDUserExisting(): Promise<number> {
+	try {
+		let found: boolean = false
+
+		const users = await prisma.user.findMany({
+			take: 1
+		})
+		if (!users) throw new NotFoundError('no user found to add the comment')
+		if (users.length === 0) throw new NotFoundError('no user found to add the comment')
+		return users[0].id
+	}
+	catch (error) {
+		throw new NotFoundError('no user found to add the comment')
 	}
 }
