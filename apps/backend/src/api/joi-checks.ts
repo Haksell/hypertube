@@ -12,6 +12,11 @@ export const patchCommentSchema = Joi.object({
     comment: Joi.string(),
 })
 
+export const postCommentSchema = Joi.object({
+    movie_id: Joi.number().required(),
+    comment: Joi.string().required(),
+})
+
 export const idShema = Joi.object({
     id: Joi.number().required(),
 })
