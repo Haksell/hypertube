@@ -15,6 +15,7 @@ function ConfirmEmailPage() {
     const { confirmid } = router.query
     const [retour, setRetour] = useState<string | null>(null)
     const { t } = useTranslation('common')
+    let validateCalled = false
 
     useEffect(() => {
         if (confirmid) {
@@ -24,7 +25,8 @@ function ConfirmEmailPage() {
     }, [confirmid])
 
     async function validateLink() {
-        if (!confirmid) return
+        if (validateCalled) return
+        validateCalled = true
         try {
             const response = await axios.get(
                 `http://localhost:5001/web/auth/confirm/${String(confirmid)}`,
@@ -32,11 +34,11 @@ function ConfirmEmailPage() {
                     withCredentials: true,
                 },
             )
-            setRetour(response.data.msg)
+            setRetour(response.data)
             return response.data
         } catch (error: any) {
             if (error.response) {
-                if (error.response.data === ErMsg('InvalidId', t)) await router.push('/404')
+                if (error.response.data === 'invalidConfirmId') await router.push('/404')
                 setRetour(error.response.data)
             } else setRetour(null)
         }
@@ -44,16 +46,16 @@ function ConfirmEmailPage() {
 
     return (
         <TramePage>
-            {retour && retour === ErMsg('SuccessMsg', t) && (
+            {retour && retour === 'mailConfirmed' && (
                 <>
-                    <TitleSmall text={t('Confirm.congrate')} />
-                    <TextPage center={true}>{t('Confirm.linkLog')}</TextPage>
+                    <TitleSmall text={t('confirm.congrate')} />
+                    <TextPage center={true}>{t('confirm.linkLog')}</TextPage>
                 </>
             )}
-            {retour && retour === ErMsg('AlreadyValid', t) && (
+            {retour && retour === 'alreadyValidated' && (
                 <>
-                    <TitleSmall text={t('Confirm.error')} />
-                    <TextPage center={true}>{t('Confirm.linkVal')}</TextPage>
+                    <TitleSmall text={t('confirm.error')} />
+                    <TextPage center={true}>{t('confirm.linkVal')}</TextPage>
                 </>
             )}
         </TramePage>

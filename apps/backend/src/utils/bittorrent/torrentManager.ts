@@ -32,17 +32,22 @@ export default class TorrentManager extends EventEmitter {
         this._videoLength = 0
 
         const login42 = __dirname.split(path.sep)[4]
-        const downloadsDir = login42 ? path.join('/sgoinfre/goinfre/Perso/', login42) : 'downloads'
+        const downloadsDir = login42
+            ? path.join('/sgoinfre/goinfre/Perso', login42, 'movies')
+            : 'downloads'
         const pathName = path.join(downloadsDir, torrent.info.name)
-        console.log(pathName)
         if (torrent.info.files) {
             console.log('Torrent contains multiple files')
             fs.mkdirSync(pathName, { recursive: true })
             torrent.info.files.forEach((file: { path: string[]; length: number }) => {
                 const filePath = path.join(pathName, file.path[0])
-                if (filePath.endsWith('.mp4') || filePath.endsWith('.webm') || filePath.endsWith('.mkv')) {
+                if (
+                    filePath.endsWith('.mp4') ||
+                    filePath.endsWith('.webm') ||
+                    filePath.endsWith('.mkv')
+                ) {
                     this._videoLength = file.length
-								}
+                }
                 const fd = fs.openSync(filePath, 'w')
                 this._fileList.push({ path: filePath, length: file.length, fd })
             })
@@ -242,7 +247,11 @@ export default class TorrentManager extends EventEmitter {
                     () => {},
                 )
 
-                if (file.path.endsWith('.mp4') || file.path.endsWith('.webm') || file.path.endsWith('.mkv')) {
+                if (
+                    file.path.endsWith('.mp4') ||
+                    file.path.endsWith('.webm') ||
+                    file.path.endsWith('.mkv')
+                ) {
                     const start = writeOffset
                     const end = writeOffset + endOffset - startOffset
                     // Insert [start, end] into this._movieBytesStatus at the right place and if it is adjacent to any other ranges, merge them
