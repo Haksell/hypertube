@@ -92,7 +92,7 @@ export async function getMovieInfo(req: Request, res: Response) {
         await createMovieDB(movie)
 
         //add movie to viewed By user
-        movieViewed(user, movieId)
+        await movieViewed(user, movieId)
 
         //downloading movie
         await downloadMovie(movie, sourceArg)
@@ -102,7 +102,7 @@ export async function getMovieInfo(req: Request, res: Response) {
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Error')
-        console.log(error)
+        console.log(error);
     }
 }
 
