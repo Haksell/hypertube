@@ -7,6 +7,11 @@ export const patchUserSchema = Joi.object({
     profile_picture: Joi.string(),
 })
 
+export const patchCommentSchema = Joi.object({
+    username: Joi.string(),
+    comment: Joi.string(),
+})
+
 export const idShema = Joi.object({
     id: Joi.number().required(),
 })
