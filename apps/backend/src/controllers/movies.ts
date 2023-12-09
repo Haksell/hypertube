@@ -102,7 +102,6 @@ export async function getMovieInfo(req: Request, res: Response) {
     } catch (error) {
         if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
         else res.status(400).send('Error')
-        console.log(error);
     }
 }
 
@@ -162,6 +161,7 @@ export async function viewMovie(req: Request, res: Response) {
 
     try {
         const movieId = getMovieId(req)
+        console.log(movieId)
 
         var movie = await getMovieByIMDB(movieId)
 
@@ -181,7 +181,7 @@ export async function viewMovie(req: Request, res: Response) {
 
         videoPath = path.join(movie.folder, movie.file)
 
-        // console.log('watching movie = ' + videoPath)
+        console.log('watching movie = ' + videoPath)
 
         if (!fs.existsSync(videoPath)) throw new Error('Movie not found')
 

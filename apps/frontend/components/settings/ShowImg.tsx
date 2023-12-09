@@ -16,9 +16,12 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
     const altImage = `image description ${picture}`
     async function deletePictureBackend() {
         try {
-            const response = await axios.delete(`http://localhost:5001/web/users/image/${picture}`, {
-                withCredentials: true,
-            })
+            const response = await axios.delete(
+                `http://localhost:5001/web/users/image/${picture}`,
+                {
+                    withCredentials: true,
+                },
+            )
             // console.log(response.data);
             setPicture(null)
             setError('')
@@ -48,13 +51,14 @@ function ShowImg({ picture, setPicture, setError }: Prop) {
             formData.append('image', selectedImage)
 
             try {
-                const response = await axios.post(`http://localhost:5001/web/users/image`, formData, {
-                    withCredentials: true,
-                })
+                const response = await axios.post(
+                    'http://localhost:5001/web/users/image',
+                    formData,
+                    { withCredentials: true },
+                )
                 setPicture(response.data)
                 setError('')
             } catch (error: any) {
-                //console.log('TODO', error)
                 if (error && error.response) setError(error.response.data)
             }
         }

@@ -425,7 +425,7 @@ function MoviePage() {
                                     <div className="relative pl-2 flex flex-none mr-5">
                                         {recommended.map((element: any, index: any) => (
                                             <div key={index} className="relative my-2 mr-2">
-                                                <Link href={`/movie/${element.imdb_code}`}>
+                                                <a href={`/movie/${element.imdb_code}`}>
                                                     <img
                                                         src={
                                                             element.thumbnail || '/errorPicture.jpg'
@@ -437,7 +437,7 @@ function MoviePage() {
                                                                 '/errorPicture.jpg'
                                                         }}
                                                     />
-                                                </Link>
+                                                </a>
                                             </div>
                                         ))}
                                     </div>

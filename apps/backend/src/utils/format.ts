@@ -46,13 +46,17 @@ export const formatComment = (comment: CommentPrisma): CommentDTO => {
     }
 }
 
-const dedup = <T>(array: T[]): T[] => {
-    const seen = new Set<T>()
+interface HasImdbCode {
+    imdb_code: string
+}
+
+const dedup = <T extends HasImdbCode>(array: T[]): T[] => {
+    const seen = new Set<string>()
     return array.filter((item) => {
-        if (seen.has(item)) {
+        if (seen.has(item.imdb_code)) {
             return false
         } else {
-            seen.add(item)
+            seen.add(item.imdb_code)
             return true
         }
     })

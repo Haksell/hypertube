@@ -22,7 +22,6 @@ export default function Login42(): JSX.Element {
             if (errorParam) setError(true)
             if (code) {
                 const url = 'http://localhost:5001/web/auth/' + String(method)
-                console.log(url)
                 const res = await axios.post(url, { code }, { withCredentials: true })
                 loginUser(res.data)
                 void router.push('/')
