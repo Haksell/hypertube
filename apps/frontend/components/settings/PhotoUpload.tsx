@@ -29,9 +29,13 @@ function PhotoUploader({ setPicture, setError }: Prop) {
             formData.append('image', selectedImage)
 
             try {
-                const response = await axios.post(`http://localhost:5001/web/users/image`, formData, {
-                    withCredentials: true,
-                })
+                const response = await axios.post(
+                    `http://localhost:5001/web/users/image`,
+                    formData,
+                    {
+                        withCredentials: true,
+                    },
+                )
                 setPicture(response.data)
                 setError('')
             } catch (error: any) {

@@ -1,19 +1,18 @@
 import { infoHash } from './torrent-parser'
-import { genId } from './utils'
-
 import { Block } from './types'
+import { genId } from './utils'
 
 export const PROTOCOL = 'BitTorrent protocol'
 
 export const buildHandshake = (infoHash: Buffer) => {
-	const buf = Buffer.alloc(68)
-	buf.writeUInt8(19, 0)
-	buf.write(PROTOCOL, 1)
-	buf.writeUInt32BE(0, 20)
-	buf.writeUInt32BE(0, 24)
-	infoHash.copy(buf, 28)
-	genId().copy(buf, 48)
-	return buf
+    const buf = Buffer.alloc(68)
+    buf.writeUInt8(19, 0)
+    buf.write(PROTOCOL, 1)
+    buf.writeUInt32BE(0, 20)
+    buf.writeUInt32BE(0, 24)
+    infoHash.copy(buf, 28)
+    genId().copy(buf, 48)
+    return buf
 }
 
 export const buildInterested = () => {

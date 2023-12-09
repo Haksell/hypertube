@@ -1,9 +1,4 @@
-type BencodeValue =
-    | string
-    | number
-    | Buffer
-    | BencodeValue[]
-    | { [key: string]: BencodeValue }
+type BencodeValue = string | number | Buffer | BencodeValue[] | { [key: string]: BencodeValue }
 
 export const decode = (buffer: Buffer): BencodeValue => {
     let index = 0

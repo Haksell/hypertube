@@ -24,7 +24,7 @@ export const isValidCommentLength = (comment: string) =>
 
 function doubleBrEnding(str: string) {
     // Regular expression to match strings that end with '<br>' or '<br />'
-    const regex = /(?:[^>]|^)(<br>|<br \/>)$/;
+    const regex = /(?:[^>]|^)(<br>|<br \/>)$/
 
     // Check if the string matches the regular expression
     if (regex.test(str)) {

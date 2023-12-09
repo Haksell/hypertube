@@ -4,15 +4,15 @@ export interface Peer {
 }
 
 export interface BlockStatus {
-	status: 'REQUESTED' | 'RECEIVED' | 'NEEDED'
-	data: Buffer | null
+    status: 'REQUESTED' | 'RECEIVED' | 'NEEDED'
+    data: Buffer | null
 }
 
 export interface Block {
-	pieceIndex: number
-	length: number
-	begin: number
-	delayed?: boolean
+    pieceIndex: number
+    length: number
+    begin: number
+    delayed?: boolean
 }
 
 export const BLOCK_LEN = 1 << 14

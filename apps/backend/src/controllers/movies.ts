@@ -221,7 +221,6 @@ export async function viewMovie(req: Request, res: Response) {
     }
 }
 
-
 // export async function viewMovie(req: Request, res: Response) {
 //     const path = require('path')
 //     const fs = require('fs')

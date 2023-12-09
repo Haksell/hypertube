@@ -1,18 +1,17 @@
+import { infoHash, size } from './torrent-parser'
+import { Peer } from './types'
+import { genId, log } from './utils'
 import crypto from 'crypto'
 import dgram from 'dgram'
 
-import { infoHash, size } from './torrent-parser'
-import { genId, log } from './utils'
-import { Peer } from './types'
-
 export const getPeers = (torrent: any, url: string): Promise<Peer[]> => {
     return new Promise((resolve, reject) => {
-				const formatUrl = new URL(url)
+        const formatUrl = new URL(url)
         const socket = dgram.createSocket('udp4')
         // TODO: loop, and accept udp/http/wss
 
         const timeout = setTimeout(() => {
-						log(false, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker timeout')
+            log(false, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker timeout')
             socket.close()
             reject('timeout')
         }, 3000)
@@ -20,19 +19,24 @@ export const getPeers = (torrent: any, url: string): Promise<Peer[]> => {
         socket.on('message', (response) => {
             if (respType(response) === 'connect') {
                 const connResp = parseConnResp(response)
-								log(true, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker connect response')
+                log(true, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker connect response')
                 const announceReq = buildAnnounceReq(connResp.connectionId, torrent)
                 udpSend(socket, announceReq, url)
             } else if (respType(response) === 'announce') {
                 const announceResp = parseAnnounceResp(response)
-								log(true, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker announce response : found ' + announceResp.peers.length + ' peers')
+                log(
+                    true,
+                    formatUrl.hostname,
+                    parseInt(formatUrl.port),
+                    'Tracker announce response : found ' + announceResp.peers.length + ' peers',
+                )
                 clearTimeout(timeout)
                 socket.close()
                 resolve(announceResp.peers)
             }
         })
 
-				log(true, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker request')
+        log(true, formatUrl.hostname, parseInt(formatUrl.port), 'Tracker request')
         udpSend(socket, buildConnReq(), url)
     })
 }
@@ -41,8 +45,8 @@ function udpSend(socket: dgram.Socket, message: Buffer, rawUrl: string) {
     const url = new URL(rawUrl)
     socket.send(message, 0, message.length, parseInt(url.port), url.hostname, (err) => {
         if (err) {
-					log(false, url.hostname, parseInt(url.port), 'udp send error: ' + err.message)
-				}
+            log(false, url.hostname, parseInt(url.port), 'udp send error: ' + err.message)
+        }
     })
 }
 

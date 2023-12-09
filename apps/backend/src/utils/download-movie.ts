@@ -16,16 +16,14 @@ export async function downloadMovie(movieInfo: MovieDetails, source: string) {
 
     if (movie.file) return //movie already downloaded
 
-	let torrent: string = ''
-	if (source === 'YTS') {
-		//get torrent info
-		let torrents = await getTorrentInfo(movieInfo.imdb_code)
+    let torrent: string = ''
+    if (source === 'YTS') {
+        //get torrent info
+        let torrents = await getTorrentInfo(movieInfo.imdb_code)
 
-		//select torrent:
-		torrent = selectTorrent(torrents)
-	}
-	else if (movieInfo.hash !== '')
-		torrent = movieInfo.hash
+        //select torrent:
+        torrent = selectTorrent(torrents)
+    } else if (movieInfo.hash !== '') torrent = movieInfo.hash
 
     // //get torrent info
     // let torrents = await getTorrentInfo(imdb_code)
@@ -34,8 +32,7 @@ export async function downloadMovie(movieInfo: MovieDetails, source: string) {
     // let torrent: string = selectTorrent(torrents)
 
     //download movie
-	if (torrent !== '') 
-    	await downloadTorrent(torrent, movie.id, movieInfo.imdb_code)
+    if (torrent !== '') await downloadTorrent(torrent, movie.id, movieInfo.imdb_code)
 
     //download subtitles
 }
@@ -50,24 +47,23 @@ export async function downloadMovie(movieInfo: MovieDetails, source: string) {
 // 		console.log('movie already downloading')
 // 		return //movie already downloading
 // 	}
-	
-	// let torrent: string = ''
-	// if (source === 'YTS') {
-	// 	//get torrent info
-	// 	let torrents = await getTorrentInfo(movieInfo.imdb_code)
 
-	// 	//select torrent:
-	// 	torrent = selectTorrent(torrents)
-	// }
-	// else if (movieInfo.hash !== '')
-	// 	torrent = movieInfo.hash
-    
+// let torrent: string = ''
+// if (source === 'YTS') {
+// 	//get torrent info
+// 	let torrents = await getTorrentInfo(movieInfo.imdb_code)
+
+// 	//select torrent:
+// 	torrent = selectTorrent(torrents)
+// }
+// else if (movieInfo.hash !== '')
+// 	torrent = movieInfo.hash
 
 // 	if (torrent !== '') {
 // 		//download movie
 // 		await downloadTorrent(torrent, movie.id, movieInfo.imdb_code)
 // 	}
-    
+
 // }
 
 async function downloadSubtitle(imdb_code: string) {
@@ -120,9 +116,6 @@ function selectTorrent(torrents: any) {
     return url
 }
 
-
-
-
 export async function downloadTorrent(hash: string, movieID: number, imdb_code: string) {
     var torrentStream = require('torrent-stream')
 
@@ -147,34 +140,36 @@ export async function downloadTorrent(hash: string, movieID: number, imdb_code: 
             console.log('filename:', file.name)
             console.log('full path:', `${engine.path} =/= ${file.path}`)
             let filePath: string = ''
-			if (file.name !== file.path)
-				filePath = file.path.replace(`/${file.name}`, '')
+            if (file.name !== file.path) filePath = file.path.replace(`/${file.name}`, '')
             const folderPath: string = `${engine.path}/${filePath}`
             var stream = file.createReadStream()
-            if (file && (file.name.endsWith('.mp4') || file.name.endsWith('.mkv') || file.name.endsWith('.webm'))) {
+            if (
+                file &&
+                (file.name.endsWith('.mp4') ||
+                    file.name.endsWith('.mkv') ||
+                    file.name.endsWith('.webm'))
+            ) {
                 //sauvegarder nom bdd
-				try {
-					console.log('saving info for movie:')
-					console.log(`file.name=${file.name}`)
-					console.log(`file.path=${file.path}`)
-					console.log(`DB file=${file}`)
-					console.log(`DB folder=${folderPath}`)
-					await prisma.movies.update({
-						where: {
-							id: movieID,
-						},
-						data: {
-							file: `${file.name}`,
-							folder: folderPath,
-							dateDownload: new Date(),
-						},
-					})
-				}
-				catch (error) {
-					console.log('error on DB movie ')
-					console.log(error)
-				}
-                
+                try {
+                    console.log('saving info for movie:')
+                    console.log(`file.name=${file.name}`)
+                    console.log(`file.path=${file.path}`)
+                    console.log(`DB file=${file}`)
+                    console.log(`DB folder=${folderPath}`)
+                    await prisma.movies.update({
+                        where: {
+                            id: movieID,
+                        },
+                        data: {
+                            file: `${file.name}`,
+                            folder: folderPath,
+                            dateDownload: new Date(),
+                        },
+                    })
+                } catch (error) {
+                    console.log('error on DB movie ')
+                    console.log(error)
+                }
 
                 //look for subtitles
                 await downloadSubtitle(imdb_code)
@@ -192,8 +187,6 @@ export async function downloadTorrent(hash: string, movieID: number, imdb_code: 
         })
     })
 }
-
-
 
 // export const downloadStatus = new Map<string, TorrentManager>()
 

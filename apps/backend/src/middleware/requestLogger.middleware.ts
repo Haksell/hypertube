@@ -39,7 +39,7 @@ const requestLoggerMiddleware = (req: Request, res: Response, next: NextFunction
         // warn the response warnrmation
         log.push(`Response Status: ${res.statusCode}`)
         log.push(`Response Time: ${duration}ms`)
-        log.push('Response Body:', res.locals.responseBody);
+        log.push('Response Body:', res.locals.responseBody)
 
         // Handle error warnging
         if (res.statusCode >= 400) {
