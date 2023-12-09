@@ -11,7 +11,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { FaSearch } from 'react-icons/fa'
+import { GrClose } from 'react-icons/gr'
 
 const limit = 14
 const DEFAULT_SORT_BY = 'like_count'
@@ -259,7 +259,12 @@ const MoviesPage = () => {
                                 disabled={type === 'tvShow'}
                                 aria-label="Search movies"
                             />
-                            <FaSearch className="absolute top-0 right-0 mt-3 mr-3 text-white" />
+                            {search && (
+                                <GrClose
+                                    className="absolute top-0 right-0 mt-3 mr-3 text-white hover:cursor-pointer"
+                                    onClick={() => setSearch('')}
+                                />
+                            )}
                         </div>
                         <SearchButton
                             disabled={type === 'tvShow'}
