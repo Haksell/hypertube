@@ -192,7 +192,6 @@ const MoviesPage = () => {
             // console.error('Error fetching movies:', error)
         } finally {
             setLoading(false)
-            setStopFetch(false)
         }
     }
 
