@@ -13,7 +13,7 @@ import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchCommentSchema, patchUserSchema } from './api/joi-checks.ts'
 import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
-import { apiGetComments, apiGetOneComment, apiPatchComment } from './api/comments-api.ts'
+import { apiDeleteComment, apiGetComments, apiGetOneComment, apiPatchComment } from './api/comments-api.ts'
 
 const cookieParser = require('cookie-parser')
 
@@ -68,7 +68,7 @@ app.get('/movies/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOn
 app.get('/comments', cors(corsOptionsAPI), apiGetComments) // GET /comments
 app.get('/comments/:id', cors(corsOptionsAPI), validator.params(idShema), apiGetOneComment) // GET /comments/:id
 app.patch('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchCommentSchema), validator.params(idShema), apiPatchComment) // PATCH /comments/:id
-app.delete('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiPatchComment) // PATCH /comments/:id
+app.delete('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiDeleteComment) // PATCH /comments/:id
 
 // DELETE /comments/:id
 // POST /comments OR POST /movies/:movie_id/comments
