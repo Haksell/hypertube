@@ -60,7 +60,6 @@ function ResetPasswordPage() {
                 },
             )
             if (response.data) setRetour(response.data)
-            console.log(response.data)
             return response.data
         } catch (errorMsg: any) {
             if (errorMsg.response === 'invalidConfirmId') await router.push('/404')
@@ -69,7 +68,6 @@ function ResetPasswordPage() {
     }
 
     async function resetPasswordBackend() {
-        console.log('test')
         try {
             const response = await axios.post(
                 `http://localhost:5001/web/auth/forgot/${String(confirmid)}`,
