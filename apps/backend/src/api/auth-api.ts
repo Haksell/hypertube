@@ -1,13 +1,21 @@
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
-const jwt = require('jsonwebtoken');
+const passport = require('./oauth2');
 
 export async function oathToken(req: Request, res: Response) {
-	passport.authenticate('oauth2', { session: false }),
-    (req: Request, res: Response) => {
-        // Generate a JWT token upon successful authentication
-        const token = jwt.sign({ user: req.user }, process.env.API_SECRET_KEY);
-        res.json({ access_token: token });
-    }
-}
+	const { client, secret } = req.body
 
+	if (!(client && secret)) {
+		res.status(400).json({ message: 'client or secret not defined' });
+		return
+	}
+	if (!(secret === process.env.API_SECRET && client === process.env.API_CLIENT)) {
+		res.status(401).json({ message: 'Unauthorized' });
+		return
+	}
+	const api_token = process.env.API_TOKEN ? process.env.API_TOKEN : ''
+	const token = jwt.sign({ user: 'OK'}, api_token);
+	res.status(200).json({ access_token: token });
+
+}
