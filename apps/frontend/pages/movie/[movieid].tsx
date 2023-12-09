@@ -44,12 +44,15 @@ function MoviePage() {
 
     async function getMovie() {
         try {
-            const response = await axios.get(`http://localhost:5001/web/movies/${String(movieid)}`, {
-                params: {
-                    source: source,
+            const response = await axios.get(
+                `http://localhost:5001/web/movies/${String(movieid)}`,
+                {
+                    params: {
+                        source: source,
+                    },
+                    withCredentials: true,
                 },
-                withCredentials: true,
-            })
+            )
             setMovieDetails(response.data)
             if (response.data.liked) setLiked(response.data.liked)
 
@@ -240,25 +243,33 @@ function MoviePage() {
                     <img
                         src={movie.image.poster || '/errorPicture.jpg'}
                         alt={movie.title}
-                        className={`absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible transition-all transform duration-500 ${isMovieVisible ? 'min-[1000px]:top-4' : 'min-[1000px]:-top-20'}`}
+                        className={`absolute w-1/4 top-4 z-10 left-[3%] rounded-lg invisible shadow-lg shadow-orange-50 min-[770px]:visible min-[770px]:transition-all transform min-[770px]:duration-500 ${
+                            isMovieVisible ? 'min-[1000px]:top-4' : 'min-[1000px]:-top-20'
+                        }`}
                         onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                             e.currentTarget.src = '/errorPicture.jpg'
                         }}
                     />
-                    <div className="flex flex-col pl-10 bg-neutral-800 w-full h-40 bg-opacity-80 min-[770px]:pl-[31vw] min-[950px]:flex-row min-[950px]:h-28">
+                    <div className="flex flex-col pl-10 pb-3 bg-neutral-800 w-full bg-opacity-80 min-[770px]:pl-[31vw] min-[950px]:flex-row">
                         <div className="w-full min-[950px]:w-[53vw]">
                             <h1 className="py-2 pr-5 text-2xl font-bold text-slate-200 truncate sm:text-4xl">
                                 {movie.title}
                             </h1>
                             <RatingStars rating={movie.rating / 2} line={true} />
-                            {movie.genres.slice(0, 6).map((element, index) => (
-                                <span
-                                    key={index}
-                                    className="mr-2 bg-blue-50 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded"
-                                >
-                                    {t(`index.genre.${element.toLowerCase()}`)}
-                                </span>
-                            ))}
+                            <div className="flex flex-wrap">
+                                {movie.genres.map((element, index) => (
+                                    <Link
+                                        key={index}
+                                        href={{
+                                            pathname: '/',
+                                            query: { genre: element },
+                                        }}
+                                        className="mr-2 mt-2 bg-blue-50 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded hover:bg-blue-60 active:bg-blue-70"
+                                    >
+                                        {t(`index.genre.${element.toLowerCase()}`)}
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
                         <div className="flex flex-row grow mt-4 ml-2 min-[950px]:justify-end min-[950px]:mt-0">
                             <button className="mr-10" onClick={handleToggleMovie}>
