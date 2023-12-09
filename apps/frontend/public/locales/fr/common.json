@@ -32,6 +32,7 @@
         "member": "Deviens membre !"
     },
     "forgot": {
+        "emailSend": "Email envoyé",
         "title": "Mot de passe oublié ?",
         "noRecovery": "Impossible de changer car ",
         "recoverPwd": "Changer de mot de passe",
@@ -200,5 +201,6 @@
     "emailSent": "Si ce compte existe, un e-mail a été envoyé à votre boîte de réception",
     "validConfirmId": "Code de confirmation correct",
     "pwdReseted": "Mot de passe mis à jour avec succès",
-    "signOut": "Vous êtes déconnecté"
+    "signOut": "Vous êtes déconnecté",
+    "or": "ou"
 }

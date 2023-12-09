@@ -82,9 +82,15 @@ function ForgotPasswordPage() {
         content = (
             <TramePage>
                 <TitleSmall text={t('forgot.title')} />
-
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6" action="#" onSubmit={handleSignIn}>
+                <div className="px-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <form
+                        className="space-y-6"
+                        action="#"
+                        onSubmit={(data) => {
+                            handleSignIn(data)
+                            setCreated(true)
+                        }}
+                    >
                         <ShowErrorMessage error={error} message={t('forgot.noRecovery')} />
                         <ErrorField
                             name="email1"

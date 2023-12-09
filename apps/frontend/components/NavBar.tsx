@@ -36,7 +36,7 @@ const LinkNavBar: React.FC<{
     const { user } = useUserContext()
 
     return (
-        <div className="flex items-center pt-2 ml-6 hidden min-[770px]:block">
+        <div className="items-center pt-2 ml-6 hidden min-[770px]:block">
             <div className="flex space-x-4">
                 {user && (
                     <>

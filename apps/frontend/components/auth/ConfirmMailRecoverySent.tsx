@@ -8,7 +8,7 @@ function ConfirmMailConfirmationSent() {
     const { t } = useTranslation('common')
     return (
         <TramePage>
-            <TitleSmall text={t('ConfirmMailrecoverySent.check')} />
+            <TitleSmall text={t('ConfirmMailRecoverySent.check')} />
             <TextPage>
                 <p>{t('ConfirmMailRecoverySent.recoveryLink')}</p>
                 <LinkText linkText={t('getBack')} link="/" space="1" />

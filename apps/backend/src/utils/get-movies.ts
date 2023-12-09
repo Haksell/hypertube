@@ -21,7 +21,7 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
         const page: number =
             params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
         const parameters: TRequete = {
-            limit: limit + 5,
+            limit: limit * 2,
             page: page,
             sort_by: params.sort,
         }
@@ -57,10 +57,8 @@ export async function getMoviesFromYTS(limit: number, params: TRequestGetMovie):
                 liked: false,
                 source: 'YTS',
             }
-            if (params.year === -1 || params.year === oneMovie.year)
-                movies.push(oneMovie)
-            if (movies.length === limit)
-                break
+            if (params.year === -1 || params.year === oneMovie.year) movies.push(oneMovie)
+            if (movies.length === limit) break
         }
         return movies
     } catch (error) {
@@ -94,7 +92,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
         const page: number =
             params.offset !== 0 ? Math.floor(params.offset / (limit > 0 ? limit : 1)) + 1 : 1
         const response = await axios.get(
-            `https://eztv.re/api/get-torrents?limit=${limit + 5}&page=${page}`,
+            `https://eztv.re/api/get-torrents?limit=${limit * 2}&page=${page}`,
         )
         const moviesEZTV = response.data.torrents
         const movies: Movie[] = []
@@ -126,8 +124,7 @@ export async function getMoviesEZTV(limit: number, params: TRequestGetMovie): Pr
                 oneMovie.imdbRating = info.imdbRating
 
                 movies.push(oneMovie)
-                if (movies.length === limit)
-                    break
+                if (movies.length === limit) break
             }
         }
         return movies

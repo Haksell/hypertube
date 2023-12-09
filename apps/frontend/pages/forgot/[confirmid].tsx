@@ -1,7 +1,6 @@
 import Button from '../../components/elems/Button'
 import { ErrorField } from '../../components/elems/ErrorFields'
 import LinkText from '../../components/elems/LinkText'
-import PageTitleOneText from '../../components/elems/PageTitleOneText'
 import ShowErrorMessage from '../../components/elems/ShowErrorMessage'
 import TextPage from '../../components/elems/TextPage'
 import TitleSmall from '../../components/elems/TitleSmall'
@@ -16,6 +15,24 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect, useState } from 'react'
 
+interface Prop {
+    title: string
+    textBody: string
+}
+
+function PageTitleOneText({ title, textBody }: Prop) {
+    const { t } = useTranslation('common')
+    return (
+        <MainLayout>
+            <TitleSmall text={title} />
+            <TextPage>
+                <p>{textBody}</p>
+                <LinkText linkText={t('getBack')} link="/" space="1" />
+            </TextPage>
+        </MainLayout>
+    )
+}
+
 function ResetPasswordPage() {
     const router = useRouter()
     const { confirmid } = router.query
@@ -25,15 +42,16 @@ function ResetPasswordPage() {
     const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string>('')
     const { t } = useTranslation('common')
+    let validateCalled = false
 
     useEffect(() => {
-        // console.log('id=' + confirmid)
         void validateLink()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [confirmid])
 
     async function validateLink() {
-        if (!confirmid) return
+        if (validateCalled) return
+        validateCalled = true
         try {
             const response = await axios.get(
                 `http://localhost:5001/web/auth/forgot/${String(confirmid)}`,
@@ -41,16 +59,17 @@ function ResetPasswordPage() {
                     withCredentials: true,
                 },
             )
-            if (response.data.msg) setRetour(response.data.msg)
-            // console.log(response.data);
+            if (response.data) setRetour(response.data)
+            console.log(response.data)
             return response.data
         } catch (errorMsg: any) {
-            if (errorMsg.response === ErMsg('InvalidId', t)) await router.push('/404')
+            if (errorMsg.response === 'invalidConfirmId') await router.push('/404')
             setRetour(null)
         }
     }
 
     async function resetPasswordBackend() {
+        console.log('test')
         try {
             const response = await axios.post(
                 `http://localhost:5001/web/auth/forgot/${String(confirmid)}`,
@@ -61,8 +80,7 @@ function ResetPasswordPage() {
                     withCredentials: true,
                 },
             )
-            // console.log(response.data);
-            if (response.data.msg === ErMsg('SuccessMsg', t)) {
+            if (response.data === 'pwdReseted') {
                 setError('')
                 setStyleErrorPassword(false)
                 setCreated(true)
@@ -90,7 +108,7 @@ function ResetPasswordPage() {
 
     let content
 
-    if (retour && retour === ErMsg('SuccessMsg', t)) {
+    if (retour && retour === 'validConfirmId') {
         if (created) {
             content = (
                 <PageTitleOneText title={t('forgot2.pwdChange')} textBody={t('forgot2.newLog')} />
@@ -133,7 +151,7 @@ function ResetPasswordPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-    return { props: { translations: await serverSideTranslations(locale ?? 'en', ['common']) } }
+    return { props: { ...(await serverSideTranslations(locale ?? 'en', ['common'])) } }
 }
 
 export default ResetPasswordPage

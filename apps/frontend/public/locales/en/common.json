@@ -32,6 +32,7 @@
         "member": "Become a member !"
     },
     "forgot": {
+        "emailSend": "Email Sent",
         "title": "Forgot your password ?",
         "noRecovery": "Impossible to recover because ",
         "recoverPwd": "Recover password",
@@ -171,7 +172,7 @@
         "cancel": "Cancel"
     },
     "ConfirmMailRecoverySent": {
-        "check": "Check your emails..",
+        "check": "Check your emails...",
         "recoveryLink": "A recovery link have been sent to your inbox."
     },
     "ConfirmUserCreation": {
@@ -200,5 +201,6 @@
     "emailSent": "If this account exists, an email has been sent to your inbox",
     "validConfirmId": "Confirmation code correct",
     "pwdReseted": "Password successfully updated",
-    "signOut": "You're logged out"
+    "signOut": "You're logged out",
+    "or": "or"
 }

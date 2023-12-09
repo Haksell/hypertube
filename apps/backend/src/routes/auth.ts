@@ -73,7 +73,7 @@ router.get(
 router.post(
     '/forgot/:confirmId',
     validator.params(confirmEmailSchema),
-    validator.query(resetPwdSchema), // TODO: body ?
+    validator.body(resetPwdSchema),
     asyncHandler(ResetPwd),
 )
 
