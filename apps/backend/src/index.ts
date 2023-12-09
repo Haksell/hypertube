@@ -12,7 +12,7 @@ import { authenticateJWT } from './api/middlewares/authJWT.ts'
 import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchCommentSchema, patchUserSchema, postCommentSchema } from './api/joi-checks.ts'
-import { apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
+import { apiDeleteMovie, apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
 import { apiDeleteComment, apiGetComments, apiGetOneComment, apiPatchComment, apiPostComment } from './api/comments-api.ts'
 
 const cookieParser = require('cookie-parser')
@@ -70,6 +70,9 @@ app.get('/comments/:id', cors(corsOptionsAPI), validator.params(idShema), apiGet
 app.patch('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.body(patchCommentSchema), validator.params(idShema), apiPatchComment) // PATCH /comments/:id
 app.delete('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiDeleteComment) // DELETE /comments/:id
 app.post('/comments', cors(corsOptionsAPI), authenticateJWT, validator.body(postCommentSchema), apiPostComment) // POST /comments
+//BONUS ROUTES API
+app.delete('/movies/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiDeleteMovie) // DELETE /movies/:id
+app.delete('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiPostComment) // DELETE /users/:id
 
 app.listen(port, () => console.log(`API listening on port ${port}!`))
 
