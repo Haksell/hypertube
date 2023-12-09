@@ -57,8 +57,8 @@ export async function register(req: Request, res: Response) {
         },
     })
 
-    // const emailBody: string = generateEmailBodyNewUser(Username, confirmID);
-    // sendEmail('Verify your account', Email, emailBody);
+    const emailBody: string = generateEmailBodyNewUser(username, confirmID)
+    sendEmail('Verify your account', email, emailBody)
 
     res.status(201).send('userCreated')
 }
@@ -79,6 +79,11 @@ export async function login(req: Request, res: Response) {
 
     if (user.authMethod !== 'EMAIL') {
         res.status(400).send('wrongAuthMethod' + user.authMethod)
+        return
+    }
+
+    if (!user.email_verified) {
+        res.status(200).send('emailNotVerified')
         return
     }
 
@@ -286,8 +291,8 @@ export async function ForgotPwd(req: Request, res: Response) {
     console.log(retour)
 
     // send Email
-    // const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID);
-    // sendEmail('Reset your password', email, emailBody);
+    const emailBody: string = generateEmailBodyForgotPwd(user.username, confirmID)
+    sendEmail('Reset your password', email, emailBody)
 
     res.status(200).send('emailSent')
 }

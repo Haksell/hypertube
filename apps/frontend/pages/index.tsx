@@ -187,7 +187,7 @@ const MoviesPage = () => {
                 offset === 0 ? response.data : [...prevMovies.slice(0, offset), ...response.data],
             )
         } catch (error) {
-            console.error('Error fetching movies:', error)
+            // console.error('Error fetching movies:', error)
         } finally {
             setLoading(false)
         }

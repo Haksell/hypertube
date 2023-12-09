@@ -66,14 +66,14 @@ router.get('/confirm/:confirmId', validator.params(confirmEmailSchema), asyncHan
 router.post('/forgotpwd', validator.body(forgotPwdSchema), asyncHandler(ForgotPwd))
 router.get(
     '/forgot/:confirmId',
-    validator.query(confirmEmailSchema),
+    validator.params(confirmEmailSchema),
     asyncHandler(ConfirmForgotPwd),
 )
 
 router.post(
     '/forgot/:confirmId',
-    validator.query(confirmEmailSchema),
-    validator.query(resetPwdSchema),
+    validator.params(confirmEmailSchema),
+    validator.query(resetPwdSchema), // TODO: body ?
     asyncHandler(ResetPwd),
 )
 

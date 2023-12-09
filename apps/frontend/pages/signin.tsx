@@ -64,19 +64,18 @@ function SignInPage() {
                 { username, password },
                 { withCredentials: true },
             )
-            // console.log(response.data)
             if (response.data) {
-                // console.log('you are signed in!')
-                // console.log(response.data)
+                if (response.data === 'emailNotVerified') {
+                    setError('Your email is not verified')
+                    return
+                }
                 loginUser(response.data)
-                // console.log('done')
                 setError('')
                 setStyleError(false)
                 void router.push('/')
             }
             return response.data
         } catch (err: any) {
-            // console.log(error)
             setStyleError(true)
             if (error && err.response && err.response.data) setError(err.response.data)
             loginUser(null)
