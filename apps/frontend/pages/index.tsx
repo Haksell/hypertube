@@ -149,8 +149,6 @@ const MoviesPage = () => {
 
     useEffect(() => {
         if (movies.length === 0) {
-            setLoading(true)
-            setStopFetch(false)
             fetchMovies(0, type)
         }
     }, [])
@@ -158,8 +156,6 @@ const MoviesPage = () => {
     useEffect(() => {
         const genreParam = searchParams.get('genre')
         if (genreParam && genreParam in GENRES) {
-            setLoading(true)
-            setStopFetch(false)
             setGenre(genreParam)
             fetchMovies(0, type, genreParam)
             router.replace({ pathname: router.pathname, query: {} }, undefined, { shallow: true })
@@ -172,6 +168,10 @@ const MoviesPage = () => {
             document.documentElement.offsetHeight - window.innerHeight / 2
 
     const fetchMovies = async (offset: number, newType: VideoType, newGenre: string = genre) => {
+        if (offset === 0) {
+            setLoading(true)
+            setStopFetch(false)
+        }
         try {
             const params: any = { offset, limit, downloaded }
             if (search) params['search'] = search
@@ -212,15 +212,11 @@ const MoviesPage = () => {
     const handleSwitch = () => {
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
-        setLoading(true)
-        setStopFetch(false)
         fetchMovies(0, newType)
         setSearch('')
     }
 
     const handleSearch = () => {
-        setLoading(true)
-        setStopFetch(false)
         fetchMovies(0, type)
     }
 
