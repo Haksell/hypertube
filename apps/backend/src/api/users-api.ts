@@ -117,3 +117,51 @@ export async function patchOneUser(req: Request, res: Response) {
         else res.status(400).send('Error with request')
 	}
 }
+
+export async function apiDeleteUser(req: Request, res: Response) {
+	try {
+		const { id } = req.params
+		if (!id) throw new CustomError('empty argument')
+		const numID = parseInt(id)
+		if (isNaN(numID)) throw new CustomError('incorrect ID format')
+		let user = await prisma.user.findUnique({
+			where: {
+				id: numID
+			}
+		})
+		if (!user) throw new NotFoundError('no user found with this ID')
+
+
+		//deleting related comments
+		await prisma.comment.deleteMany({
+			where: {
+			  userId: numID,
+			},
+		  });
+		//deleting related likes
+		await prisma.favoriteMovie.deleteMany({
+			where: {
+			  userId: numID,
+			},
+		  });
+		//deleting related viewed movies
+		await prisma.viewedMovie.deleteMany({
+			where: {
+			  userId: numID,
+			},
+		  });
+		await prisma.user.delete({
+			where: {
+				id: user.id
+			}
+		})
+
+		res.status(200).json(SuccessMsg);
+	}
+	catch (error) {
+		if (error instanceof CustomError) res.status(400).send(`Invalid request: ${error.message}`)
+		else if (error instanceof NotFoundError) res.status(404).send(`Error: ${error.message}`)
+        else res.status(400).send('Error with request')
+	console.log(error)
+	}
+}

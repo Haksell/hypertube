@@ -9,7 +9,7 @@ import express from 'express'
 import { scheduleTask } from './utils/files-handling.ts'
 import { oathToken } from './api/auth-api.ts'
 import { authenticateJWT } from './api/middlewares/authJWT.ts'
-import { getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
+import { apiDeleteUser, getOneUser, getUsers, patchOneUser } from './api/users-api.ts'
 import { createValidator } from 'express-joi-validation'
 import { idShema, patchCommentSchema, patchUserSchema, postCommentSchema } from './api/joi-checks.ts'
 import { apiDeleteMovie, apiGetMovies, apiGetOneMovie } from './api/movies-api.ts'
@@ -72,7 +72,7 @@ app.delete('/comments/:id', cors(corsOptionsAPI), authenticateJWT, validator.par
 app.post('/comments', cors(corsOptionsAPI), authenticateJWT, validator.body(postCommentSchema), apiPostComment) // POST /comments
 //BONUS ROUTES API
 app.delete('/movies/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiDeleteMovie) // DELETE /movies/:id
-app.delete('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiPostComment) // DELETE /users/:id
+app.delete('/users/:id', cors(corsOptionsAPI), authenticateJWT, validator.params(idShema), apiDeleteUser) // DELETE /users/:id
 
 app.listen(port, () => console.log(`API listening on port ${port}!`))
 
