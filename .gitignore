@@ -21,3 +21,5 @@ apps/backend/downloads/*
 !apps/backend/downloads/.gitkeep
 
 dev.db-journal
+apps/backend/prisma/dev.db
+apps/backend/prisma/dev.db-journal

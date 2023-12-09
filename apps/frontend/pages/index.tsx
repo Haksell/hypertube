@@ -210,6 +210,7 @@ const MoviesPage = () => {
         const newType = type === 'movie' ? 'tvShow' : 'movie'
         setType(newType)
         isFetchingFromScroll = true
+        setMovies([])
         fetchMovies(0, newType)
         setSearch('')
     }
